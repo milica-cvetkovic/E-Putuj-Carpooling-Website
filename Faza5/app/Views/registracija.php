@@ -5,7 +5,7 @@
             <div class="row">
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12" id="registration">
                     <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registrujte se</h3>
-                    <form>
+                    <form name="registracijaform" action="<?= site_url("GostController/registracijaSubmit") ?>" method="post">
 
                         <div class="form-outline mb-4">
                             <label class="form-label" for="firstname">Ime</label>
@@ -41,20 +41,19 @@
                         </div>
 
                         <div class="form-outline mb-4">
-                            <label class="form-label" for="firstname">Korisničko ime</label>
-                            <input type="text" id="firstname" class="form-control form-control-lg" />
+                            <label class="form-label" for="username">Korisničko ime</label>
+                            <input type="text" id="username" class="form-control form-control-lg" />
                         </div>
                         <div class="form-outline mb-4">
-                            <label class="form-label" for="firstname">Lozinka</label>
-                            <input type="password" id="firstname" class="form-control form-control-lg" />
+                            <label class="form-label" for="password">Lozinka</label>
+                            <input type="password" id="password" class="form-control form-control-lg" />
                         </div>
                         <div class="form-outline mb-4">
-                            <label class="form-label" for="firstname">Potvrdi lozinku</label>
-                            <input type="password" id="firstname" class="form-control form-control-lg" />
+                            <label class="form-label" for="checkpassword">Potvrdi lozinku</label>
+                            <input type="password" id="checkpassword" class="form-control form-control-lg" />
                         </div>
-                        <button type="button" class="btn btn-primary btn-block mb-4 confirm-btn" onclick="window.location.href='#'">Potvrdi</button>
-                        <p style="color:rgb(85, 84, 84);text-align:left;font-size:13px;margin-right:-150px;margin-left:-120px"><strong>Napomena:</strong>Morate čekati potvrdu profila od administratora da biste se ulogovali.</p>
-
+                        <input type='submit' class="btn btn-primary btn-block mb-4 submit-btn" value="Potvrdi">
+                        <p style="color:rgb(85, 84, 84);text-align:left;font-size:13px;margin-right:-150px;margin-left:-120px"><strong>Napomena:</strong> Morate čekati potvrdu profila od administratora da biste se ulogovali.</p>
                     </form>
                     
                 </div>

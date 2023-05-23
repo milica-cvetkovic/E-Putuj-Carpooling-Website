@@ -46,7 +46,7 @@
                               <td style="width:20%"><img src="<?php echo base_url('images/3.png') ?>" alt="#" />
                                  eputuj@gmail.com&nbsp;&nbsp;&nbsp;</td>
 
-                              <td style="width:25%; padding-right: 10px;" align="right"><a href="login.html"><img src="<?php echo base_url('images/Adobe_Express_20230318_1713500_1.png') ?>" style="height:15% ;width:15%" />Uloguj se</a> </td>
+                              <td style="width:25%; padding-right: 10px;" align="right"><a href="<?php echo site_url("GostController/login")?>"><img src="<?php echo base_url('images/Adobe_Express_20230318_1713500_1.png') ?>" style="height:15% ;width:15%" />Uloguj se</a> </td>
                            </tr>
                         </table>
                      </div>
@@ -73,7 +73,7 @@
 
                               <li class="active"> <a href="#">Početna</a> </li> <!-- ovde treba prosledjivati sta je aktivno, vrv moze preko js -->
                               <li> <a href="#about">O nama</a> </li>
-                              <li><a href="#offers">Ponude</a></li>
+                              <li><a href="<?php echo site_url("GostController/pregledPonuda")?>">Ponude</a></li>
                               <li><a href="#contact">Kontakt</a></li>
 
                            </ul>

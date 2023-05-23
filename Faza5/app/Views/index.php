@@ -66,7 +66,7 @@
                         </div>
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-                        <a href="pregled_ponuda_gost.html" style="background-color: rgb(6, 47, 60);">Pretraži</a>
+                        <a href="<?php echo site_url("GostController/pregledPonuda")?>" style="background-color: rgb(6, 47, 60);">Pretraži</a>
                      </div>
                   </div>
                </form>
