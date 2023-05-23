@@ -96,7 +96,7 @@
                         Razlog zbog kog naši članovi koriste ePutuj je da podele troškove. Upravo zbog toga, naš
                         servis nema za cilj da omogući vozačima da zarade od putovanja.
                      </span></p>
-                  <div class="palne-img-area">
+                  <div class="palne-img-area" style="right: -165px">
                      <img src="<?php echo base_url('images/plane-img.png') ?>" alt="images">
                   </div>
                </div>

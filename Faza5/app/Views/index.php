@@ -103,7 +103,7 @@
                </div>
             </div>
          </div>
-      </div class="justify-content-center">
+      </div><div class="justify-content-center">
       <a href="#contact" style="background-color: rgb(63, 155, 183); ">Pročitaj više</a>
    </div>
 </div>
