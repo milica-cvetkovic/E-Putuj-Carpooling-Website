@@ -5,21 +5,29 @@
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12" id="login">
                <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Ulogujte se</h3>
                <form name="loginform" action="<?= site_url("GostController/loginSubmit") ?>" method="post">
-                  <div class="form-outline mb-4">
-                     <input type="text" id="username-input" class="form-control" />
+                    <?php if(!empty($poruke['prazno'])) 
+                        echo "<span>{$poruke['prazno']}</span>";
+                    ?>
+                   <div class="form-outline mb-4">
+                     <input type="text" name="username-input" id="username-input" class="form-control" />
                      <label class="form-label" for="username-input">Korisničko ime</label>
-                  </div>
+                     <?php if(!empty($poruke['korisnickoime'])) 
+                        echo "<br><span>{$poruke['korisnickoime']}</span>";
+                    ?>
+                   </div>
                   <div class="form-outline mb-4">
-                     <input type="password" id="password-input" class="form-control" />
+                     <input type="password" name="password-input" id="password-input" class="form-control" />
                      <label class="form-label" for="password-input">Lozinka</label>
+                     <?php if(!empty($poruke['lozinka'])) 
+                        echo "<br><span>{$poruke['lozinka']}</span>";
+                     ?>
                   </div>
                   <div class="row mb-4">
                      <div class="col">
                         <a href="zaboravljenalozinka.html">Zaboravili ste lozinku?</a>
                      </div>
                   </div>
-                  <button type="button" class="btn btn-primary btn-block mb-4 confirm-btn"
-                     >Potvrdi</button>
+                   <input type='submit' class="btn btn-primary btn-block mb-4 confirm-btn" value="Potvrdi">
                </form>
             </div>
             <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12" id="logreg">

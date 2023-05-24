@@ -18,26 +18,32 @@ class GostController extends BaseController {
         $this->prikaz("index", []);
     }
     
-    public function login(){
-        $this->prikaz("login.php", []);
+    public function login($poruke = null){
+        $this->prikaz("login.php", ["poruke" => $poruke]);
     }
     
     public function loginSubmit(){
         
-        if(!$this->validate(['korime' => 'required', 'lozinka' => 'required'])){
-            // error handling
-        }
+        // ne valja css
         
         $korisnickoime = $this->request->getVar("username-input");
         $lozinka = $this->request->getVar("password-input");
         
         $korisnik = $this->dohvatiKorisnika($korisnickoime);
         
-        if($korisnik == null){
-            // greska
+        if($korisnickoime == null || $lozinka == null){
+            $poruke['prazno'] = "Popunjavanje svih polja je obavezno.";
+            return $this->login($poruke);
         }
-        if($korisnik->Lozinka != $lozinka){
-            // greska
+        
+        if($this->proveraKorisnickoIme($korisnickoime) == 0){
+            $poruke['korisnickoime'] = "Neispravno korisničko ime.";
+            return $this->login($poruke);
+        }
+        
+        if($this->proveraLozinka($korisnickoime, $lozinka) == 0){
+             $poruke['lozinka'] = "Neispravna lozinka.";
+            return $this->login($poruke);
         }
         
         $this->session->set("korisnik", $korisnik);
@@ -45,8 +51,8 @@ class GostController extends BaseController {
         
     }
 
-    public function registracija(){
-        $this->prikaz("registracija.php", []);
+    public function registracija($poruke = null){
+        $this->prikaz("registracija.php", ["poruke" => $poruke]);
     }
     
     public function registracijaSubmit(){
@@ -61,22 +67,41 @@ class GostController extends BaseController {
         $lozinka = $this->request->getVar("password");
         $ponovnalozinka = $this->request->getVar("checkpassword");
         
-        // greska ako je nesto prazno
-        // greska u formatu
-        
-        if($lozinka != $ponovnalozinka){
-            // greska
+        if($ime == null || $prezime == null || $brtel == null || $email == null || $tip == null
+                || $korisnickoime == null || $lozinka == null || $ponovnalozinka == null){
+            $poruke['prazno'] = "Popunjavanje svih polja je obavezno.";
+            return $this->registracija($poruke);
+        }
+       
+        if(!filter_var($email,FILTER_VALIDATE_EMAIL)){
+            $poruke['email'] = "Email adresa u pogrešnom formatu.";
+            return $this->registracija($poruke);
         }
         
-        // forma ne radi
-        //var_dump($GLOBALS);
+        if($this->proveraKorisnickoIme($korisnickoime) != 0){
+            $poruke['korisnickoime'] = "Korisničko ime je zauzeto.";
+            return $this->registracija($poruke);
+        }
+       
+         // dodaj 14 karaktera max
+        $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/";
+        if(preg_match($regex, $lozinka) == 0){
+            $poruke['lozinka'] = "Lozinka u neispravnom formatu.";
+            return $this->registracija($poruke);
+        }
+        
+        if($lozinka != $ponovnalozinka){
+            $poruke['ponovna'] = "Lozinka u polju potvrde nije usta kao prva unesena.";
+            return $this->registracija($poruke);
+        }
         
         switch($tip){
             case "Korisnik":
                 $this->sacuvajObicnogKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka);
                 break;
             case "Privatnik":
-                
+                // pretplata ? 
+                $this->sacuvajPrivatnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka);
                 break;
         }
         return redirect()->to(site_url("GostController/index"));
@@ -87,6 +112,8 @@ class GostController extends BaseController {
     }
 
     public function pregledPonuda(){
+        
+        // ne valja nesto
         $prevoznoSredstvo = null;
         $mestoOd = null;
         $mestoDo = null;
@@ -98,7 +125,28 @@ class GostController extends BaseController {
         $vremeOd = null;
         $vremeDo = null;
         $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo);
-        $this->prikaz("pregledPonuda", ["ponude" => $ponude]);
+        return $this->prikaz("pregledPonuda.php", ["ponude" => $ponude]);
+    }
+   
+    public function pretragaPonuda(){
+        
+        $prevoznoSredstvo = $this->request->getVar("prevoznoSredstvo");
+        $mestoOd = $this->request->getVar("mestoOd");
+        $mestoDo = $this->request->getVar("mestoDo");
+        $minimalnaCena = $this->request->getVar("minimalnaCena");
+        $maksimalnaCena = $this->request->getVar("maksimalnaCena");
+        $brojPutnika = $this->request->getVar("brojPutnika");
+        $datumOd = $this->request->getVar("datumOd");
+        $datumDo = $this->request->getVar("datumDo");
+        $vremeOd = $this->request->getVar("vremeOd");
+        $vremeDo = $this->request->getVar("vremeDo");
+        
+        // proveri ispravnost formata unetih
+        
+        $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo);
+        var_dump($ponude);
+        return $this->prikaz("pregledPonuda.php", ["ponude" => $ponude]);
+                
     }
 
     public function prikazPonude(){
@@ -147,6 +195,63 @@ class GostController extends BaseController {
         
     }
     
+    public function sacuvajPrivatnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('korisnik');
+        
+        $data = [
+          "KorisnickoIme" => $korisnickoime,
+          "Lozinka" => $lozinka
+        ];
+        
+        $builder->insert($data);
+        
+        $builder->select("SifK");
+        $builder->where("KorisnickoIme", $korisnickoime);
+        $id = ($builder->get()->getResult())[0]->SifK;
+        
+        $builder = $db->table('privatnik');
+        
+        $data = [
+          "SifK" => $id,
+          "Ime" => $ime,
+          "Prezime" => $prezime,
+          "Email" => $email,
+          "BrTel" => $brtel
+        ];
+        
+        $builder->insert($data);
+        
+    }
+    
+    public function proveraKorisnickoIme($korisnickoIme){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('korisnik');
+        
+        $builder->where("KorisnickoIme", $korisnickoIme);
+        
+        $count = $builder->get()->getResult();
+        
+        return count($count);
+        
+    }
+    
+    public function proveraLozinka($korisnickoIme, $lozinka){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('korisnik');
+        
+         $builder->where("KorisnickoIme", $korisnickoIme);
+         $builder->where("Lozinka", $lozinka);
+         
+         $count = $builder->get()->getResult();
+        
+        return count($count);
+        
+    }
+    
     public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo){
         
         $db      = \Config\Database::connect();
@@ -167,7 +272,7 @@ class GostController extends BaseController {
         if($minimalnaCena != null)
             $builder->where("ponuda.CenaKarte >=", $minimalnaCena);
         if($maksimalnaCena != null)
-            $builder->where("ponuda.CenaKarte <=", $maksimalnaCena);
+            $builder->where("CenaKarte <=", (float)$maksimalnaCena);
         if($brojPutnika != null)
             $builder->where ("ponuda.BrMesta <=", $brojPutnika);
         if($datumOd != null)
@@ -182,4 +287,16 @@ class GostController extends BaseController {
         return $builder->get()->getResult();
         
     }
+    
+    // date('y-m-d'));
+    
+    public function dohvatiSvePonude(){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        return $builder->get()->getResult();
+        
+    }
+    
 }

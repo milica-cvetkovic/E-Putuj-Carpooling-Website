@@ -10,14 +10,14 @@
         </div>
     </div>
     <div class="container">
-        <form class="main-form">
+        <form class="main-form" action="<?= site_url("GostController/pretragaPonuda") ?>" method="post">
             <h3>Pretraži ponudu</h3>
             <div class="row">
                 <div class="col-md-9">
                     <div class="row">
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Prevozno sredstvo</label>
-                            <select class="form-control" name="Any">
+                            <select class="form-control" name="prevoznoSredstvo">
                                 <option>Automobil</option>
                                 <option>Autobus</option>
                                 <option>Brod</option>
@@ -25,7 +25,7 @@
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Mesto do</label>
-                            <select class="form-control" name="Any">
+                            <select class="form-control" name="mestoDo">
                                 <option>Subotica</option>
                                 <option>Beograd</option>
                                 <option>Novi Sad</option>
@@ -34,7 +34,7 @@
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Mesto od</label>
-                            <select class="form-control" name="Any">
+                            <select class="form-control" name="mestoOd">
                                 <option>Subotica</option>
                                 <option>Beograd</option>
                                 <option>Novi Sad</option>
@@ -43,47 +43,42 @@
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Minimalna cena</label>
-                            <input class="form-control" placeholder="0" type="text" name="00.0">
+                            <input class="form-control" placeholder="0" type="number" name="minimalnaCena">
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Maksimalna cena</label>
-                            <input class="form-control" placeholder="0" type="text" name="00.0">
+                            <input class="form-control" placeholder="0" type="number" name="maksimalnaCena">
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label> Broj putnika</label>
-                            <input class="form-control" placeholder="0" type="text" name="00.0">
+                            <input class="form-control" placeholder="0" type="number" name="brojPutnika">
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                             <label>Datum do</label>
-                            <input class="form-control" placeholder="Any" type="date" name="Any">
+                            <input class="form-control" placeholder="Any" type="date" name="datumDo">
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                             <label>Datum od</label>
-                            <input class="form-control" placeholder="Any" type="date" name="Any">
+                            <input class="form-control" placeholder="Any" type="date" name="datumOd">
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                             <label>Vreme do</label>
-                            <input class="form-control" placeholder="Any" type="time" name="Any">
+                            <input class="form-control" placeholder="Any" type="time" name="vremeDo">
                         </div>
                         <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
                             <label>Vreme od</label>
-                            <input class="form-control" placeholder="Any" type="time" name="Any">
+                            <input class="form-control" placeholder="Any" type="time" name="vremeOd">
                         </div>
-
-
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-                    <a href="pregled_ponuda_gost.html" style="background-color: rgb(6, 47, 60);">Pretraži</a>
+                    <a href="#" style="background-color: rgb(6, 47, 60);" onclick="this.closest('form').submit();return false;">Pretraži</a>
                 </div>
-
-
             </div>
         </form>
     </div>
 
     <?php
-    
     // popravi kad dodajes stranice
     for($i = 0, $j = 0; $i<3 && $j < count($ponude); $i++){
         echo "<div class='row' style='margin-top: 40px;'>";
