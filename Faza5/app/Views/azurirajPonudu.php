@@ -20,6 +20,8 @@ $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
 $builder = $db->table("postavljenaponuda");
 $rokZaOtkazivanje = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
 
+$builder = $db->table("prevoznosredstvo");
+$prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
 ?>
 
 <section>
@@ -46,11 +48,6 @@ $rokZaOtkazivanje = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())
                         <h5>{$porukaUspeh}</h5>
                      </div>";
          }
-         if (!empty($datum)){
-            echo "<div style='display: flex; justify-content: center; color: green'
-                        <h5>{$datum}</h5>
-                     </div>";
-         }
          ?>
          <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" method="post" action="<?= site_url("PrivatnikController/azuriranjePonudeSubmit/{$ponuda->SifP}") ?>">
             <div class="row" style="margin-top:50px;margin-right:30px;margin-left:30px;">
@@ -59,9 +56,7 @@ $rokZaOtkazivanje = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())
                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" style="margin-top:30px">
                         <label>Prevozno sredstvo</label>
                         <select class="form-control" name="prevoznoSredstvo" readonly>
-                           <option>Automobil</option>
-                           <option>Autobus</option>
-                           <option>Brod</option>
+                           <option><?= $prevoznoSredstvo ?></option>
                         </select>
                      </div>
                      <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12" style="margin-top:30px">

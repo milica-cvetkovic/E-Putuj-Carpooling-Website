@@ -5,9 +5,9 @@
       <div class="container-fluid px-0" style="margin-right: unset">
          <img src="<?php
 
-use function PHPUnit\Framework\isEmpty;
+                     use function PHPUnit\Framework\isEmpty;
 
- echo base_url('images/GettyImages-185298837.jpg') ?>" alt="#" style="
+                     echo base_url('images/GettyImages-185298837.jpg') ?>" alt="#" style="
    width: 100vw; 
    position: relative;
    left: 50.55%;  
@@ -65,67 +65,73 @@ use function PHPUnit\Framework\isEmpty;
          </div>
       </div>
       <?php
-         if (empty($ponude)){
-            echo '<div class="titlepage" id="ponude">
-            <h3>Nema postavljenih ponuda</h3>
+      if (empty($ponude)) {
+         echo '<div class="titlepage" id="ponude">
+               <h3>Nema postavljenih ponuda</h3>
                </div>';
+         echo '<div class="justify-content-center bg about" style="padding-bottom: unset;">
+         <a href="'; echo base_url("PrivatnikController/napraviPonudu"); echo '"style="background-color: rgb(63, 155, 183); ">Napravi ponudu
+         </a></div>';
+      } else {
+         echo '<div class="row">';
+         echo '<div id="postavljenePonude" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">';
+         echo '<div class="carousel-inner">';
+         $postavljeniDivovi = false;
+         foreach ($ponude as $i => $ponuda) {
+            if ($i % 3 == 0) {
+               if ($i == 0) {
+                  echo '<div class="carousel-item active">';
+               } else {
+                  echo '<div class="carousel-item">';
+               }
+               echo '<div class="row">';
+            }
+            $db = \Config\Database::connect();
+            $builder = $db->table('mesto');
+            $mestoOd = ($builder->where("SifM", $ponuda->SifMesOd)->get()->getResult())[0]->Naziv;
+            $mestoDo = ($builder->where("SifM", $ponuda->SifMesDo)->get()->getResult())[0]->Naziv;
+            $builder = $db->table("prevoznosredstvo");
+            $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
+            $dan = explode("-", $ponuda->DatumOd)[2];
+            $mesec = explode("-", $ponuda->DatumOd)[1];
+            $godina = explode("-", $ponuda->DatumOd)[0];
+            $datum = $dan . "/" . $mesec . "/" . $godina;
+            echo '<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">';
+            echo "<a href='";
+            echo base_url("PrivatnikController/prikazPonude/{$ponuda->SifP}");
+            echo "'>";  // link treba da ima deo za odredjenu ponudu
+            echo '<div class="traveling-box" >';
+            echo '<i><img src="https://www.vivatravel.rs/photo/56518/p/16:10" alt="icon" style="width:250px;height:200px" style="object-fit: scale-down; margin-top: 10px" /></i>
+               <h2>' . $mestoOd . ' -> ' . $mestoDo . '</h2>
+               ' . $datum . ' <br><img src="';
+            echo base_url("images/{$prevoznoSredstvo}_transparent.png");
+            echo '"';
+            echo ' height="35" width="35"><br>
+               ' . $ponuda->BrMesta . ' <span><img src="';
+            echo base_url("images/stickman.png");
+            echo '"';
+            echo ' height="15" width="15"></span>
+               <h3>' . $ponuda->CenaKarte . '€</h3>
+               </div>';
+            echo '</a>';
+            echo '</div>';
+            if ($i % 3 == 2) {
+               $postavljeniDivovi = true;
+               echo '</div>';
+               echo '</div>';
+            } else {
+               $postavljeniDivovi = false;
+            }
          }
-         else {
-            echo '<div class="row">';
-            echo '<div id="postavljenePonude" class="carousel slide" data-bs-ride="carousel" data-bs-interval="false">';
-            echo '<div class="carousel-inner">';
-            $postavljeniDivovi = false;
-            foreach($ponude as $i=>$ponuda) {
-               if ($i % 3 == 0){
-                  if ($i == 0){
-                     echo '<div class="carousel-item active">';
-                  }
-                  else {
-                     echo '<div class="carousel-item">';
-                  }
-                  echo '<div class="row">';
-               }
-               $db = \Config\Database::connect();
-               $builder = $db->table('mesto');
-               $mestoOd = ($builder->where("SifM", $ponuda->SifMesOd)->get()->getResult())[0]->Naziv;
-               $mestoDo = ($builder->where("SifM", $ponuda->SifMesDo)->get()->getResult())[0]->Naziv;
-               $builder = $db->table("prevoznosredstvo");
-               $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
-               $dan = explode("-", $ponuda->DatumOd)[2];
-               $mesec = explode("-", $ponuda->DatumOd)[1];
-               $godina = explode("-", $ponuda->DatumOd)[0];
-               $datum = $dan."/".$mesec."/".$godina;
-               echo '<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">';
-               echo "<a href='"; echo base_url("PrivatnikController/prikazPonude/{$ponuda->SifP}"); echo "'>";  // link treba da ima deo za odredjenu ponudu
-               echo '<div class="traveling-box" >';   
-               echo '<i><img src="https://www.vivatravel.rs/photo/56518/p/16:10" alt="icon" style="width:250px;height:200px" style="object-fit: scale-down; margin-top: 10px" /></i>
-               <h2>'.$mestoOd.' -> '.$mestoDo.'</h2>
-               '.$datum.' <br><img src="'; echo base_url("images/{$prevoznoSredstvo}_transparent.png");
-               echo '"'; echo ' height="35" width="35"><br>
-               '.$ponuda->BrMesta.' <span><img src="'; echo base_url("images/stickman.png");
-               echo '"'; echo ' height="15" width="15"></span>
-               <h3>'.$ponuda->CenaKarte.'€</h3>
-               </div>';
-               echo '</a>';
-               echo '</div>';
-               if ($i % 3 == 2){
-                  $postavljeniDivovi = true;
-                  echo '</div>';
-                  echo '</div>';
-               }
-               else {
-                  $postavljeniDivovi = false;
-               }
-            }
-            if (!$postavljeniDivovi){
-               echo '</div>';
-               echo '</div>';
-            }
+         if (!$postavljeniDivovi) {
             echo '</div>';
             echo '</div>';
-            echo '</div>';
+         }
+         echo '</div>';
+         echo '</div>';
+         echo '</div>';
 
-            echo '<div class="row" style="justify-content: center;">
+         echo '<div class="row" style="justify-content: center;">
             <div class="col-md-12">
                <button class="carousel-control-prev" type="button" data-bs-target="#postavljenePonude" data-bs-slide="prev" style="left: 30%;">
                   <span class="carousel-control-prev-icon" style="color: black !important; 
@@ -139,7 +145,7 @@ use function PHPUnit\Framework\isEmpty;
                </button>
             </div>
          </div>';
-         }
+      }
       ?>
    </div>
 </div>

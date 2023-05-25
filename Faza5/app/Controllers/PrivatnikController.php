@@ -148,7 +148,7 @@ class PrivatnikController extends BaseController {
             $builder->where("SifP", $sifP);
             $builder->update($data);
 
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno azuriranje!"]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno napravljena ponuda!"]);
         }
     }
 
@@ -163,6 +163,84 @@ class PrivatnikController extends BaseController {
 
     public function napraviPonudu(){
         $this->prikaz("napraviPonudu", []);
+    }
+
+    public function napraviPonuduSubmit(){
+        $prevoznosredstvo = $this->request->getVar("prevoznoSredstvo");
+        $mestoOd = $this->request->getVar("mestoPolaska");
+        $mestoDo = $this->request->getVar("mestoDolaska");
+        $cena = $this->request->getVar("cenaKarte");
+        $brMesta = $this->request->getVar("brMesta");
+        $datumOd = $this->request->getVar("datumOd");
+        $datumDo = $this->request->getVar("datumDo");
+        $vremeOd = $this->request->getVar("vremeOd");
+        $vremeDo = $this->request->getVar("vremeDo");
+        // fotografija.......
+        $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
+        
+        if ($cena <= 0){
+            $poruka = "Cena mora da bude pozitivan broj.";
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else if ($datumOd." ".$vremeOd <= date("Y-m-d H:i:s") || $datumDo." ".$vremeDo <= date("Y-m-d H:i:s")){
+            $poruka = "Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena.";
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else if ($datumOd > $datumDo){
+            $poruka = "Datum dolaska mora biti kasnije od datuma polaska.";
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else if ($datumOd == $datumDo && $vremeOd >= $vremeDo){
+            $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else if ($mestoOd == $mestoDo){
+            $poruka = "Mesto polaska i dolaska moraju biti različiti.".$mestoOd."|".$mestoDo;
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else if ($rokZaOtkazivanje <= 0 || (strtotime($datumOd) - strtotime(date("Y-m-d")))/(60*60*24) < $rokZaOtkazivanje - 1){
+            $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i da se uklapa u period do realizacije ponude.";
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else if ($brMesta <= 0){
+            $poruka = "Broj slobodnih mesta mora da bude pozitivan broj.";
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
+        }
+        else {
+            $db      = \Config\Database::connect();
+            $builder = $db->table("mesto");
+            $SifMesOd = ($builder->where("Naziv", $mestoOd)->get()->getResult())[0]->SifM;
+            $SifMesDo = ($builder->where("Naziv", $mestoDo)->get()->getResult())[0]->SifM;
+
+            $builder = $db->table("prevoznosredstvo");
+            $SifSred = ($builder->where("Naziv", $prevoznosredstvo)->get()->getResult())[0]->SifSred;
+
+            $builder = $db->table("ponuda");
+            $data = [
+                "BrMesta" => $brMesta,
+                "DatumOd" => $datumOd,
+                "DatumDo" => $datumDo,
+                "VremeOd" => $vremeOd,
+                "VremeDo" => $vremeDo,
+                "CenaKarte" => $cena,
+                "SifMesDo" => $SifMesDo,
+                "SifMesOd" => $SifMesOd,
+                "SifSred" => $SifSred,
+                "SifK" => session()->get("korisnik")->SifK
+            ];
+
+            $builder->insert($data);
+
+            $builder = $db->table("postavljenaponuda");
+            $data = [
+                "SifP" => $db->insertID(),
+                "RokZaOtkazivanje" => $rokZaOtkazivanje
+            ];
+            $builder->insert($data);
+
+            // mozda da se ode na prikaz te ponude??
+            $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!"]);
+        }
     }
 
     public function otkaziPonudu(){

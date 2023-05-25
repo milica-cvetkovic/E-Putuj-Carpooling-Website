@@ -28,6 +28,8 @@
     <link rel="stylesheet" href="<?php echo base_url('zeljko/css/style.css') ?>">
     <link rel="stylesheet" href="<?php echo base_url('lana/css/korisnik.css') ?>">
 
+    <script src="<?php echo base_url('milica/js/jquery.min.js') ?>"></script>
+
 </head>
 
 <body class="main-layout" style="background-color:#004043">
@@ -75,7 +77,7 @@
                     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
                         <div class="full">
                             <div class="center-desk">
-                                <div class="logo"> <a href="privatnikPocetna.html"><img src="<?php echo base_url('images/logo.jfif') ?>" style="height:50%; width:50%" alt="#"></a> </div>
+                                <div class="logo"> <a href="<?php echo base_url('PrivatnikController/index') ?>"><img src="<?php echo base_url('images/logo.jfif') ?>" style="height:50%; width:50%" alt="#"></a> </div>
                             </div>
                         </div>
                     </div>
@@ -85,14 +87,14 @@
                                 <nav class="main-menu">
                                     <ul class="menu-area-main">
 
-                                        <li class="active"> <a href="<?php echo base_url('PrivatnikController/')?>">Početna</a> </li>
-                                        <li><a href="#contact">Kontakt</a></li>
-                                        <li><a href="inbox_privatnik.html">Inbox <span class="badge bg-danger">5</span></a></li>
-                                        <li><a href="napraviPonudu.html">Napravi ponudu </a></li>
-                                        <li><a href="<?php echo base_url('PrivatnikController/izborPonudeAzuriranje')?>">Ažuriraj punudu</a></li>
-                                        <li><a href="otkaziPonudu.html">Otkaži ponudu</a></li>
-                                        <li><a href="promenaPretplate.html">Promena pretplate</a></li>
-                                        <li><a href="#ponude">Postavljene ponude</a></li>
+                                        <li id="liPocetna">  <a href="<?php echo base_url('PrivatnikController/')?>">Početna</a> </li>
+                                        <li id="liKontakt">  <a href="#contact">Kontakt</a></li>
+                                        <li id="liInbox">    <a href="inbox_privatnik.html">Inbox <span class="badge bg-danger">5</span></a></li>
+                                        <li id="liNapravi">  <a href="<?php echo base_url('PrivatnikController/napraviPonudu')?>">Napravi ponudu </a></li>
+                                        <li id="liAzuriraj"> <a href="<?php echo base_url('PrivatnikController/izborPonudeAzuriranje')?>">Ažuriraj punudu</a></li>
+                                        <li id="liOtkazi">   <a href="otkaziPonudu.html">Otkaži ponudu</a></li>
+                                        <li id="liPretplata"><a href="promenaPretplate.html">Promena pretplate</a></li>
+                                        <li id="liPonude">   <a href="#ponude">Postavljene ponude</a></li>
 
                                     </ul>
                                 </nav>
@@ -103,3 +105,22 @@
             </div>
         </div>
     </header>
+
+    <script>
+        $(document).ready(function(){
+            // inkrementalno dodavati svaki active
+            let url = window.location.href;
+            if (url.includes("napraviPonudu")){
+                $("#liNapravi").addClass("active");
+            }
+            else if (url.includes("zurira")){
+                $("#liAzuriraj").addClass("active");
+            }
+            else if (url.includes("prikazPonude")){
+                $("#liPonude").addClass("active");
+            }
+            else {
+                $("#liPocetna").addClass("active");
+            }
+        });
+    </script>
