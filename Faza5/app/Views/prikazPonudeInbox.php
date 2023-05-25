@@ -52,10 +52,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-5"></div>
-            <div class="col-sm-1"><button type="button" class="btn make-offer-btn" style="position: relative; left: 50%;">Prihvati</button></div>
-            <div class="col-sm-1"></div>
-            <div class="col-sm-1" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: 50%;">Odbij</button></div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6"><a href=""><button type="button" class="btn make-offer-btn" style="position: relative; left: 20%;">Prihvati</button></a></div>
+                        <div class="col-sm-6" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;"><a href="#">Odbij</a></button></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

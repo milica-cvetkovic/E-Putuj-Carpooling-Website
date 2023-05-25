@@ -1,3 +1,5 @@
+<!-- Željko Urošević 2020/0073 -->
+
 <?php
 $db = \Config\Database::connect();
 $builder = $db->table('mesto');
@@ -7,20 +9,20 @@ $mestoDo = ($builder->where("SifM", $ponuda->SifMesDo)->get()->getResult())[0]->
 $danOd = explode("-", $ponuda->DatumOd)[2];
 $mesecOd = explode("-", $ponuda->DatumOd)[1];
 $godinaOd = explode("-", $ponuda->DatumOd)[0];
-$datumOd = $danOd."/".$mesecOd."/".$godinaOd;
+$datumOd = $danOd . "/" . $mesecOd . "/" . $godinaOd;
 
 $danDo = explode("-", $ponuda->DatumDo)[2];
 $mesecDo = explode("-", $ponuda->DatumDo)[1];
 $godinaDo = explode("-", $ponuda->DatumDo)[0];
-$datumDo = $danDo."/".$mesecDo."/".$godinaDo;
+$datumDo = $danDo . "/" . $mesecDo . "/" . $godinaDo;
 
 $satiOd = explode(":", $ponuda->VremeOd)[0];
 $minutiOd = explode(":", $ponuda->VremeOd)[1];
-$vremeOd = $satiOd.":".$minutiOd;
+$vremeOd = $satiOd . ":" . $minutiOd;
 
 $satiDo = explode(":", $ponuda->VremeDo)[0];
 $minutiDo = explode(":", $ponuda->VremeDo)[1];
-$vremeDo = $satiDo.":".$minutiDo;
+$vremeDo = $satiDo . ":" . $minutiDo;
 
 $brMesta = $ponuda->BrMesta;
 
@@ -91,10 +93,15 @@ $cena = $ponuda->CenaKarte;
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-5"></div>
-            <div class="col-sm-1"><a href="<?php echo base_url("PrivatnikController/azurirajPonudu") ?>"><button type="button" class="btn make-offer-btn" style="position: relative; left: 50%;">Ažuriraj ponudu</button></a></div>
-            <div class="col-sm-1"></div>
-            <div class="col-sm-1" style="margin-bottom: 15px;"><a href="#"><button type="button" class="btn make-offer-btn" style="position: relative; left: 50%;">Otkaži ponudu</button></a></div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6"><a href="<?php echo base_url("PrivatnikController/azurirajPonudu/{$ponuda->SifP}") ?>"><button type="button" class="btn make-offer-btn" style="position: relative; left: 20%;">Ažuriraj ponudu</button></a></div>
+                        <div class="col-sm-6" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;"><a href="#">Otkaži ponudu</a></button></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

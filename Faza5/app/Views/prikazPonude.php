@@ -52,10 +52,125 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-5"></div>
-            <div class="col-sm-1"><button type="button" class="btn make-offer-btn" style="position: relative; left: 50%;">Rezerviši</button></div>
-            <div class="col-sm-1"></div>
-            <div class="col-sm-1" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: 50%;">Kupi kartu</button></div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-8">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <button type="button" class="btn make-offer-btn open-button" style="position: relative; left: 20%;" onclick="openForm()">
+                                Rezerviši
+                            </button>
+                            <div class="form-popup" id="myForm">
+                                <table class="table table-borderless" style="opacity:95%;color:white;background-color: #004043;width:400px;height:500px;">
+                                    <form class="form-container ">
+
+                                        <tr>
+                                            <td colspan='2'>
+                                                <h1 class="boja" style="font-weight:bold;color:white;text-align:center;height:25%">Rezervacija
+                                                    <hr />
+                                                </h1>
+                                            </td>
+                                        </tr>
+                                        <tr rowspan="2">
+                                            <td width="50%"><label for="brtel"><b>Broj telefona</b></label></td>
+                                            <td align="center"><input type="text" placeholder="065 123 456 7" style="width:100%;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <hr />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="psw"><b>Broj mesta</b></label></td>
+                                            <td align="center"><input type="number" id="psw" style="width:100%"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <hr />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><button type="submit" class="btn " style="background-color: pink;width:100px;">Rezerviši</button></td>
+                                            <td align="center"><button type="button" class="btn cancel" style="background-color: pink;width:100px" onclick="closeForm()">Odustani</button></td>
+                                        </tr>
+                                    </form>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-6" style="margin-bottom: 15px;">
+                            <button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;" onclick="openForm1()">
+                                Kupi kartu
+                            </button>
+                            <div class="form-popup" id="myForm1">
+                                <table class="table table-borderless" style="opacity:95%;color:white;background-color: #004043;width:400px;height:500px;">
+                                    <form class="form-container ">
+
+                                        <tr>
+                                            <td colspan='2'>
+                                                <h1 class="boja" style="font-weight:bold;color:white;text-align:center">Kupovina karte</h1hr />
+                                                </h1>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="50%"><label for="brtel"><b>Broj telefona</b></label></td>
+                                            <td align="center"><input type="text" placeholder="065 123 456 7" style="width:100%"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <hr />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="psw"><b>Broj mesta</b></label></td>
+                                            <td align="center"><input type="number" id="psw" style="width:100%"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2">
+                                                <hr />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="placanje"><b>Način plaćanja</b></label></td>
+                                            <td align="center"> <select name="placanje" id="placanje" style="width:100%">
+                                                    <option value="gotovina">Gotovina</option>
+                                                    <option value="kartica">Kartica</option>
+                                                </select>
+                                        <tr>
+                                            <td colspan="2">
+                                                <hr />
+                                            </td>
+                                        </tr>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <td align="center"><button type="submit" class="btn " style="background-color: pink;width:100px;">Kupi</button></td>
+                                            <td align="center"><button type="button" class="btn cancel" style="background-color: pink;width:100px" onclick="closeForm1()">Odustani</button></td>
+                                        </tr>
+                                    </form>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    function openForm() {
+        document.getElementById("myForm").style.display = "block";
+    }
+
+    function openForm1() {
+        document.getElementById("myForm1").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("myForm").style.display = "none";
+    }
+
+    function closeForm1() {
+        document.getElementById("myForm1").style.display = "none";
+    }
+</script>

@@ -85,14 +85,14 @@
                                 <nav class="main-menu">
                                     <ul class="menu-area-main">
 
-                                        <li class="active"> <a href="privatnikPocetna.html">Početna</a> </li>
+                                        <li class="active"> <a href="<?php echo base_url('PrivatnikController/')?>">Početna</a> </li>
                                         <li><a href="#contact">Kontakt</a></li>
                                         <li><a href="inbox_privatnik.html">Inbox <span class="badge bg-danger">5</span></a></li>
                                         <li><a href="napraviPonudu.html">Napravi ponudu </a></li>
-                                        <li><a href="azurirajPonudu.html">Ažuriraj punudu</a></li>
+                                        <li><a href="<?php echo base_url('PrivatnikController/izborPonudeAzuriranje')?>">Ažuriraj punudu</a></li>
                                         <li><a href="otkaziPonudu.html">Otkaži ponudu</a></li>
                                         <li><a href="promenaPretplate.html">Promena pretplate</a></li>
-                                        <li><a href="privatnikPocetna.html#ponude">Postavljene ponude</a></li>
+                                        <li><a href="#ponude">Postavljene ponude</a></li>
 
                                     </ul>
                                 </nav>
