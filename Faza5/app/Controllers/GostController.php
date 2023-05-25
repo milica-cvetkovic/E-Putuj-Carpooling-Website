@@ -15,7 +15,8 @@ class GostController extends BaseController {
     }
 
     public function index() {
-        $this->prikaz("index", []);
+        $svePonude = $this->dohvatiSvePonude();
+        $this->prikaz("index", ["svePonude"=> $svePonude]);
     }
     
     public function login($poruke = null){
@@ -113,22 +114,27 @@ class GostController extends BaseController {
 
     public function pregledPonuda(){
         
-        // ne valja nesto
-        $prevoznoSredstvo = null;
-        $mestoOd = null;
-        $mestoDo = null;
-        $minimalnaCena = null;
-        $maksimalnaCena = null;
-        $brojPutnika = null;
-        $datumOd = null;
-        $datumDo = null;
-        $vremeOd = null;
-        $vremeDo = null;
-        $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo);
-        return $this->prikaz("pregledPonuda.php", ["ponude" => $ponude]);
+        $totalPages = count($this->dohvatiSvePonude());
+        
+        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        
+        $numOfResultsOnPage = 9;
+        
+        $ponude = $this->dohvatiSvePonudeLimit($page, $numOfResultsOnPage);
+        $svePonude = $this->dohvatiSvePonude();
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages]);
     }
    
     public function pretragaPonuda(){
+        
+        // popravi da se salju sva mesta i sve ponude ?
+        // treba da se uveze slika odgovarajuceg mesta na kraju
+        
+        $totalPages = count($this->dohvatiSvePonude());
+        
+        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        
+        $numOfResultsOnPage = 9;
         
         $prevoznoSredstvo = $this->request->getVar("prevoznoSredstvo");
         $mestoOd = $this->request->getVar("mestoOd");
@@ -141,11 +147,13 @@ class GostController extends BaseController {
         $vremeOd = $this->request->getVar("vremeOd");
         $vremeDo = $this->request->getVar("vremeDo");
         
-        // proveri ispravnost formata unetih
+        // proveri datum i vreme
         
-        $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo);
-        var_dump($ponude);
-        return $this->prikaz("pregledPonuda.php", ["ponude" => $ponude]);
+        $svePonude = $this->dohvatiSvePonude();
+        
+        $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
+        
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages]);
                 
     }
 
@@ -252,12 +260,12 @@ class GostController extends BaseController {
         
     }
     
-    public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo){
+    public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage){
         
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
         
-        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte");
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
@@ -284,6 +292,10 @@ class GostController extends BaseController {
         if($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
         
+        $start = ($page - 1) * $numOfResultsOnPage;
+        
+        $builder->limit($start, $numOfResultsOnPage);
+        
         return $builder->get()->getResult();
         
     }
@@ -295,6 +307,30 @@ class GostController extends BaseController {
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
         
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+        public function dohvatiSvePonudeLimit($page, $numOfResultsOnPage){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        $start = ($page - 1) * $numOfResultsOnPage;
+        
+        $builder->limit($start, $numOfResultsOnPage);
         return $builder->get()->getResult();
         
     }

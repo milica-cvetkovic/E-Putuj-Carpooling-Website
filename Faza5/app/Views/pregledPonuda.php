@@ -18,27 +18,34 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Prevozno sredstvo</label>
                             <select class="form-control" name="prevoznoSredstvo">
-                                <option>Automobil</option>
-                                <option>Autobus</option>
-                                <option>Brod</option>
+                                <option>...</option>
+                                <?php 
+                                    foreach($svePonude as $p){
+                                        echo "<option> {$p->prevoznoSredstvo} </option>";
+                                    }
+                                ?>
                             </select>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Mesto do</label>
                             <select class="form-control" name="mestoDo">
-                                <option>Subotica</option>
-                                <option>Beograd</option>
-                                <option>Novi Sad</option>
-                                <option>Niš</option>
+                                <option>...</option>
+                                <?php 
+                                    foreach($svePonude as $p){
+                                        echo "<option> {$p->MestoDo} </option>";
+                                    }
+                                ?>
                             </select>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Mesto od</label>
                             <select class="form-control" name="mestoOd">
-                                <option>Subotica</option>
-                                <option>Beograd</option>
-                                <option>Novi Sad</option>
-                                <option>Niš</option>
+                                <option>...</option>
+                                <?php 
+                                    foreach($svePonude as $p){
+                                        echo "<option> {$p->MestoOd} </option>";
+                                    }
+                                ?>
                             </select>
                         </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
@@ -80,6 +87,7 @@
 
     <?php
     // popravi kad dodajes stranice
+    
     for($i = 0, $j = 0; $i<3 && $j < count($ponude); $i++){
         echo "<div class='row' style='margin-top: 40px;'>";
         $count = 3;
@@ -91,7 +99,7 @@
             echo "<h2>{$ponude[$j]->MestoOd} - {$ponude[$j]->MestoDo}</h2>";
             echo "<p>Datum od: {$ponude[$j]->DatumOd} <br/> Datum do: {$ponude[$j]->DatumDo}</p>";
             echo "<br><img src='";
-            echo base_url('images/car_transparent.png');
+            echo base_url('images/'.$ponude[$j]->prevoznoSredstvo.'_transparent.png');
             echo "' height='35' width='35'><br>";
             echo "Broj sedišta: {$ponude[$j]->BrMesta}";
             echo "<span><img src='";
@@ -108,16 +116,59 @@
     
     ?>
     
-
     <!--dugmad za pregled stranica-->
     <div class="row justify-content-center" style="margin-top: 40px; text-align: center;">
         <div class="col-xl-2">
             <ul class="pagination" style="margin-bottom: 40px; display: flex;">
-                <li class="page-item"><a class="page-link make-offer-btn" href="#">Prošla</a></li>
-                <li class="page-item"><a class="page-link make-offer-btn" href="#">1</a></li>
-                <li class="page-item"><a class="page-link make-offer-btn" href="#">2</a></li>
-                <li class="page-item"><a class="page-link make-offer-btn" href="#">3</a></li>
-                <li class="page-item"><a class="page-link make-offer-btn" href="#">Sledeća</a></li>
+                
+                <?php
+                
+                if($page > 1){
+                    $result = $page -1;
+                    $GET["page"] = $result;
+                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                    echo site_url('GostController/pretragaPonuda');
+                    echo "'>Prošla</a></li>";
+                }
+                
+                if($page - 2 > 0){
+                    $result = $page - 2;
+                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                    echo site_url('GostController/pretragaPonuda?page='.$result);
+                    echo "'>{$result}</a></li>";
+                }
+                if($page - 1 > 0){
+                    $result = $page - 1;
+                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                    echo site_url('GostController/pretragaPonuda?page='.$result);
+                    echo "'>{$result}</a></li>";
+                }
+        
+                echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                echo site_url('GostController/pretragaPonuda?page='.$page);
+                echo "'>{$page}</a></li>";
+                
+                if($page + 1 < ceil($totalPages / $numOfResultsOnPage) + 1){
+                    $result = $page +1;
+                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                    echo site_url('GostController/pretragaPonuda?page='.$result);
+                    echo "'>{$result}</a></li>";
+                }
+                if($page + 2 < ceil($totalPages/ $numOfResultsOnPage) + 1){
+                    $result = $page + 2;
+                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                    echo site_url('GostController/pretragaPonuda?page='.$result);
+                    echo "'>{$result}</a></li>";
+                }
+                
+                if($page < ceil($totalPages/$numOfResultsOnPage)){
+                    $result = $page + 1;
+                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                    echo site_url('GostController/pretragaPonuda?page='.$result);
+                    echo "'>Sledeća</a></li>";
+                }
+                ?>
+                
             </ul>
         </div>
     </div>
