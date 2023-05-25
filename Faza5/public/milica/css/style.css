@@ -2379,6 +2379,11 @@ ul.location_icon span {
      background-color: lightblue;
 }
 
+.dropdown {
+    text-align: right;
+    margin-top: 10px;
+}
+
 /* .background-main{
      background-color: #004043;
 } */

@@ -83,11 +83,24 @@
                 </div>
             </div>
         </form>
+        <div class="row">
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" id="sort" name="sort" data-bs-toggle="dropdown">
+                        Sortiraj
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Rastuće po ceni</a></li>
+                        <li><a class="dropdown-item" href="#">Rastuće po broju mesta</a></li>
+                        <li><a class="dropdown-item" href="#">Opadajuće po ceni</a></li>
+                        <li><a class="dropdown-item" href="#">Opadajuće po broju mesta</a></li>
+                    </ul>
+                </div>   
+            </div>
+        </div>
     </div>
-
-    <?php
-    // popravi kad dodajes stranice
     
+    <?php
     for($i = 0, $j = 0; $i<3 && $j < count($ponude); $i++){
         echo "<div class='row' style='margin-top: 40px;'>";
         $count = 3;

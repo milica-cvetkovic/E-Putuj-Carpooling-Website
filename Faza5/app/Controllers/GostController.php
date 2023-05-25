@@ -291,6 +291,9 @@ class GostController extends BaseController {
             $builder->where("ponuda.VremeOd >=", $vremeOd);
         if($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
+                    
+        /*if($pretragaCenaRastuce != null)
+            $builder->orderBy("ponuda.CenaKarte", "asc");*/
         
         $start = ($page - 1) * $numOfResultsOnPage;
         
