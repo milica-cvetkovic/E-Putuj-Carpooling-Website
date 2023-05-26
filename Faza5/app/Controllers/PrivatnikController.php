@@ -152,6 +152,9 @@ class PrivatnikController extends BaseController {
         }
     }
 
+/**
+ * Anja Curic 2020/0513
+ */
     public function inboxPrivatnik(){
         $this->prikaz("inboxPrivatnik", []);
     }
