@@ -15,6 +15,10 @@ class KorisnikController extends BaseController {
     }
 
     // dalje su samo fje za testiranje prikaza
+    
+/**
+ * Anja Curic 2020/0513
+ */
     public function inboxKorisnik(){
         $this->prikaz("inboxPrivatnik", []);
     }

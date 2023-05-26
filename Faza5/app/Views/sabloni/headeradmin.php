@@ -48,7 +48,7 @@
                                                 </button>
                                                 <div id="profil_lista" class="collapse">
                                                     <ul class="dropdown-menu">
-                                                        <li><a href="index.html" class="dropdown-item">Log out</a></li>
+                                                        <li><a href="<?php echo base_url('GostController/index') ?>" class="dropdown-item">Log out</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -67,7 +67,7 @@
                     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
                         <div class="full">
                             <div class="center-desk">
-                                <div class="logo"> <a href="privatnikPocetna.html"><img src="<?php echo base_url('images/logo.jfif') ?>" style="height:50%; width:50%" alt="#"></a> </div>
+                                <div class="logo"> <a href="<?php echo base_url('AdminController/index') ?>"><img src="<?php echo base_url('images/logo.jfif') ?>" style="height:50%; width:50%" alt="#"></a> </div>
                             </div>
                         </div>
                     </div>
@@ -75,12 +75,12 @@
                         <div class="menu-area">
                             <div class="limit-box">
                                 <nav class="main-menu">
-                                    <ul class="menu-area-main">
+                                    <ul class="menu-area-main" style="padding-top:5%">
 
-                                        <li class="active"> <a href="adminPocetna.html">Potvrda registracija <span class="badge bg-danger">4</span></a> </li>
-                                        <li><a href="ukloniNalog.html">Ukloni nalog <span class="badge bg-danger">4</span></a>
+                                       <?php echo '<li ';if($broj==1){echo "class='active'";}echo '>';?><a href="<?php echo base_url('AdminController/index') ?>">Potvrda registracija <?php  if($nalog!=0)echo '<span class="badge bg-danger">'.$nalog.'</span>'?></a> </li>
+                                       <?php echo '<li ';if($broj==2){echo "class='active'";} echo '>';?><a href="<?php echo base_url('AdminController/ukloniNalog') ?>">Ukloni nalog <?php  if($brisanje!=0)echo '<span class="badge bg-danger">'.$brisanje.'</span>'?></a>
                                         </li>
-                                        <li><a href="dodajMesto.html">Dodaj mesto</a></li>
+                                        <?php echo '<li ';if($broj==3){echo "class='active'";} echo '>';?><a href="<?php echo base_url('AdminController/dodajMesto') ?>">Dodaj mesto</a></li>
 
                                     </ul>
                                 </nav>
