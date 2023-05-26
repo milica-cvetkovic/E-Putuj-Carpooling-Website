@@ -34,7 +34,7 @@
                            <textarea class="textarea" placeholder="Komentar" type="text"></textarea>
                         </div>
                      </div>
-                     <a href="#contact"></a><button class="Subscribe">Pošalji</button></a>
+                     <a href="#"><button class="Subscribe">Pošalji</button></a>
                   </div>
                </form>
             </div>

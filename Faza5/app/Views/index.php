@@ -13,34 +13,34 @@
                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                               <label>Prevozno sredstvo</label>
                               <select class="form-control" name="prevoznoSredstvo">
-                                  <option></option>
-                                 <?php 
-                                    foreach($svePonude as $p){
-                                        echo "<option> {$p->prevoznoSredstvo} </option>";
-                                    }
-                                ?>
+                                 <option></option>
+                                 <?php
+                                 foreach ($svePonude as $p) {
+                                    echo "<option> {$p->prevoznoSredstvo} </option>";
+                                 }
+                                 ?>
                               </select>
                            </div>
                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                               <label>Mesto do</label>
                               <select class="form-control" name="mestoDo">
-                                  <option></option>
-                                 <?php 
-                                    foreach($svePonude as $p){
-                                        echo "<option> {$p->MestoDo} </option>";
-                                    }
-                                ?>
+                                 <option></option>
+                                 <?php
+                                 foreach ($svePonude as $p) {
+                                    echo "<option> {$p->MestoDo} </option>";
+                                 }
+                                 ?>
                               </select>
                            </div>
                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                               <label>Mesto od</label>
                               <select class="form-control" name="mestoOd">
-                                  <option></option>
-                                 <?php 
-                                    foreach($svePonude as $p){
-                                        echo "<option> {$p->MestoOd} </option>";
-                                    }
-                                ?>
+                                 <option></option>
+                                 <?php
+                                 foreach ($svePonude as $p) {
+                                    echo "<option> {$p->MestoOd} </option>";
+                                 }
+                                 ?>
                               </select>
                            </div>
                            <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
@@ -111,8 +111,10 @@
                </div>
             </div>
          </div>
-      </div><div class="justify-content-center">
-      <a href="#contact" style="background-color: rgb(63, 155, 183); ">Pročitaj više</a>
+      </div>
+      <div class="justify-content-center read-more">
+         <a href="#contact" style="background-color: rgb(63, 155, 183); ">Pročitaj više</a>
+      </div>
    </div>
 </div>
 <div id="offers" class="traveling">
