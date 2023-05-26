@@ -44,14 +44,14 @@
                     echo
                     $tip." />
                     <br />
-                    <br />
-                    <a href=".base_url('AdminController/potvrdiKreiranje?izbor='.$odabran->SifK)."><button class='dugme' style='float:left'>Potvrdi kreiranje</button></a>
-                    &nbsp;&nbsp;
-                    <a href=".base_url('AdminController/potvrdiOdbijanje?izbor='.$odabran->SifK)."<button class='dugme' style='float:left'>Odbij kreiranje</button></a>
-    
-                </form>
-            </div>";
+                    <br />";
             }
-        ?>
+            ?>
+            </form>
+            <a href="<?php echo base_url('AdminController/potvrdiKreiranje?izbor='.$odabran->SifK)?>"><button class='dugme' style='float:left'>Potvrdi kreiranje</button></a>
+                    &nbsp;&nbsp;
+            <a href="<?php echo base_url('AdminController/potvrdiOdbijanje?izbor='.$odabran->SifK)?>"><button class='dugme' style='float:left'>Odbij kreiranje</button></a>
+        
+            </div>
     </div>
 </div>

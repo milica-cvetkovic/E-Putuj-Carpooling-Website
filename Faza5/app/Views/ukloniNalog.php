@@ -3,32 +3,35 @@
         <div class="row">
             <div class="text-block col-sm" style="margin-left: -15px;margin-right: -15px;">
                 <table class="table table-striped" style="width: 100%">
-                    <tr>
-                        <td>
-                            <h4>Zahtev za brisanje korisničkog naloga <strong> milica.cvetkovic1.</strong></h4>
-                            <div style="width: 25%">
-                                <a href="potvrdiBrisanje.html"><button class="dugme">Pregledaj</button></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <h4>Zahtev za brisanje korisničkog naloga <strong>lana.ivkovic1.</strong></h4>
+                    <?php
 
-                            <div style="width: 25%">
-                                <a href="potvrdiBrisanje.html"><button class="dugme">Pregledaj</button></a>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
+                        foreach($nalozi as $nalog){ 
+                            echo " <tr>
                         <td>
-                            <h4>Obaveštenje o novom report-u naloga <strong>anja.curic.</strong></h4>
-
-                            <div style="width: 25%">
-                                <a href="procitajVise.html"><button class="dugme">Pregledaj</button></a>
+                            <h4>Zahtev za brisanje korisničkog naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
+                            <div style='width: 25%'>
+                                <a href=".base_url('AdminController/potvrdiBrisanje?izbor='.$nalog->SifK)."><button class='dugme'>Pregledaj</button></a>
                             </div>
                         </td>
-                    </tr>
+                    </tr>";
+                        }
+                    ?>
+                    <?php
+                    
+                        foreach($reportovi as $nalog){ 
+                            echo "<tr>
+                    <td>
+                        <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
+
+                        <div style='width: 25%'>
+                            <a href=".base_url('AdminController/reportDetalji?izbor1='.$nalog->SifPrijavljen.'&izbor2='.$nalog->SifPrijavio)."><button class='dugme'>Pregledaj</button></a>
+                        </div>
+                    </td>
+                </tr>";
+                    
+                        }
+                    ?>
+                    
                 </table>
             </div>
             <div class="col-sm"></div>

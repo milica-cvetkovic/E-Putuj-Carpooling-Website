@@ -1,66 +1,73 @@
 <div class="container-fluid admin-background">
     <div class="row">
         <div class="text-block col-sm" style="margin-left: -15px;margin-right: -15px;">
-            <table class="table table-striped" style="width: 100%;">
-                <tr>
-                    <td>
-                        <h4>Zahtev za brisanje korisničkog naloga <strong> milica.cvetkovic1.</strong></h4>
-                        <div style="width: 25%">
-                            <a href="potvrdiBrisanje.html"><button class="dugme">Pregledaj</button></a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <h4>Zahtev za brisanje korisničkog naloga <strong>lana.ivkovic1.</strong></h4>
+        <table class="table table-striped" style="width: 100%">
+                    <?php
 
-                        <div style="width: 25%">
-                            <a href="potvrdiBrisanje.html"><button class="dugme">Pregledaj</button></a>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
+                        foreach($nalozi as $nalog){ 
+                            echo " <tr>
+                        <td>
+                            <h4>Zahtev za brisanje korisničkog naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
+                            <div style='width: 25%'>
+                            <a href=".base_url('AdminController/potvrdiBrisanje?izbor='.$nalog->SifK)."><button class='dugme'>Pregledaj</button></a>
+                            </div>
+                        </td>
+                    </tr>";
+                        }
+                    ?>
+                    <?php
+                    
+                        foreach($reportovi as $nalog){ 
+                            echo "<tr>
                     <td>
-                        <h4>Obaveštenje o novom report-u naloga <strong>anja.curic.</strong></h4>
+                        <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
 
-                        <div style="width: 25%">
-                            <a href="procitajVise.html"><button class="dugme">Pregledaj</button></a>
+                        <div style='width: 25%'>
+                        <a href=".base_url('AdminController/reportDetalji?izbor='.$nalog->SifPrijavljen)."><button class='dugme'>Pregledaj</button></a>
                         </div>
                     </td>
-                </tr>
-            </table>
+                </tr>";
+                    
+                        }
+                    ?>
+                    
+                </table>
         </div>
 
-        <div class="text-block1 col-sm">
-         <form>
-            <br />
-            <h2> <strong>Obaveštenje</strong></h2>
-            <div class="row">
-               <table class="table-stripped" style="margin-left:20px">
-                  <tr>
-                     <th style="width:200px">Report za nalog: </th>
-                     <td>anja.curic</td>
-                  </tr>
-                  <tr>
-                     <th style="width:200px">Report od korisnika: </th>
-                     <td>zika</td>
-                  </tr>
-                  <tr>
-                     <th style="width:200px">Razlog report-a: </th>
-                     <td>Lažno predstavljanje</td>
-                  </tr>
-               </table>
-            </div>
-            <br />
-            <br />
-            <button class="dugme" style="margin-right:10px;"><a href="brisanjeNasilno.html"
-                  style="color:white;text-decoration:none">Detalji o nalogu </a></button>
-
-            <button class="dugme" style="margin-right:10px;">Upozori</button>
-
-            <button class="dugme">Ukloni nalog</button>
+       <?php 
+            echo "
+            <div class='text-block1 col-sm'>
+            <form>
+               <br />
+               <h2> <strong>Obaveštenje</strong></h2>
+               <div class='row'>
+                  <table class='table-stripped' style='margin-left:20px'>
+                     <tr>
+                        <th style='width:200px'>Report za nalog: </th>
+                        <td>".$odabran1->KorisnickoIme."</td>
+                     </tr>
+                     <tr>
+                        <th style='width:200px'>Report od korisnika: </th>
+                        <td>".$odabran2->KorisnickoIme."</td>
+                     </tr>
+                     <tr>
+                        <th style='width:200px'>Razlog report-a: </th>
+                        <td>Lažno predstavljanje</td>
+                     </tr>
+                  </table>
+               </div>
+               <br />
+               <br />";
+       
+       ?>
 
          </form>
+         <a href="<?= base_url('AdminController/detaljiPrivatnikaPosleReporta?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK)?>"
+                  style="color:white;text-decoration:none"><button class="dugme" style="margin-right:10px;">Detalji o nalogu </button></a>
+
+            <a href="<?= base_url('AdminController/posaljiEmail?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK)?>"><button class="dugme" style="margin-right:10px;">Upozori</button></a>
+
+           <a href="<?= base_url('AdminController/Obrisi?izbor='.$odabran1->SifK)?>"> <button class="dugme">Ukloni nalog</button></a>
       </div>
     </div>
 </div>

@@ -6,7 +6,7 @@ use CodeIgniter\Model;
 
 class ModelObicanKorisnik extends Model
 {
-    protected $table      = 'obicankorisnik';
+    protected $table= 'obicankorisnik';
     protected $primaryKey = 'SifK';
 
     protected $useAutoIncrement = false;
