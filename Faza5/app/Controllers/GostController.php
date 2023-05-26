@@ -25,8 +25,6 @@ class GostController extends BaseController {
     
     public function loginSubmit(){
         
-        // ne valja css
-        
         $korisnickoime = $this->request->getVar("username-input");
         $lozinka = $this->request->getVar("password-input");
         
@@ -227,55 +225,6 @@ class GostController extends BaseController {
         $totalPages = count($this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage));
         return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
                 
-    }
-    
-    public function pretragaPonudaSort(){
-        
-        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
-        
-        $numOfResultsOnPage = 9;
-        
-        $prevoznoSredstvo =$this->session->get("prevoznoSredstvo" );
-        $mestoOd = $this->session->get("mestoOd");
-        $mestoDo= $this->session->get("mestoDo");
-        $minimalnaCena =$this->session->get("minimalnaCena");
-        $maksimalnaCena = $this->session->get("maksimalnaCena");
-        $brojPutnika = $this->session->get("brojPutnika");
-        $datumOd = $this->session->get("datumOd");
-        $datumDo = $this->session->get("datumDo");
-        $vremeOd = $this->session->get("vremeOd");
-        $vremeDo = $this->session->get("vremeDo");
-        
-        // proveri datum i vreme
-        
-        $sortiranje = $this->request->getVar("sortiranje");
-        $rastuceCena = null;
-        $rastuceDatum = null;
-        $opadajuceCena = null;
-        $opadajuceDatum = null;
-        
-        switch($sortiranje){
-            case "rastuceCena":
-                $rastuceCena = $sortiranje;
-                break;
-            case "rastuceDatum":
-                $rastuceDatum = $sortiranje;
-                break;
-            case "opadajuceCena":
-                $opadajuceCena = $sortiranje;
-                break;
-            case "opadajuceDatum":
-                $opadajuceDatum = $sortiranje;
-                break;
-        }
-
-        $svePonude = $this->dohvatiSvePonude();
-        
-        $ponude = $this->pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum);
-        $totalPages = count($ponude);
-        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
-         
-        
     }
 
     public function prikazPonude(){

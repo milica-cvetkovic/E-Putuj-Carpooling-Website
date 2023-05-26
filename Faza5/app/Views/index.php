@@ -1,3 +1,4 @@
+<!-- Milica Cvetkovic 2020/0003 -->
 <section>
    <div class="banner-main">
       <img src="<?php echo base_url('images/pinksky.jpg') ?>" alt="#" style="width:100%;" />

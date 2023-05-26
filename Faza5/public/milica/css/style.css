@@ -2321,14 +2321,14 @@ ul.location_icon span {
      width: 500px;
 }
 
-.confirm-btn {
+.confirm-btn, .submit-btn {
      background-color: #f7cfcd;
      color: #004041;
      border: 1px solid #f7cfcd;
 }
 
 
-.confirm-btn:hover {
+.confirm-btn:hover, .submit-btn:hover {
      background-color: #004041;
      color: #f7cfcd;
      border: 1px solid #004041;
@@ -2353,6 +2353,7 @@ ul.location_icon span {
      height: 100%;
      background-size: cover;
      opacity: 100%;
+    margin-bottom: -100px;
 }
 
 .back-image-message{
@@ -2383,6 +2384,8 @@ ul.location_icon span {
     text-align: right;
     margin-top: 10px;
 }
+
+
 
 /* .background-main{
      background-color: #004043;

@@ -1,4 +1,4 @@
-
+<!-- Milica Cvetkovic 2020/0003 -->
     <div class="login-and-registration2">
         <div class="container">
 
@@ -6,8 +6,11 @@
                 <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12" id="registration">
                     <h3 class="mb-4 pb-2 pb-md-0 mb-md-5">Registrujte se</h3>
                     <form name="registracijaform" action="<?= site_url("GostController/registracijaSubmit") ?>" method="post">
-                        <?php if(!empty($poruke['prazno'])) 
+                        <?php if(!empty($poruke['prazno'])) {
+                            echo "<div class='alert alert-dark' role='alert'>";
                             echo "<span>{$poruke['prazno']}</span>";
+                             echo "</div>";
+                        }
                         ?>
                         <div class="form-outline mb-4">
                             <label class="form-label" for="firstname">Ime</label>
@@ -24,8 +27,12 @@
                         <div class="form-outline mb-4">
                             <label class="form-label" for="email">Email</label>
                             <input type="text" name="email" id="email" class="form-control form-control-lg" />
-                            <?php if(!empty($poruke['email'])) 
+                            <br>
+                            <?php if(!empty($poruke['email'])) {
+                                 echo "<div class='alert alert-dark' role='alert'>";
                                 echo "<span>{$poruke['email']}</span>";
+                                echo "</div>";
+                            }
                             ?>
                         </div>
 
@@ -48,22 +55,34 @@
                         <div class="form-outline mb-4">
                             <label class="form-label" for="username">Korisničko ime</label>
                             <input type="text" name="username" id="username" class="form-control form-control-lg" />
-                            <?php if(!empty($poruke['korisnickoime'])) 
+                            <br>
+                            <?php if(!empty($poruke['korisnickoime'])) {
+                                echo "<div class='alert alert-dark' role='alert'>";
                                 echo "<span>{$poruke['korisnickoime']}</span>";
+                                echo "</div>";
+                            }
                             ?>
                         </div>
                         <div class="form-outline mb-4">
                             <label class="form-label" for="password">Lozinka</label>
                             <input type="password" name="password" id="password" class="form-control form-control-lg" />
-                            <?php if(!empty($poruke['lozinka'])) 
+                            <br>
+                            <?php if(!empty($poruke['lozinka'])){ 
+                                 echo "<div class='alert alert-dark' role='alert'>";
                                 echo "<span>{$poruke['lozinka']}</span>";
+                                echo "</div>";
+                            }
                             ?>
                         </div>
                         <div class="form-outline mb-4">
                             <label class="form-label" for="checkpassword">Potvrdi lozinku</label>
                             <input type="password" name="checkpassword" id="checkpassword" class="form-control form-control-lg" />
-                            <?php if(!empty($poruke['ponovna'])) 
+                            <br>
+                            <?php if(!empty($poruke['ponovna'])) {
+                                echo "<div class='alert alert-dark' role='alert'>";
                                 echo "<span>{$poruke['ponovna']}</span>";
+                                echo "</div>";
+                            }
                             ?>
                         </div>
                         <input type='submit' class="btn btn-primary btn-block mb-4 submit-btn" value="Potvrdi">
