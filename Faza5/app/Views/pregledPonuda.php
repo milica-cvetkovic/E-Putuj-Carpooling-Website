@@ -18,7 +18,7 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Prevozno sredstvo</label>
                             <select class="form-control" name="prevoznoSredstvo">
-                                <option>...</option>
+                                <option></option>
                                 <?php 
                                     foreach($svePonude as $p){
                                         echo "<option> {$p->prevoznoSredstvo} </option>";
@@ -29,7 +29,7 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Mesto do</label>
                             <select class="form-control" name="mestoDo">
-                                <option>...</option>
+                                <option></option>
                                 <?php 
                                     foreach($svePonude as $p){
                                         echo "<option> {$p->MestoDo} </option>";
@@ -40,7 +40,7 @@
                         <div class="col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12">
                             <label>Mesto od</label>
                             <select class="form-control" name="mestoOd">
-                                <option>...</option>
+                                <option></option>
                                 <?php 
                                     foreach($svePonude as $p){
                                         echo "<option> {$p->MestoOd} </option>";
@@ -83,21 +83,24 @@
                 </div>
             </div>
         </form>
-        <div class="row">
-            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                <div class="dropdown">
-                    <button type="button" class="btn btn-primary dropdown-toggle" id="sort" name="sort" data-bs-toggle="dropdown">
-                        Sortiraj
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Rastuće po ceni</a></li>
-                        <li><a class="dropdown-item" href="#">Rastuće po broju mesta</a></li>
-                        <li><a class="dropdown-item" href="#">Opadajuće po ceni</a></li>
-                        <li><a class="dropdown-item" href="#">Opadajuće po broju mesta</a></li>
-                    </ul>
-                </div>   
-            </div>
-        </div>
+        <?php if(isset($submitted)){
+      
+                echo "<form name='sortform' action='";
+                echo site_url('GostController/pretragaPonudaSort');
+                echo "' method='post'>";
+                    echo "<div class='row'>";
+                        echo "<div class='col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12'>";
+                            echo "<select class='form-select' name='sortiranje' onchange='this.form.submit()'>";
+                                echo "<option selected>Sortiraj</option>";
+                                echo "<option value='rastuceCena'>Rastuće po ceni</a></option>";
+                                echo "<option value='rastuceDatum'>Rastuće po datumu</a></option>";
+                                echo "<option value='opadajuceCena'>Opadajuće po ceni</a></option>";
+                                echo "<option value='opadajuceDatum'>Opadajuće po datumu</a></option>";
+                            echo "</select>";
+                        echo "</div>";  
+                    echo "</div>";
+                echo "</form>";
+        }?>
     </div>
     
     <?php

@@ -129,6 +129,8 @@ class GostController extends BaseController {
         
         // popravi da se salju sva mesta i sve ponude ?
         // treba da se uveze slika odgovarajuceg mesta na kraju
+        // da ne moze da bude prazna pretraga
+        // da ne moze da se unese samo jedno mesto
         
         $totalPages = count($this->dohvatiSvePonude());
         
@@ -147,14 +149,76 @@ class GostController extends BaseController {
         $vremeOd = $this->request->getVar("vremeOd");
         $vremeDo = $this->request->getVar("vremeDo");
         
+        $this->session->set("prevoznoSredstvo", $prevoznoSredstvo);
+        $this->session->set("mestoOd", $mestoOd);
+        $this->session->set("mestoDo", $mestoDo);
+        $this->session->set("minimalnaCena", $minimalnaCena);
+        $this->session->set("maksimalnaCena", $maksimalnaCena);
+        $this->session->set("brojPutnika", $brojPutnika);
+        $this->session->set("datumOd", $datumOd);
+        $this->session->set("datumDo", $datumDo);
+        $this->session->set("vremeOd", $vremeOd);
+        $this->session->set("vremeDo", $vremeDo);
+        
         // proveri datum i vreme
         
         $svePonude = $this->dohvatiSvePonude();
         
         $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
         
-        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages]);
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
                 
+    }
+    
+    public function pretragaPonudaSort(){
+        
+        $totalPages = count($this->dohvatiSvePonude());
+        
+        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        
+        $numOfResultsOnPage = 9;
+        
+        $prevoznoSredstvo =$this->session->get("prevoznoSredstvo" );
+        $mestoOd = $this->session->get("mestoOd");
+        $mestoDo= $this->session->get("mestoDo");
+        $minimalnaCena =$this->session->get("minimalnaCena");
+        $maksimalnaCena = $this->session->get("maksimalnaCena");
+        $brojPutnika = $this->session->get("brojPutnika");
+        $datumOd = $this->session->get("datumOd");
+        $datumDo = $this->session->get("datumDo");
+        $vremeOd = $this->session->get("vremeOd");
+        $vremeDo = $this->session->get("vremeDo");
+        
+        // proveri datum i vreme
+        
+        $sortiranje = $this->request->getVar("sortiranje");
+        $rastuceCena = null;
+        $rastuceDatum = null;
+        $opadajuceCena = null;
+        $opadajuceDatum = null;
+        
+        switch($sortiranje){
+            case "rastuceCena":
+                $rastuceCena = $sortiranje;
+                break;
+            case "rastuceDatum":
+                $rastuceDatum = $sortiranje;
+                break;
+            case "opadajuceCena":
+                $opadajuceCena = $sortiranje;
+                break;
+            case "opadajuceDatum":
+                $opadajuceDatum = $sortiranje;
+                break;
+        }
+
+        $svePonude = $this->dohvatiSvePonude();
+        
+        $ponude = $this->pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum);
+        
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
+         
+        
     }
 
     public function prikazPonude(){
@@ -291,9 +355,6 @@ class GostController extends BaseController {
             $builder->where("ponuda.VremeOd >=", $vremeOd);
         if($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
-                    
-        /*if($pretragaCenaRastuce != null)
-            $builder->orderBy("ponuda.CenaKarte", "asc");*/
         
         $start = ($page - 1) * $numOfResultsOnPage;
         
@@ -303,7 +364,54 @@ class GostController extends BaseController {
         
     }
     
-    // date('y-m-d'));
+    public function pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+       
+        if($prevoznoSredstvo != null)
+            $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
+        if($mestoOd != null)
+            $builder->like("mOd.Naziv" , $mestoOd);
+        if($mestoDo != null)
+            $builder->like("mDo.Naziv", $mestoDo);
+        if($minimalnaCena != null)
+            $builder->where("ponuda.CenaKarte >=", $minimalnaCena);
+        if($maksimalnaCena != null)
+            $builder->where("CenaKarte <=", (float)$maksimalnaCena);
+        if($brojPutnika != null)
+            $builder->where ("ponuda.BrMesta <=", $brojPutnika);
+        if($datumOd != null)
+            $builder->where("ponuda.DatumOd >=", $datumOd);
+        if($datumDo != null)
+            $builder->where("ponuda.DatumDo <=", $datumDo);
+        if($vremeOd != null)
+            $builder->where("ponuda.VremeOd >=", $vremeOd);
+        if($vremeDo != null)
+            $builder->where("ponuda.VremeDo <=", $vremeDo);
+                    
+        if($rastuceCena != null)
+            $builder->orderBy("ponuda.CenaKarte", "asc");
+        if($rastuceDatum != null)
+            $builder->orderBy("ponuda.DatumOd", "asc");
+        if($opadajuceCena != null)
+            $builder->orderBy("ponuda.CenaKarte", "desc");
+        if($opadajuceDatum != null)
+            $builder->orderBy("ponuda.DatumOd", "desc");
+        
+        $start = ($page - 1) * $numOfResultsOnPage;
+        
+        $builder->limit($start, $numOfResultsOnPage);
+        
+        return $builder->get()->getResult();
+        
+    }
     
     public function dohvatiSvePonude(){
         
