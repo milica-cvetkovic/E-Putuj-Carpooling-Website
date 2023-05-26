@@ -78,29 +78,26 @@
                         </div>
                     </div>
                 </div>
+                <input type="hidden" name="resetPage" value="true">
                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                     <a href="#" style="background-color: rgb(6, 47, 60);" onclick="this.closest('form').submit();return false;">Pretraži</a>
                 </div>
             </div>
         </form>
-        <?php if(isset($submitted)){
-      
-                echo "<form name='sortform' action='";
-                echo site_url('GostController/pretragaPonudaSort');
-                echo "' method='post'>";
-                    echo "<div class='row'>";
-                        echo "<div class='col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12'>";
-                            echo "<select class='form-select' name='sortiranje' onchange='this.form.submit()'>";
-                                echo "<option selected>Sortiraj</option>";
-                                echo "<option value='rastuceCena'>Rastuće po ceni</a></option>";
-                                echo "<option value='rastuceDatum'>Rastuće po datumu</a></option>";
-                                echo "<option value='opadajuceCena'>Opadajuće po ceni</a></option>";
-                                echo "<option value='opadajuceDatum'>Opadajuće po datumu</a></option>";
-                            echo "</select>";
-                        echo "</div>";  
-                    echo "</div>";
-                echo "</form>";
-        }?>
+        <form name='sortform' action="<?= site_url('GostController/pretragaPonuda');?>" method='post'>
+            <input type="hidden" name="sort" value="true">
+            <div class='row'>
+                <div class='col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12'>
+                    <select class='form-select' name='sortiranje' onchange='this.form.submit()'>
+                        <option selected>Sortiraj</option>
+                        <option value='rastuceCena'>Rastuće po ceni</a></option>
+                        <option value='rastuceDatum'>Rastuće po datumu</a></option>
+                        <option value='opadajuceCena'>Opadajuće po ceni</a></option>
+                        <option value='opadajuceDatum'>Opadajuće po datumu</a></option>
+                    </select>
+                </div>
+            </div>
+        </form>
     </div>
     
     <?php
@@ -141,9 +138,8 @@
                 
                 if($page > 1){
                     $result = $page -1;
-                    $GET["page"] = $result;
                     echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda');
+                    echo site_url('GostController/pretragaPonuda?page='.$result);
                     echo "'>Prošla</a></li>";
                 }
                 

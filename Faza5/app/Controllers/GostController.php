@@ -127,52 +127,109 @@ class GostController extends BaseController {
    
     public function pretragaPonuda(){
         
-        // popravi da se salju sva mesta i sve ponude ?
         // treba da se uveze slika odgovarajuceg mesta na kraju
-        // da ne moze da bude prazna pretraga
         // da ne moze da se unese samo jedno mesto
         
-        $totalPages = count($this->dohvatiSvePonude());
+        $resetPage = $this->request->getVar("resetPage");
+        $sortiranje = $this->request->getVar("sortiranje");
         
-        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        if($sortiranje != null){
+            $this->session->set("sortiranje", $sortiranje);
+        }
         
+        if($resetPage != null || $sortiranje != null){
+            $page = 1;
+        }
+        else{
+            $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        }
+
         $numOfResultsOnPage = 9;
+                
+        if($resetPage != null){
+            
+            $prevoznoSredstvo = $this->request->getVar("prevoznoSredstvo");
+            $mestoOd = $this->request->getVar("mestoOd");
+            $mestoDo = $this->request->getVar("mestoDo");
+            $minimalnaCena = $this->request->getVar("minimalnaCena");
+            $maksimalnaCena = $this->request->getVar("maksimalnaCena");
+            $brojPutnika = $this->request->getVar("brojPutnika");
+            $datumOd = $this->request->getVar("datumOd");
+            $datumDo = $this->request->getVar("datumDo");
+            $vremeOd = $this->request->getVar("vremeOd");
+            $vremeDo = $this->request->getVar("vremeDo");
+           
         
-        $prevoznoSredstvo = $this->request->getVar("prevoznoSredstvo");
-        $mestoOd = $this->request->getVar("mestoOd");
-        $mestoDo = $this->request->getVar("mestoDo");
-        $minimalnaCena = $this->request->getVar("minimalnaCena");
-        $maksimalnaCena = $this->request->getVar("maksimalnaCena");
-        $brojPutnika = $this->request->getVar("brojPutnika");
-        $datumOd = $this->request->getVar("datumOd");
-        $datumDo = $this->request->getVar("datumDo");
-        $vremeOd = $this->request->getVar("vremeOd");
-        $vremeDo = $this->request->getVar("vremeDo");
         
-        $this->session->set("prevoznoSredstvo", $prevoznoSredstvo);
-        $this->session->set("mestoOd", $mestoOd);
-        $this->session->set("mestoDo", $mestoDo);
-        $this->session->set("minimalnaCena", $minimalnaCena);
-        $this->session->set("maksimalnaCena", $maksimalnaCena);
-        $this->session->set("brojPutnika", $brojPutnika);
-        $this->session->set("datumOd", $datumOd);
-        $this->session->set("datumDo", $datumDo);
-        $this->session->set("vremeOd", $vremeOd);
-        $this->session->set("vremeDo", $vremeDo);
+            $this->session->set("prevoznoSredstvo", $prevoznoSredstvo);
+            $this->session->set("mestoOd", $mestoOd);
+            $this->session->set("mestoDo", $mestoDo);
+            $this->session->set("minimalnaCena", $minimalnaCena);
+            $this->session->set("maksimalnaCena", $maksimalnaCena);
+            $this->session->set("brojPutnika", $brojPutnika);
+            $this->session->set("datumOd", $datumOd);
+            $this->session->set("datumDo", $datumDo);
+            $this->session->set("vremeOd", $vremeOd);
+            $this->session->set("vremeDo", $vremeDo);
+            
+            $this->session->set("sort", null);
+            $this->session->set("sortiranje", null);
+        }
+        
+        $prevoznoSredstvo =$this->session->get("prevoznoSredstvo" );
+        $mestoOd = $this->session->get("mestoOd");
+        $mestoDo= $this->session->get("mestoDo");
+        $minimalnaCena =$this->session->get("minimalnaCena");
+        $maksimalnaCena = $this->session->get("maksimalnaCena");
+        $brojPutnika = $this->session->get("brojPutnika");
+        $datumOd = $this->session->get("datumOd");
+        $datumDo = $this->session->get("datumDo");
+        $vremeOd = $this->session->get("vremeOd");
+        $vremeDo = $this->session->get("vremeDo");
         
         // proveri datum i vreme
         
+        $sortiranje = $this->session->get("sortiranje");
+        
+        $rastuceCena = null;
+        $rastuceDatum = null;
+        $opadajuceCena = null;
+        $opadajuceDatum = null;
+        
+        switch($sortiranje){
+            case "rastuceCena":
+                $rastuceCena = $sortiranje;
+                break;
+            case "rastuceDatum":
+                $rastuceDatum = $sortiranje;
+                break;
+            case "opadajuceCena":
+                $opadajuceCena = $sortiranje;
+                break;
+            case "opadajuceDatum":
+                $opadajuceDatum = $sortiranje;
+                break;
+            default:
+                break;
+        }
+        
         $svePonude = $this->dohvatiSvePonude();
         
-        $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
+        $sort = $this->request->getVar("sort");
         
+        if($sort != null || $this->session->get("sort") != null){
+            $temp = $this->session->get("sort");
+            $this->session->set("sort", $sort);
+            $ponude = $this->pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum);
+        }else{
+            $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
+        }
+        $totalPages = count($this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage));
         return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
                 
     }
     
     public function pretragaPonudaSort(){
-        
-        $totalPages = count($this->dohvatiSvePonude());
         
         $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
         
@@ -215,7 +272,7 @@ class GostController extends BaseController {
         $svePonude = $this->dohvatiSvePonude();
         
         $ponude = $this->pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum);
-        
+        $totalPages = count($ponude);
         return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
          
         
@@ -374,6 +431,15 @@ class GostController extends BaseController {
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        if($rastuceCena != null)
+            $builder->orderBy("ponuda.CenaKarte", "asc");
+        if($rastuceDatum != null)
+            $builder->orderBy("ponuda.DatumOd", "asc");
+        if($opadajuceCena != null)
+            $builder->orderBy("ponuda.CenaKarte", "desc");
+        if($opadajuceDatum != null)
+            $builder->orderBy("ponuda.DatumOd", "desc");
        
         if($prevoznoSredstvo != null)
             $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
@@ -396,15 +462,6 @@ class GostController extends BaseController {
         if($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
                     
-        if($rastuceCena != null)
-            $builder->orderBy("ponuda.CenaKarte", "asc");
-        if($rastuceDatum != null)
-            $builder->orderBy("ponuda.DatumOd", "asc");
-        if($opadajuceCena != null)
-            $builder->orderBy("ponuda.CenaKarte", "desc");
-        if($opadajuceDatum != null)
-            $builder->orderBy("ponuda.DatumOd", "desc");
-        
         $start = ($page - 1) * $numOfResultsOnPage;
         
         $builder->limit($start, $numOfResultsOnPage);

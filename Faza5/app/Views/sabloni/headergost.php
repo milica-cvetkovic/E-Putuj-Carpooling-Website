@@ -73,7 +73,7 @@
 
                               <li class="active"> <a href="#">Početna</a> </li> <!-- ovde treba prosledjivati sta je aktivno, vrv moze preko js -->
                               <li> <a href="#about">O nama</a> </li>
-                              <li><a href="<?php echo site_url("GostController/pregledPonuda")?>">Ponude</a></li>
+                              <li><a href="<?php echo site_url("GostController/pretragaPonuda")?>">Ponude</a></li>
                               <li><a href="#contact">Kontakt</a></li>
 
                            </ul>
