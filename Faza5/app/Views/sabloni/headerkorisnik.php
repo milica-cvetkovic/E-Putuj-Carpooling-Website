@@ -91,9 +91,9 @@
                                         <li> <a href="indexkorisnik.html#about">O nama</a> </li>
                                         <li><a href="pregled_ponuda.html">Pretraži ponude</a></li>
                                         <li><a href="trazenje_voznje.html">Zatraži vožnju</a></li>
-                                        <li><a href="rezervacije_korisnika.html">Moje rezervacije</a></li>
+                                        <li><a href="KorisnikController/rezervacije">Moje rezervacije</a></li>
                                         <li><a href="spinthewheel.html">Točak sreće</a></li>
-                                        <li><a href="report.html">Report</a></li>
+                                        <li><a href="KorisnikController/report">Report</a></li>
 
                                     </ul>
                                 </nav>

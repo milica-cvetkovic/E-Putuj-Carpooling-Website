@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\ModelKorisnik;
 class KorisnikController extends BaseController {
 
     private function prikaz($stranica, $podaci){
@@ -29,11 +30,51 @@ class KorisnikController extends BaseController {
     }
 
     public function izmenaProfila(){
-        $this->prikaz("izmenaProfila", []);
+        $data = [];
+        $db= db_connect();
+        $model = new ModelKorisnik($db);
+        // $SifK =  session()->get("korisnik")->SifK;
+        $SifK = "2";
+        if($this->request->getMethod()=='post'){ 
+            if($_POST){
+                $data['poruka']= "post";
+                $ime = $_POST['ime'];
+                $prezime=$_POST['prezime'];
+                $lozinka=$_POST['lozinka'];
+                $email = $_POST['email'];
+                // $prfilna = $_POST[''] IZMJENA PROFILNE
+                $profilna =null;
+                
+                $model->izmenaProfila($ime,$prezime,$lozinka,$email,$profilna,$SifK);
+
+            }
+        }
+        $this->prikaz("izmenaProfila", $data);
     }
 
     public function ocenjivanje(){
-        $this->prikaz("ocenjivanje", []);
+        $data = [];
+        $db= db_connect();
+        $model = new ModelKorisnik($db);
+        if($this->request->getMethod()=='post'){ 
+            if($_POST){
+                $Imeprivatnika = $_POST['Imeprivatnika'];
+                $ocena = $_POST['ocena'];
+                $komentar = $_POST['komentar'];
+                // $SifK =  session()->get("korisnik")->SifK;
+                $SifK = "2";
+                $ocena = $model->ocenjivanje($Imeprivatnika,$komentar,$ocena,$SifK);
+                if($ocena==null){
+                    $data['poruka']="Privatnik ne postoji!";
+                }else{
+                $db->table('ocena')->insert($ocena);}
+            }
+        }
+        $this->prikaz("ocenjivanje", $data);
+        
+       
+        
+        
     }
 
     public function pregledPonuda(){
@@ -50,14 +91,95 @@ class KorisnikController extends BaseController {
     }
 
     public function report(){
-        $this->prikaz("report", []);
+        $db= db_connect();
+        $model = new ModelKorisnik($db);
+        $data =[];
+        if($this->request->getMethod()=='post'){
+           
+            
+            if($_POST){
+                $SifK = $_POST['SifK'];
+                $komentar = $_POST['komentar'];
+                
+                // $SifPrijavitelja =  session()->get("korisnik")->SifK;
+                $SifPrijavitelja = "2";
+                $prijava =  $model->report($SifK,$komentar,$SifPrijavitelja);
+                if($prijava==null){
+                    $data['poruka']="Privatnik ne postoji!";
+
+                }else{
+                    $db->table('report')->insert($prijava);
+
+                }
+
+            }}
+       $this->prikaz("report",$data);
+
     }
 
     public function rezervacije(){
-        $this->prikaz("rezervacije", []);
+        $db= db_connect();
+        $model = new ModelKorisnik($db);
+        $data =[];
+        // $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        $SifK = "2";
+        $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
+        $this->prikaz("rezervacije", $data);
     }
 
     public function trazenjeVoznje(){
-        $this->prikaz("trazenjeVoznje", []);
+        
+        $db = db_connect();
+        $data=[];
+        $model = new ModelKorisnik($db);
+        $data['poruka']="";
+        $data['mesta'] = $model->svaMesta();
+        $data['sredstva']= $model->svaSredstva();
+
+        // $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        $SifK = "2";
+        if($this->request->getMethod()=='post'){
+           
+            
+            if($_POST){
+                if( $_POST['CenaOd']>$_POST['CenaDo'] || 
+                    $_POST['BrojPutnika']<0 || 
+                    $_POST['DatumDo']<$_POST['DatumOd'] ){
+                    // $_POST['VremeDo']<$_POST['VremeOd'] nez 
+                   
+                    $data['poruka']="Greska pri unosu podataka";
+
+                }else{
+                    echo $_POST['prevoz'];
+                    echo $_POST['CenaOd'];
+                    echo $_POST['DatumDo'];
+                    echo $_POST['VremeDo'];
+                    $ponuda=[
+                        'Sred'=>$_POST['prevoz'], 
+                        'SifMesDo'=>$_POST['MesDo'],
+                        'SifMesOd'=>$_POST['MesOd'],
+                        'CenaOd'=>$_POST['CenaOd'],
+                        'CenaDo'=>$_POST['CenaDo'],
+                        'BrMesta'=>$_POST['BrojPutnika'],
+                        'DatumDo'=>$_POST['DatumDo'],
+                        'DatumOd'=>$_POST['DatumOd'],
+                        'VremeDo'=>$_POST['VremeDo'],
+                        'VremeOd'=>$_POST['VremeOd'],
+                        'SifK'=>$SifK
+                        
+                    ];
+                    
+                    print_r($ponuda);
+                    
+                    $model = new ModelKorisnik($db);
+                    $model->posaljiVandrednuVoznju($ponuda);
+                }
+                
+            }
+
+        }
+        
+        
+        $this->prikaz("trazenjeVoznje", $data);
     }
 }

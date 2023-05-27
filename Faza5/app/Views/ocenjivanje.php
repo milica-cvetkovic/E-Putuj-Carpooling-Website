@@ -1,3 +1,14 @@
+<?php
+
+        if(isset($poruka)){
+
+            echo '<script>
+                // Vaš JavaScript kod ovdje
+                alert('.$poruka.');
+            </script>';
+        }
+
+?>
 <div class="back-image-inbox" style="padding-bottom: 15px">
     <div class="row">
         <div class="col-md-12 ">
@@ -8,13 +19,13 @@
         </div>
     </div>
     <div class="container" align="center">
-        <form class="main-form" style="width: 50%;">
+        <form class="main-form" action='<?= base_url("KorisnikController/ocenjivanje")?>' method="post" style="width: 50%;">
             <div class="row">
                 <div class="col-sm-12">
                     <div class="row">
                         <div class="col-sm-12">
                             <label>Ime privatnika</label>
-                            <input type="text" class="form-control">
+                            <input type="text" name="Imeprivatnika" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -24,19 +35,19 @@
                     <label style="margin-right: 10px; margin-top: 30px;"> Ocena &nbsp; (1-5) </label>
                 </div>
                 <div class="col-sm-4">
-                    <input type="range" min="1" max="5" style="margin-top: 35px;">
+                    <input name="ocena" type="range" min="1" max="5" style="margin-top: 35px;">
                 </div>
                 <div class="col-sm-4"><label style="margin-left: 10px; margin-top: 30px;"></label></div>
             </div>
             <div class="row" style="margin-top: 30px;">
                 <div class="col-sm-12">
                     <label>Komentar</label>
-                    <input type="textarea" class="form-control" rows="4" style="height: 100%;">
+                    <input type="textarea" name="komentar" class="form-control" rows="4" style="height: 100%;">
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <a href="#" style="background-color: rgb(6, 47, 60);">Oceni</a>
+                    <input type="submit" value="Oceni" style="background-color: rgb(6, 47, 10); width: 200px; height: 80px; font-size: 20px; color:white; ">
                 </div>
             </div>
         </form>
