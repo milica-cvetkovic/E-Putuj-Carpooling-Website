@@ -93,7 +93,7 @@
                                         <li id="liNapravi">  <a href="<?php echo base_url('PrivatnikController/napraviPonudu')?>">Napravi ponudu </a></li>
                                         <li id="liAzuriraj"> <a href="<?php echo base_url('PrivatnikController/izborPonudeAzuriranje')?>">Ažuriraj punudu</a></li>
                                         <li id="liOtkazi">   <a href="otkaziPonudu.html">Otkaži ponudu</a></li>
-                                        <li id="liPretplata"><a href="promenaPretplate.html">Promena pretplate</a></li>
+                                        <li id="liPretplata"><a href="<?php echo base_url('PrivatnikController/promenaPretplate')?>">Promena pretplate</a></li>
                                         <li id="liPonude">   <a href="#ponude">Postavljene ponude</a></li>
 
                                     </ul>
@@ -118,6 +118,9 @@
             }
             else if (url.includes("prikazPonude")){
                 $("#liPonude").addClass("active");
+            }
+            else if (url.includes("promenaPretplate")){
+                $("#liPretplata").addClass("active");
             }
             else {
                 $("#liPocetna").addClass("active");

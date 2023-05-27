@@ -5,9 +5,8 @@ namespace App\Controllers;
 
 class PrivatnikController extends BaseController {
 
-    private function prikaz($stranica, $podaci){
+    private function prikaz($stranica, $podaci) {
 
-        
         echo view("sabloni/headerprivatnik");
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
@@ -20,7 +19,7 @@ class PrivatnikController extends BaseController {
         $db      = \Config\Database::connect();
         $builder = $db->table('korisnik');
 
-        $korisnik = ($builder->where("KorisnickoIme", "mika")->get()->getResult())[0];
+        $korisnik = ($builder->where("KorisnickoIme", "zeljko123")->get()->getResult())[0];
         $this->session->set("korisnik", $korisnik);
 
         $builder = $db->table("ponuda");
@@ -28,14 +27,14 @@ class PrivatnikController extends BaseController {
         $this->prikaz("indexprivatnik", ["ponude" => $ponude]);
     }
 
-    public function izborPonudeAzuriranje(){
+    public function izborPonudeAzuriranje() {
 
         // samo za testing deo
         // u sustini dohvatanje korisnika ide iz sesije i preko njega se samo proslede ponude
         $db      = \Config\Database::connect();
         $builder = $db->table('korisnik');
 
-        $korisnik = ($builder->where("KorisnickoIme", "mika")->get()->getResult())[0];
+        $korisnik = ($builder->where("KorisnickoIme", "zeljko123")->get()->getResult())[0];
         $this->session->set("korisnik", $korisnik);
 
         $builder = $db->table("ponuda");
@@ -45,7 +44,7 @@ class PrivatnikController extends BaseController {
     }
 
     // prikaz ponude koju je postavio
-    public function prikazPonude($sifP){
+    public function prikazPonude($sifP) {
         $db      = \Config\Database::connect();
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
@@ -54,7 +53,7 @@ class PrivatnikController extends BaseController {
     }
 
     // $sifP je sifra ponude
-    public function azurirajPonudu($sifP){
+    public function azurirajPonudu($sifP) {
         $db      = \Config\Database::connect();
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
@@ -62,7 +61,7 @@ class PrivatnikController extends BaseController {
         $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda]);
     }
 
-    public function azuriranjePonudeSubmit($sifP){
+    public function azuriranjePonudeSubmit($sifP) {
         $db      = \Config\Database::connect();
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
@@ -85,40 +84,34 @@ class PrivatnikController extends BaseController {
         $builder = $db->table("rezervacija");
         $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
         $brojRezervisanihMesta = 0;
-        foreach($rezervacije as $rezervacija){
+        foreach ($rezervacije as $rezervacija) {
             $brojRezervisanihMesta += $rezervacija->BrMesta;
         }
-        if ($brojRezervisanihMesta > $brMesta){
-            $poruka = "Rezervisano je ".$brojRezervisanihMesta." tako da se ne moze smanjiti broj mesta za ponudu na ".$brMesta.".";
+        if ($brojRezervisanihMesta > $brMesta) {
+            $poruka = "Rezervisano je " . $brojRezervisanihMesta . " tako da se ne moze smanjiti broj mesta za ponudu na " . $brMesta . ".";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else if ($cena <= 0){
+        } else if ($cena <= 0) {
             $poruka = "Cena mora da bude pozitivan broj.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else if ($brojRezervisanihMesta == 0 && 
-            ($datumOd." ".$vremeOd <= date("Y-m-d H:i:s") || $datumDo." ".$vremeDo <= date("Y-m-d H:i:s"))
-        ){
+        } else if (
+            $brojRezervisanihMesta == 0 &&
+            ($datumOd . " " . $vremeOd <= date("Y-m-d H:i:s") || $datumDo . " " . $vremeDo <= date("Y-m-d H:i:s"))
+        ) {
             $poruka = "Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else if ($brojRezervisanihMesta == 0 && $datumOd > $datumDo){
+        } else if ($brojRezervisanihMesta == 0 && $datumOd > $datumDo) {
             $poruka = "Datum dolaska mora biti kasnije od datuma polaska.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else if ($brojRezervisanihMesta == 0 && $datumOd == $datumDo && $vremeOd >= $vremeDo){
+        } else if ($brojRezervisanihMesta == 0 && $datumOd == $datumDo && $vremeOd >= $vremeDo) {
             $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else if ($brojRezervisanihMesta == 0 && $mestoOd == $mestoDo){
+        } else if ($brojRezervisanihMesta == 0 && $mestoOd == $mestoDo) {
             $poruka = "Mesto polaska i dolaska moraju biti različiti.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else if ($rokZaOtkazivanje <= 0 || $rokZaOtkazivanje > $trenutniRokZaOtkaz){
+        } else if ($rokZaOtkazivanje <= 0 || $rokZaOtkazivanje > $trenutniRokZaOtkaz) {
             $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i ne veći od trenutnog roka.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
-        }
-        else {
+        } else {
             $builder = $db->table("mesto");
             $SifMesOd = ($builder->where("Naziv", $mestoOd)->get()->getResult())[0]->SifM;
             $SifMesDo = ($builder->where("Naziv", $mestoDo)->get()->getResult())[0]->SifM;
@@ -152,23 +145,23 @@ class PrivatnikController extends BaseController {
         }
     }
 
-/**
- * Anja Curic 2020/0513
- */
-    public function inboxPrivatnik(){
+    /**
+     * Anja Curic 2020/0513
+     */
+    public function inboxPrivatnik() {
         $this->prikaz("inboxPrivatnik", []);
     }
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
-    public function inboxPrivatnikPoruka(){
+    public function inboxPrivatnikPoruka() {
         $this->prikaz("inboxPrivatnikPoruka", []);
     }
 
-    public function napraviPonudu(){
+    public function napraviPonudu() {
         $this->prikaz("napraviPonudu", []);
     }
 
-    public function napraviPonuduSubmit(){
+    public function napraviPonuduSubmit() {
         $prevoznosredstvo = $this->request->getVar("prevoznoSredstvo");
         $mestoOd = $this->request->getVar("mestoPolaska");
         $mestoDo = $this->request->getVar("mestoDolaska");
@@ -180,36 +173,29 @@ class PrivatnikController extends BaseController {
         $vremeDo = $this->request->getVar("vremeDo");
         // fotografija.......
         $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
-        
-        if ($cena <= 0){
+
+        if ($cena <= 0) {
             $poruka = "Cena mora da bude pozitivan broj.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else if ($datumOd." ".$vremeOd <= date("Y-m-d H:i:s") || $datumDo." ".$vremeDo <= date("Y-m-d H:i:s")){
+        } else if ($datumOd . " " . $vremeOd <= date("Y-m-d H:i:s") || $datumDo . " " . $vremeDo <= date("Y-m-d H:i:s")) {
             $poruka = "Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else if ($datumOd > $datumDo){
+        } else if ($datumOd > $datumDo) {
             $poruka = "Datum dolaska mora biti kasnije od datuma polaska.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else if ($datumOd == $datumDo && $vremeOd >= $vremeDo){
+        } else if ($datumOd == $datumDo && $vremeOd >= $vremeDo) {
             $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else if ($mestoOd == $mestoDo){
-            $poruka = "Mesto polaska i dolaska moraju biti različiti.".$mestoOd."|".$mestoDo;
+        } else if ($mestoOd == $mestoDo) {
+            $poruka = "Mesto polaska i dolaska moraju biti različiti." . $mestoOd . "|" . $mestoDo;
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else if ($rokZaOtkazivanje <= 0 || (strtotime($datumOd) - strtotime(date("Y-m-d")))/(60*60*24) < $rokZaOtkazivanje - 1){
+        } else if ($rokZaOtkazivanje <= 0 || (strtotime($datumOd) - strtotime(date("Y-m-d"))) / (60 * 60 * 24) < $rokZaOtkazivanje - 1) {
             $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i da se uklapa u period do realizacije ponude.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else if ($brMesta <= 0){
+        } else if ($brMesta <= 0) {
             $poruka = "Broj slobodnih mesta mora da bude pozitivan broj.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka]);
-        }
-        else {
+        } else {
             $db      = \Config\Database::connect();
             $builder = $db->table("mesto");
             $SifMesOd = ($builder->where("Naziv", $mestoOd)->get()->getResult())[0]->SifM;
@@ -246,15 +232,60 @@ class PrivatnikController extends BaseController {
         }
     }
 
-    public function otkaziPonudu(){
+    public function otkaziPonudu() {
         $this->prikaz("otkaziPonudu", []);
     }
 
-    public function promenaPretplate(){
+
+    public function promenaPretplate() {
         $this->prikaz("promenaPretplate", []);
     }
 
-    public function izmenaProfila(){
+    public function promenaPretplateSubmit() {
+        $dugme = $this->request->getVar("dugme");
+
+        $db      = \Config\Database::connect();
+        $korisnikSifK = session()->get("korisnik")->SifK;
+        $builder = $db->table("privatnik");
+        $privatnikSifPretplata = ($builder->where("SifK", $korisnikSifK)->get()->getResult())[0]->SifPret;
+        $builder = $db->table("pretplata");
+        $pretplata = ($builder->where("SifPret", $privatnikSifPretplata)->get()->getResult())[0];
+        if ($dugme == "Premium") {
+            if ($pretplata->Naziv == "Premium") {
+                $poruka = "Vec imate premium pretplatu.";
+                $this->prikaz("promenaPretplate", ["poruka" => $poruka]);
+            } else {
+                $data = [
+                    "SifPret" => ($builder->where("Naziv", "Premium")->get()->getResult())[0]->SifPret
+                ];
+
+                $builder = $db->table("privatnik");
+
+                $builder->where("SifK", $korisnikSifK);
+                $builder->update($data);
+                $poruka = "Uspesno ažuriranje";
+                $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka]);
+            }
+        }
+        else {
+            if ($pretplata->Naziv == "Standard") {
+                $poruka = "Vec imate standard pretplatu.";
+                $this->prikaz("promenaPretplate", ["poruka" => $poruka]);
+            } else {
+                $data = [
+                    "SifPret" => ($builder->where("Naziv", "Standard")->get()->getResult())[0]->SifPret
+                ];
+
+                $builder = $db->table("privatnik");
+
+                $builder->where("SifK", $korisnikSifK);
+                $builder->update($data);
+                $poruka = "Uspesno ažuriranje";
+                $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka]);
+            }
+        }
+    }
+    public function izmenaProfila() {
         $this->prikaz("izmenaProfila", []);
     }
 }
