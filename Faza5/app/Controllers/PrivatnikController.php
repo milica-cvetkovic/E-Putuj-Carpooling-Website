@@ -12,6 +12,8 @@ use App\Models\ModelSredstvo;
 
 class PrivatnikController extends BaseController {
 
+    //....
+
     private function prikaz($stranica, $podaci) {
 
         echo view("sabloni/headerprivatnik");
