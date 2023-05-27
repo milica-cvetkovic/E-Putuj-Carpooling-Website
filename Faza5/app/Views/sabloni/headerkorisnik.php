@@ -87,7 +87,7 @@
 
                                         <li class="active"><a href="indexkorisnik.html">Početna</a></li>
                                         <li><a href="#contact">Kontakt</a></li>
-                                        <li> <a href="inbox_korisnik.html">Inbox <span class="badge bg-danger">5</span></a> </li>
+                                        <li> <a href="inbox_korisnik.html">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
                                         <li> <a href="indexkorisnik.html#about">O nama</a> </li>
                                         <li><a href="pregled_ponuda.html">Pretraži ponude</a></li>
                                         <li><a href="trazenje_voznje.html">Zatraži vožnju</a></li>

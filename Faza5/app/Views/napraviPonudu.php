@@ -1,5 +1,5 @@
 <?php
-$db      = \Config\Database::connect();
+$db = \Config\Database::connect();
 $builder = $db->table("mesto");
 $mesta = $builder->get()->getResult();
 
@@ -28,7 +28,10 @@ $prevoznaSredstva = $builder->get()->getResult();
                      </div>";
          }
          ?>
-         <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" method="post" action="<?= site_url("PrivatnikController/napraviPonuduSubmit") ?>">
+         <form
+            style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;"
+            method="post" action="<?= site_url("PrivatnikController/napraviPonuduSubmit") ?>">
+            <input type="hidden" value="<?php if(!empty($SifK) ){echo $SifK;} else echo '-1'?>" />
             <div class="row" style="margin-top:50px;margin-right:30px;margin-left:30px;">
                <div class="col-md-12">
                   <div class="row">
@@ -88,17 +91,20 @@ $prevoznaSredstva = $builder->get()->getResult();
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label>Izaberite fotografiju</label>
-                        <input class="form-control" style="height:40px;width:270px;" placeholder="Any" type="file" name="Izaberi">
+                        <input class="form-control" style="height:40px;width:270px;" placeholder="Any" type="file"
+                           name="Izaberi">
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label style="margin-left:70px;width:150px">Unesite otkazni rok</label>
-                        <input class="form-control" style="height:40px;width:250px;margin-left:70px" placeholder="5" type="number" name="rokZaOtkazivanje">
+                        <input class="form-control" style="height:40px;width:250px;margin-left:70px" placeholder="5"
+                           type="number" name="rokZaOtkazivanje">
                      </div>
                   </div>
                </div>
             </div>
             <div class="row justify-content-center" style="margin-top:50px; padding-bottom: 50px">
-               <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" style="margin-right:-100px; justify-content: center; display: flex">
+               <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12"
+                  style="margin-right:-100px; justify-content: center; display: flex">
                   <input type='submit' class="dugme" value="Napravi">
                </div>
                <div class="col-xl-4 col-lg-4 col-md-4 col-sm-12 col-12" style="justify-content: center; display: flex">

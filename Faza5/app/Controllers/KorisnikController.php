@@ -3,10 +3,14 @@
 namespace App\Controllers;
 
 use App\Models\ModelKorisnik;
+use App\Models\ModelPoruka;
 class KorisnikController extends BaseController {
 
     private function prikaz($stranica, $podaci){
-        echo view("sabloni/headerkorisnik");
+        $SifK=session()->get("korisnik")->SifK;
+        $model=new ModelPoruka();
+        $br=$model->select("count(*) as br")->where("SifKor",$SifK)->where("SmerPoruke",2)->findAll()[0]->br;
+        echo view("sabloni/headerprivatnik",["brPoruka"=>$br]);
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
     }
