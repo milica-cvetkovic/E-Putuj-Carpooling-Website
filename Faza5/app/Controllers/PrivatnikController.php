@@ -16,7 +16,10 @@ class PrivatnikController extends BaseController {
 
     private function prikaz($stranica, $podaci) {
 
-        echo view("sabloni/headerprivatnik");
+        $SifK=session()->get("korisnik")->SifK;
+        $model=new ModelPoruka();
+        $br=$model->select("count(*) as br")->where("SifPriv",$SifK)->findAll()[0]->br;
+        echo view("sabloni/headerprivatnik",["brPoruka"=>$br]);
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
     }
