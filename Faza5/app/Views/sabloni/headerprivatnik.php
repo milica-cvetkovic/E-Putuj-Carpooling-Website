@@ -96,6 +96,7 @@
                                         <li id="liPretplata"><a href="<?php echo base_url('PrivatnikController/promenaPretplate')?>">Promena pretplate</a></li>
                                         <li id="liPonude">   <a href="#ponude">Postavljene ponude</a></li>
 
+                                        
                                     </ul>
                                 </nav>
                             </div>
