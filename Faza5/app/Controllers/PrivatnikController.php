@@ -3,6 +3,13 @@
 
 namespace App\Controllers;
 
+use App\Models\ModelPoruka;
+use App\Models\ModelKorisnik;
+use App\Models\ModelZahtevPonuda;
+use App\Models\ModelPonuda;
+use App\Models\ModelMesto;
+use App\Models\ModelSredstvo;
+
 class PrivatnikController extends BaseController {
 
     private function prikaz($stranica, $podaci) {
@@ -149,12 +156,50 @@ class PrivatnikController extends BaseController {
      * Anja Curic 2020/0513
      */
     public function inboxPrivatnik() {
-        $this->prikaz("inboxPrivatnik", []);
+        $Kime=session()->get("korisnik")->KorisnickoIme;
+        $model=new ModelPoruka();
+        $modelK=new ModelKorisnik();
+        $modelP=new ModelPonuda(); 
+        $modelM=new ModelMesto();
+
+        $korisnik=$modelK->where("KorisnickoIme",$Kime)->findAll()[0];
+
+        $poruke=$model->where("SifPriv",$korisnik->SifK)->findAll();
+        foreach($poruke as $poruka){ 
+            $ponuda=$modelP->where("SifP",$poruka->SifPonuda)->findAll()[0];
+            $poruka->mestoOd=$modelM->where("SifM",$ponuda->SifMesOd)->findAll()[0];
+        }
+        
+        $this->prikaz("inboxPrivatnik", ["poruke"=>$poruke]);
     }
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
     public function inboxPrivatnikPoruka() {
-        $this->prikaz("inboxPrivatnikPoruka", []);
+        $izbor=$this->request->getVar("poruka");
+        $Kime=session()->get("korisnik")->KorisnickoIme;
+        $model=new ModelPoruka();
+        $modelK=new ModelKorisnik();
+        $modelZ=new ModelZahtevPonuda();
+        $modelP=new ModelPonuda(); 
+        $modelM=new ModelMesto();
+        $modelS=new ModelSredstvo();
+
+        $korisnik=$modelK->where("KorisnickoIme",$Kime)->findAll()[0];
+
+        $poruke=$model->where("SifPriv",$korisnik->SifK)->findAll();
+        foreach($poruke as $poruka){ 
+            $ponuda=$modelP->where("SifP",$poruka->SifPonuda)->findAll()[0];
+            $poruka->mestoOd=$modelM->where("SifM",$ponuda->SifMesOd)->findAll()[0];
+        }
+        
+        $izbor=$model->where("SifPor",$izbor)->findAll()[0];
+        $odabrana=$modelP->where("SifP",$izbor->SifPonuda)->findAll()[0];
+        $odabrana->CenaOd=$modelZ->where("SifP",$izbor->SifPonuda)->findAll()[0]->CenaOd;
+        $odabrana->CenaDo=$modelZ->where("SifP",$izbor->SifPonuda)->findAll()[0]->CenaDo;
+        $odabrana->mestoOd=$modelM->where("SifM",$odabrana->SifMesOd)->findAll()[0];
+        $odabrana->mestoDo=$modelM->where("SifM",$odabrana->SifMesDo)->findAll()[0];
+        $odabrana->sredstvo=$modelS->where("SifSred",$odabrana->SifSred)->findAll()[0]->Naziv;
+        $this->prikaz("inboxPrivatnik", ["poruke"=>$poruke,"odabrana"=>$odabrana]);
     }
 
     public function napraviPonudu() {
@@ -226,6 +271,19 @@ class PrivatnikController extends BaseController {
                 "RokZaOtkazivanje" => $rokZaOtkazivanje
             ];
             $builder->insert($data);
+
+            $SifK=$this->request->getVar("SifK");
+
+            if(!empty($SifK)){ 
+                $model=new ModelPoruka();
+                $modelP=new ModelPonuda();
+
+                $SifPonuda=$modelP->orderBy("SifP","desc")->findAll()[0]->SifP;
+                $SifPriv=session()->get("korisnik")->SifK;
+
+                $model->insert(["SifPondida"=>$SifPonuda,"SifPriv"=>$SifPriv,"SifKor"=>$SifK,"SmerPoruke"=>"2"]);
+
+            }
 
             // mozda da se ode na prikaz te ponude??
             $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!"]);
