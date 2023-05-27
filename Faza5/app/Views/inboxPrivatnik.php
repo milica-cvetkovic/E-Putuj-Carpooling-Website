@@ -7,7 +7,7 @@
                         foreach($poruke as $poruka){ 
                             echo "<li>
                                 <div class='container-fluid' style='margin: 2em;'>
-                                    <div><b>".session()->get("korisnik")->KorisnickoIme."</b></div>
+                                    <div><b>".$poruka->korisnik."</b></div>
                                     <a href=".base_url('PrivatnikController/inboxPrivatnikPoruka?poruka='.$poruka->SifPor).">
                                         <div class='hoverable-cells div-messages'style='padding-left: 15px;'>
                                             Mesto polaska:".$poruka->mestoOd->Naziv."

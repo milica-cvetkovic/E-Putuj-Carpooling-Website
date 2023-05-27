@@ -174,6 +174,7 @@ class PrivatnikController extends BaseController {
         foreach($poruke as $poruka){ 
             $ponuda=$modelP->where("SifP",$poruka->SifPonuda)->findAll()[0];
             $poruka->mestoOd=$modelM->where("SifM",$ponuda->SifMesOd)->findAll()[0];
+            $poruka->korisnik=$modelK->where("SifK",$poruka->SifKor)->findAll()[0]->KorisnickoIme;
         }
         
         $this->prikaz("inboxPrivatnik", ["poruke"=>$poruke]);
@@ -196,6 +197,7 @@ class PrivatnikController extends BaseController {
         foreach($poruke as $poruka){ 
             $ponuda=$modelP->where("SifP",$poruka->SifPonuda)->findAll()[0];
             $poruka->mestoOd=$modelM->where("SifM",$ponuda->SifMesOd)->findAll()[0];
+            $poruka->korisnik=$modelK->where("SifK",$poruka->SifKor)->findAll()[0]->KorisnickoIme;
         }
         
         $izbor=$model->where("SifPor",$izbor)->findAll()[0];

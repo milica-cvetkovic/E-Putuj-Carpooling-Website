@@ -2,8 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\ModelKorisnik;
 use App\Models\ModelPoruka;
+use App\Models\ModelObicanKorisnikLana;
 class KorisnikController extends BaseController {
 
     private function prikaz($stranica, $podaci){
@@ -36,7 +36,7 @@ class KorisnikController extends BaseController {
     public function izmenaProfila(){
         $data = [];
         $db= db_connect();
-        $model = new ModelKorisnik($db);
+        $model = new ModelObicanKorisnikLana($db);
         // $SifK =  session()->get("korisnik")->SifK;
         $SifK = "2";
         if($this->request->getMethod()=='post'){ 
@@ -59,7 +59,7 @@ class KorisnikController extends BaseController {
     public function ocenjivanje(){
         $data = [];
         $db= db_connect();
-        $model = new ModelKorisnik($db);
+        $model = new ModelObicanKorisnikLana($db);
         if($this->request->getMethod()=='post'){ 
             if($_POST){
                 $Imeprivatnika = $_POST['Imeprivatnika'];
@@ -96,7 +96,7 @@ class KorisnikController extends BaseController {
 
     public function report(){
         $db= db_connect();
-        $model = new ModelKorisnik($db);
+        $model = new ModelObicanKorisnikLana($db);
         $data =[];
         if($this->request->getMethod()=='post'){
            
@@ -123,7 +123,7 @@ class KorisnikController extends BaseController {
 
     public function rezervacije(){
         $db= db_connect();
-        $model = new ModelKorisnik($db);
+        $model = new ModelObicanKorisnikLana($db);
         $data =[];
         // $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $SifK = "2";
@@ -135,7 +135,7 @@ class KorisnikController extends BaseController {
         
         $db = db_connect();
         $data=[];
-        $model = new ModelKorisnik($db);
+        $model = new ModelObicanKorisnikLana($db);
         $data['poruka']="";
         $data['mesta'] = $model->svaMesta();
         $data['sredstva']= $model->svaSredstva();
@@ -175,7 +175,7 @@ class KorisnikController extends BaseController {
                     
                     print_r($ponuda);
                     
-                    $model = new ModelKorisnik($db);
+                    $model = new ModelObicanKorisnikLana($db);
                     $model->posaljiVandrednuVoznju($ponuda);
                 }
                 
