@@ -4,6 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 use CodeIgniter\Database\ConnectionInterface;
+use CodeIgniter\I18n\Time;
 
 class ModelObicanKorisnikLana extends Model
 {
@@ -155,6 +156,47 @@ class ModelObicanKorisnikLana extends Model
 
         ];
         return $ocena;
+
+}
+public function azuriraj_poklone_i_tokene($poklon, $SifK)
+{
+    if($poklon=="nista"){
+        return;
+    }
+    echo "metodaaa";
+    echo "ovde";
+    $poklonobj=[
+        'Iznos'=>"",
+        'TipPoklona'=>"",
+        
+    ];
+    if(strpos($poklon,"%")){
+        $poklonobj['Iznos'] = intval( substr($poklon,0,-1));
+        $poklonobj['TipPoklona'] ="%";
+
+    }else{
+        $poklonobj['Iznos'] = intval( substr($poklon,0,-3));
+        $poklonobj['TipPoklona'] ="din";
+    }
+    
+   
+    $korisnik = $this->db->table('obicankorisnik')->where('SifK=',$SifK)->get()->getResult()[0];
+    print_r($korisnik);
+    if($korisnik->token<=0){
+        return;
+    }
+    $korisnik->token= $korisnik->token-1;
+    $this->db->table('obicankorisnik')->where("SifK=", $SifK)->update($korisnik);
+    $poklon = $this->db->table('poklon')->where("TipPoklona=", $poklonobj['TipPoklona'])->where("Iznos=", $poklonobj['Iznos'])->get()->getResult()[0];
+    $je_dobio=[
+        'SifK'=>$SifK,
+        'SifPokl'=>$poklon->SifPokl,
+        'Datum'=> Time::now()->toDateTimeString()
+    ];
+    print_r($je_dobio);
+    $this->db->table('jedobio')->insert($je_dobio);
+   
+
 
 }
 }
