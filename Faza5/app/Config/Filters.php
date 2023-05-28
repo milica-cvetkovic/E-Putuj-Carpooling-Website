@@ -21,6 +21,10 @@ class Filters extends BaseConfig
         'honeypot'      => Honeypot::class,
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
+//        'gost'          => \App\Filters\GostFilter::class,
+//        'obicankorisnik'=> \App\Filters\ObicanKorisnikFilter::class,
+//        'privatnik'     => \App\Filters\PrivatnikFilter::class,
+//        'admin'         => \App\Filters\AdminFilter::class
     ];
 
     /**
@@ -60,5 +64,10 @@ class Filters extends BaseConfig
      * Example:
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
-    public array $filters = [];
+    public array $filters = [
+//        'gost' => ['before' => ['GostController', '/', 'GostController/*']],
+//        'obicankorisnik' => ['before' => ['KorisnikController', 'KorisnikController/*']],
+//        'privatnik' => ['before' => ['PrivatnikController', 'PrivatnikController/*']],
+//        'admin' => ['before' => ['AdminController', 'AdminController/*']]
+    ];
 }
