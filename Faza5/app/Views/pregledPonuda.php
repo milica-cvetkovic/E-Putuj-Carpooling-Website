@@ -112,20 +112,27 @@
             echo "'>"; ?>
             <a href="javascript:{}" onclick="document.getElementById('ponuda<?=$ponude[$j]->SifP?>').submit(); return false;">
                             <div class='traveling-box'>
-            <?php                    
+            <?php
+            $db = \Config\Database::connect();
+            $builder = $db->table("rezervacija");
+            $rezervacije = $builder->where("SifP", $ponude[$j]->SifP)->get()->getResult();
+            $brojRezervisanihMesta = 0;
+            foreach ($rezervacije as $rezervacija) {
+                $brojRezervisanihMesta += $rezervacija->BrMesta;
+            }                    
             echo "<i><img src='";
-            echo base_url('images/'.$ponude[$j]->Slika);
+            echo base_url('images/ponude/'.$ponude[$j]->Slika);
             echo "' alt='icon' style='object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;' /></i>";
             echo "<h2>{$ponude[$j]->MestoOd} - {$ponude[$j]->MestoDo}</h2>";
             echo "<p>Datum od: {$ponude[$j]->DatumOd} <br/> Datum do: {$ponude[$j]->DatumDo}</p>";
             echo "<br><img src='";
             echo base_url('images/'.$ponude[$j]->prevoznoSredstvo.'_transparent.png');
             echo "' height='35' width='35'><br>";
-            echo "Broj sedišta: {$ponude[$j]->BrMesta}";
+            echo "Broj slobodnih mesta: ".($ponude[$j]->BrMesta - $brojRezervisanihMesta);
             echo "<span><img src='";
             echo base_url('images/stickman.svg.png'); 
             echo "' height='15' width='15'></span>";
-            echo "<h3>{$ponude[$j]->CenaKarte} din.</h3>";
+            echo "<h3>{$ponude[$j]->CenaKarte} €</h3>";
             echo "<input type='hidden' name='izabranaPonuda' value='{$ponude[$j]->SifP}'>";
             echo "</div></a></form></div>";
             $j++;

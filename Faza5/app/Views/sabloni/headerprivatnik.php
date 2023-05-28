@@ -94,7 +94,7 @@
                                         <li id="liAzuriraj"> <a href="<?php echo base_url('PrivatnikController/izborPonudeAzuriranje')?>">Ažuriraj punudu</a></li>
                                         <li id="liOtkazi">   <a href="otkaziPonudu.html">Otkaži ponudu</a></li>
                                         <li id="liPretplata"><a href="<?php echo base_url('PrivatnikController/promenaPretplate')?>">Promena pretplate</a></li>
-                                        <li id="liPonude">   <a href="#ponude">Postavljene ponude</a></li>
+                                        <li id="liPonude">   <a href="<?php echo base_url('PrivatnikController/index#ponude')?>">Postavljene ponude</a></li>
 
                                         
                                     </ul>

@@ -30,7 +30,7 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                      </div>";
          }
          ?>
-         <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" method="post" action="<?= site_url("PrivatnikController/napraviPonuduSubmit") ?>">
+         <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" enctype="multipart/form-data"  method="post" action="<?= site_url("PrivatnikController/napraviPonuduSubmit") ?>">
             <input type="hidden" value="<?php if (!empty($SifK)) {
                                              echo $SifK;
                                           } else echo '-1' ?>" />
@@ -41,7 +41,7 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                         <label>Prevozno sredstvo</label>
                         <select class="form-control" name="prevoznoSredstvo" required>
                            <?php
-                           $prevoznaSredstvoSesija = "";
+                           $prevoznoSredstvoSesija = "";
                            if (!empty(session()->get("prevoznoSredstvo"))) {
                               $prevoznoSredstvoSesija = session()->get("prevoznoSredstvo");
                               echo "<option>{$prevoznoSredstvoSesija}</option>";
@@ -51,7 +51,7 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                               echo "<option>{$prevoznoSredstvoSesija}</option>";
                            }
                            foreach ($prevoznaSredstva as $prevoznoSredstvo) {
-                              if ($prevoznaSredstvoSesija != $prevoznoSredstvo->Naziv) {
+                              if ($prevoznoSredstvoSesija != $prevoznoSredstvo->Naziv) {
                                  echo "<option>{$prevoznoSredstvo->Naziv}</option>";
                               }
                            }
@@ -135,7 +135,7 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label>Izaberite fotografiju</label>
-                        <input class="form-control" style="height:40px;width:270px;" placeholder="Any" type="file" name="Izaberi">
+                        <input class="form-control" style="height:40px;width:270px;" placeholder="Any" type="file" name="slika">
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label style="margin-left:70px;width:150px">Unesite otkazni rok</label>

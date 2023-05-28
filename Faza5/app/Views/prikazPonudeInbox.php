@@ -24,7 +24,13 @@ $satiDo = explode(":", $ponuda->VremeDo)[0];
 $minutiDo = explode(":", $ponuda->VremeDo)[1];
 $vremeDo = $satiDo . ":" . $minutiDo;
 
-$brMesta = $ponuda->BrMesta;
+$builder = $db->table("rezervacija");
+$rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
+$brojRezervisanihMesta = 0;
+foreach ($rezervacije as $rezervacija) {
+    $brojRezervisanihMesta += $rezervacija->BrMesta;
+}
+$brMesta = $ponuda->BrMesta - $brojRezervisanihMesta;
 
 $builder = $db->table("prevoznosredstvo");
 $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
@@ -58,7 +64,7 @@ $prosek = $suma * 1.0 / $broj;
             <div class="col-sm-12" align="center" style="margin-top: 20px;">
                 <h1 style="font-size: 3em;"><?= $mestoOd ?> -> <?= $mestoDo ?></h1>
             </div>
-            <div class="col-sm-4" style="margin-top: 30px;"><img src="https://www.vivatravel.rs/photo/56518/p/16:10" style="border: 5px solid white;"></div>
+            <div class="col-sm-4" style="margin-top: 30px;"><img src="<?= base_url("images/ponude/{$ponuda->Slika}") ?>" style="border: 5px solid white;"></div>
             <div class="col-sm-8" style="margin-top: 30px;">
                 <table class="table">
                     <tr>

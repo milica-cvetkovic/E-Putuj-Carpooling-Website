@@ -1,10 +1,21 @@
 <!-- Milica Cvetkovic 2020/0003 -->
 
+<?php 
+$db = \Config\Database::connect();
+$builder = $db->table("rezervacija");
+$rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
+$brojRezervisanihMesta = 0;
+foreach ($rezervacije as $rezervacija) {
+    $brojRezervisanihMesta += $rezervacija->BrMesta;
+}
+$brMesta = $ponuda->BrMesta - $brojRezervisanihMesta;
+?>
+
 <div class="back-image-message">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-12" align="center" style="margin-top: 20px;"><h1 style="font-size: 3em;"><?=$ponuda->MestoOd?> - <?=$ponuda->MestoDo?></h1></div>
-                <div class="col-sm-4" style="margin-top: 30px;"><img src="<?=base_url('images/'.$ponuda->Slika)?>" style="border: 5px solid white;" ></div>
+                <div class="col-sm-4" style="margin-top: 30px;"><img src="<?=base_url('images/ponude/'.$ponuda->Slika)?>" style="border: 5px solid white;" ></div>
                 <div class="col-sm-8" style="margin-top: 30px;">
                     <table class="table">
                         <tr>
@@ -26,7 +37,7 @@
                         </tr>
                         <tr>
                             <td>Broj slobodnih mesta:</td>
-                            <td><?=$ponuda->BrMesta?>
+                            <td><?=$brMesta?>
                             <span>
                                 <img src="<?=base_url('images/stickman.svg.png')?>"
                                 height="25" width="25">

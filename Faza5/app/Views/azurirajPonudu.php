@@ -49,7 +49,7 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                      </div>";
          }
          ?>
-         <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" method="post" action="<?= site_url("PrivatnikController/azuriranjePonudeSubmit/{$ponuda->SifP}") ?>">
+         <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" enctype="multipart/form-data" method="post" action="<?= site_url("PrivatnikController/azuriranjePonudeSubmit/{$ponuda->SifP}") ?>">
             <div class="row" style="margin-top:50px;margin-right:30px;margin-left:30px;">
                <div class="col-md-12">
                   <div class="row">
@@ -141,7 +141,8 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label>Izaberite fotografiju</label>
-                        <input class="form-control" style="height:40px;width:270px;" placeholder="Any" type="file" name="Izaberi">
+                        <input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
+                        <input class="form-control" style="height:40px;width:270px;" placeholder="Any" type="file" name="slika">
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label style="margin-left:30px">Unesite otkazni rok</label>

@@ -19,7 +19,9 @@
                      <h3>Nema postavljenih ponuda</h3>
                      </div>';
                echo '<div class="justify-content-center bg about" style="padding-bottom: unset;">
-               <a href="'; echo base_url("PrivatnikController/napraviPonudu"); echo '"style="background-color: rgb(63, 155, 183); ">Napravi ponudu
+               <a href="';
+               echo base_url("PrivatnikController/napraviPonudu");
+               echo '"style="background-color: rgb(63, 155, 183); ">Napravi ponudu
                </a></div>';
             } else {
                echo '<div class="row">';
@@ -45,23 +47,29 @@
                   $mesec = explode("-", $ponuda->DatumOd)[1];
                   $godina = explode("-", $ponuda->DatumOd)[0];
                   $datum = $dan . "/" . $mesec . "/" . $godina;
+                  $builder = $db->table("rezervacija");
+                  $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
+                  $brojRezervisanihMesta = 0;
+                  foreach ($rezervacije as $rezervacija) {
+                     $brojRezervisanihMesta += $rezervacija->BrMesta;
+                  }
                   echo '<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">';
                   echo "<a href='";
                   echo base_url("PrivatnikController/prikazPonude/{$ponuda->SifP}");
                   echo "'>";
                   echo '<div class="traveling-box" >';
-                  echo '<i><img src="https://www.vivatravel.rs/photo/56518/p/16:10" alt="icon" style="width:250px;height:200px" style="object-fit: scale-down; margin-top: 10px" /></i>
+                  echo '<i><img src="' . base_url("images/ponude/{$ponuda->Slika}") . '" alt="icon" style="width:250px;height:200px" style="object-fit: scale-down; margin-top: 10px" /></i>
                <h2>' . $mestoOd . ' -> ' . $mestoDo . '</h2>
                ' . $datum . ' <br><img src="';
                   echo base_url("images/{$prevoznoSredstvo}_transparent.png");
                   echo '"';
                   echo ' height="35" width="35"><br>
-               ' . $ponuda->BrMesta . ' <span><img src="';
+               ' . ($ponuda->BrMesta - $brojRezervisanihMesta) . ' <span><img src="';
                   echo base_url("images/stickman.png");
                   echo '"';
                   echo ' height="15" width="15"></span>
                <h3>' . $ponuda->CenaKarte . '€</h3>';
-                              
+
                   echo '</div>';
                   echo '</a>';
 

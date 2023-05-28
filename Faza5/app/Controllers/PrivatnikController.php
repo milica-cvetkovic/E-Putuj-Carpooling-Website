@@ -87,7 +87,6 @@ class PrivatnikController extends BaseController {
         $datumDo = $this->request->getVar("datumDo");
         $vremeOd = $this->request->getVar("vremeOd");
         $vremeDo = $this->request->getVar("vremeDo");
-        // fotografija.......
         $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
 
         $builder = $db->table("postavljenaponuda");
@@ -99,7 +98,13 @@ class PrivatnikController extends BaseController {
         foreach ($rezervacije as $rezervacija) {
             $brojRezervisanihMesta += $rezervacija->BrMesta;
         }
-        if ($brojRezervisanihMesta > $brMesta) {
+        if (strpos($_FILES['slika']['type'], "image") === false) {
+            $poruka = "Ubacen fajl nije slika";
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+        } else if ($_FILES["slika"]["size"] > 1000000) {
+            $poruka = "Maksimalna dozvoljena veličina fajla je 1000000 bajtova.";
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+        } else if ($brojRezervisanihMesta > $brMesta) {
             $poruka = "Rezervisano je " . $brojRezervisanihMesta . " tako da se ne moze smanjiti broj mesta za ponudu na " . $brMesta . ".";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
         } else if ($cena <= 0) {
@@ -125,36 +130,53 @@ class PrivatnikController extends BaseController {
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
         } else {
 
-            $builder = $db->table("mesto");
-            $SifMesOd = ($builder->where("Naziv", $mestoOd)->get()->getResult())[0]->SifM;
-            $SifMesDo = ($builder->where("Naziv", $mestoDo)->get()->getResult())[0]->SifM;
+            // cuvanje slike na serveru
+            $destinacioniFolder = FCPATH . "images\ponude\\";
+            $imeSlike = $sifP . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
+            $destinacioniFajl = $destinacioniFolder . $imeSlike;
+            if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
+                $poruka = "Nije uspelo ubacivanje slike";
+                $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            } else {
 
-            $builder = $db->table("ponuda");
-            $data = [
-                "BrMesta" => $brMesta,
-                "DatumOd" => $datumOd,
-                "DatumDo" => $datumDo,
-                "VremeOd" => $vremeOd,
-                "VremeDo" => $vremeDo,
-                "CenaKarte" => $cena,
-                "SifMesDo" => $SifMesDo,
-                "SifMesOd" => $SifMesOd,
-            ];
+                $builder = $db->table("mesto");
+                $SifMesOd = ($builder->where("Naziv", $mestoOd)->get()->getResult())[0]->SifM;
+                $SifMesDo = ($builder->where("Naziv", $mestoDo)->get()->getResult())[0]->SifM;
 
-            $builder->where("SifP", $sifP);
-            $builder->update($data);
+                $builder = $db->table("ponuda");
+                // brisanje stare slike ponude
+                $imeStareSlike = ($builder->where("SifP", $sifP)->get()->getResult())[0]->Slika;
+                if (file_exists(FCPATH . "images\ponude\\" . $imeStareSlike)) {
+                    unlink(FCPATH . "images\ponude\\" . $imeStareSlike);
+                }
 
-            $builder = $db->table("ponuda");
-            $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+                $data = [
+                    "BrMesta" => $brMesta,
+                    "DatumOd" => $datumOd,
+                    "DatumDo" => $datumDo,
+                    "VremeOd" => $vremeOd,
+                    "VremeDo" => $vremeDo,
+                    "CenaKarte" => $cena,
+                    "SifMesDo" => $SifMesDo,
+                    "SifMesOd" => $SifMesOd,
+                    "Slika" => $imeSlike
+                ];
 
-            $builder = $db->table("postavljenaponuda");
-            $data = [
-                "RokZaOtkazivanje" => $rokZaOtkazivanje
-            ];
-            $builder->where("SifP", $sifP);
-            $builder->update($data);
+                $builder->where("SifP", $sifP);
+                $builder->update($data);
 
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno azurirana ponuda!"]);
+                $builder = $db->table("ponuda");
+                $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+
+                $builder = $db->table("postavljenaponuda");
+                $data = [
+                    "RokZaOtkazivanje" => $rokZaOtkazivanje
+                ];
+                $builder->where("SifP", $sifP);
+                $builder->update($data);
+
+                $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno azurirana ponuda!"]);
+            }
         }
     }
 
@@ -180,7 +202,6 @@ class PrivatnikController extends BaseController {
         $this->prikaz("inboxPrivatnik", ["poruke" => $poruke]);
     }
 
-    // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
     public function inboxPrivatnikPoruka() {
         $izbor = $this->request->getVar("poruka");
         $Kime = session()->get("korisnik")->KorisnickoIme;
@@ -234,7 +255,6 @@ class PrivatnikController extends BaseController {
         session()->set("vremeOd", $vremeOd);
         $vremeDo = $this->request->getVar("vremeDo");
         session()->set("vremeDo", $vremeDo);
-        // fotografija.......
         $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
         session()->set("rokZaOtkazivanje", $rokZaOtkazivanje);
         $SifK = $this->request->getVar("SifK");
@@ -260,6 +280,7 @@ class PrivatnikController extends BaseController {
             $poruka = "Broj slobodnih mesta mora da bude pozitivan broj.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else {
+
             $db      = \Config\Database::connect();
             $builder = $db->table("mesto");
             $SifMesOd = ($builder->where("Naziv", $mestoOd)->get()->getResult())[0]->SifM;
@@ -267,6 +288,7 @@ class PrivatnikController extends BaseController {
 
             $builder = $db->table("prevoznosredstvo");
             $SifSred = ($builder->where("Naziv", $prevoznosredstvo)->get()->getResult())[0]->SifSred;
+
 
             $builder = $db->table("ponuda");
             $data = [
@@ -283,37 +305,53 @@ class PrivatnikController extends BaseController {
             ];
 
             $builder->insert($data);
+            $sifP = $db->insertID();
+            $destinacioniFolder = FCPATH . "images\ponude\\";
+            $imeSlike = $sifP . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
+            $destinacioniFajl = $destinacioniFolder . $imeSlike;
+            if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
+                $builder = $db->table("ponuda");
+                $builder->where("SifP", $sifP)->delete();
+                $poruka = "Nije uspelo ubacivanje slike";
+                $this->prikaz("azurirajPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
 
-            $builder = $db->table("postavljenaponuda");
-            $data = [
-                "SifP" => $db->insertID(),
-                "RokZaOtkazivanje" => $rokZaOtkazivanje
-            ];
-            $builder->insert($data);
+            } else {
+                $data = [
+                    "Slika" => $imeSlike
+                ];
+                $builder = $db->table("ponuda");
+                $builder->where("SifP", $sifP)->update($data);
+
+                $builder = $db->table("postavljenaponuda");
+                $data = [
+                    "SifP" => $sifP,
+                    "RokZaOtkazivanje" => $rokZaOtkazivanje
+                ];
+                $builder->insert($data);
 
 
-            if (!empty($SifK) && $SifK != -1) {
-                $model = new ModelPoruka();
-                $modelP = new ModelPonuda();
+                if (!empty($SifK) && $SifK != -1) {
+                    $model = new ModelPoruka();
+                    $modelP = new ModelPonuda();
 
-                $SifPonuda = $modelP->orderBy("SifP", "desc")->findAll()[0]->SifP;
-                $SifPriv = session()->get("korisnik")->SifK;
+                    $SifPonuda = $modelP->orderBy("SifP", "desc")->findAll()[0]->SifP;
+                    $SifPriv = session()->get("korisnik")->SifK;
 
-                $model->insert(["SifPondida" => $SifPonuda, "SifPriv" => $SifPriv, "SifKor" => $SifK, "SmerPoruke" => "2"]);
+                    $model->insert(["SifPondida" => $SifPonuda, "SifPriv" => $SifPriv, "SifKor" => $SifK, "SmerPoruke" => "2"]);
+                }
+                session()->remove('zatrazenaPonuda');
+                session()->remove("prevoznoSredstvo");
+                session()->remove("mestoOd");
+                session()->remove("mestoDo");
+                session()->remove("cenaKarte");
+                session()->remove("brMesta");
+                session()->remove("datumOd");
+                session()->remove("datumDo");
+                session()->remove("vremeOd");
+                session()->remove("vremeDo");
+                session()->remove("rokZaOtkazivanje");
+                $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!"]);
             }
-            session()->remove('zatrazenaPonuda');
-            session()->remove("prevoznoSredstvo");
-            session()->remove("mestoOd");
-            session()->remove("mestoDo");
-            session()->remove("cenaKarte");
-            session()->remove("brMesta");
-            session()->remove("datumOd");
-            session()->remove("datumDo");
-            session()->remove("vremeOd");
-            session()->remove("vremeDo");
-            // fotografija.......
-            session()->remove("rokZaOtkazivanje");
-            $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!"]);
         }
     }
 
