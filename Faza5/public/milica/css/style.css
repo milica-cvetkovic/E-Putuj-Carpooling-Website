@@ -2362,6 +2362,7 @@ ul.location_icon span {
      height: 100%;
      background-size: cover;
      opacity: 100%;
+     margin-bottom: -90px;
 }
 
 .star-checked{

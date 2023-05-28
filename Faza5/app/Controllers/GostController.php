@@ -121,9 +121,6 @@ class GostController extends BaseController {
    
     public function pretragaPonuda(){
         
-        // treba da se uveze slika odgovarajuceg mesta na kraju
-        // da ne moze da se unese samo jedno mesto
-        
         $resetPage = $this->request->getVar("resetPage");
         $sortiranje = $this->request->getVar("sortiranje");
         
@@ -153,8 +150,6 @@ class GostController extends BaseController {
             $vremeOd = $this->request->getVar("vremeOd");
             $vremeDo = $this->request->getVar("vremeDo");
            
-        
-        
             $this->session->set("prevoznoSredstvo", $prevoznoSredstvo);
             $this->session->set("mestoOd", $mestoOd);
             $this->session->set("mestoDo", $mestoDo);
@@ -180,8 +175,6 @@ class GostController extends BaseController {
         $datumDo = $this->session->get("datumDo");
         $vremeOd = $this->session->get("vremeOd");
         $vremeDo = $this->session->get("vremeDo");
-        
-        // proveri datum i vreme
         
         $sortiranje = $this->session->get("sortiranje");
         
@@ -223,8 +216,11 @@ class GostController extends BaseController {
                 
     }
 
-    public function prikazPonude(){
-        $this->prikaz("prikazPonude", []);
+    public function prikazPonudeGost(){
+        $ponuda = $this->request->getVar("izabranaPonuda");
+        $ponuda = $this->dohvatiPonudu($ponuda);
+        $prosek = $this->prosek($ponuda);
+        $this->prikaz("prikazPonudeGost", ["ponuda"=>$ponuda, "prosek" => $prosek]);
     }
     
     public function dohvatiKorisnika($korisnickoime){
@@ -348,16 +344,36 @@ class GostController extends BaseController {
         
     }
     
+    public function dohvatiPonudu($ponuda){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.VremeOd as VremeOd, ponuda.VremeDo as VremeDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo, ponuda.Slika as Slika, P.Naziv as NazivPretplate, ponuda.SifK as SifK, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as KorisnickoIme");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        $builder->join("privatnik", "privatnik.SifK = korisnik.SifK");
+        $builder->join("pretplata as P", "P.SifPret = privatnik.SifPret");
+        $builder->where("SifP", $ponuda);
+        
+        return $builder->get()->getResult()[0];
+        
+    }
+    
     public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage){
         
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
         
-        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.VremeOd as VremeOd, ponuda.VremeDo as VremeDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo, ponuda.Slika as Slika, P.Naziv as NazivPretplate, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as Korisnik");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        $builder->join("privatnik", "privatnik.SifK = korisnik.SifK");
+        $builder->join("pretplata as P", "P.SifPret = privatnik.SifPret");
        
         if($prevoznoSredstvo != null)
             $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
@@ -380,6 +396,8 @@ class GostController extends BaseController {
         if($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
         
+        $builder->orderBy("NazivPretplate", "asc");
+        
         $start = ($page - 1) * $numOfResultsOnPage;
         
         $builder->limit($start, $numOfResultsOnPage);
@@ -393,7 +411,7 @@ class GostController extends BaseController {
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
         
-        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo,ponuda.Slika as Slika, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as Korisnik, ponuda.SifK as SifK");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
@@ -435,6 +453,30 @@ class GostController extends BaseController {
         
         return $builder->get()->getResult();
         
+    }
+    
+    public function proveriPretplatu($SifK){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('privatnik');
+        
+        $builder->where("SifK", $SifK);
+        $result = $builder->get()->getResult()[0];
+        
+        $pretplata = $result->SifPret;
+        
+        $builder = $db->table('pretplata');
+        
+        $builder->where("SifPret", $pretplata);
+        $result = $builder->get()->getResult()[0];
+        
+        $pretplata = $result->Naziv;
+        
+        if($pretplata == "Premium"){
+            return true;
+        }
+        
+        return false;
     }
     
     public function dohvatiSvePonude(){
@@ -491,6 +533,24 @@ class GostController extends BaseController {
         
         return ($count!=0);
         
+    }
+    
+    public function prosek($ponuda){
+        // Zeljkov kod
+        $db      = \Config\Database::connect();
+        $builder = $db->table("ocena");
+        $ocene = $builder->where("SifPriv", $ponuda->SifK)->get()->getResult();
+        $broj = 0;
+        $suma = 0;
+        foreach($ocene as $ocena){
+            $suma += $ocena->Ocena;
+            $broj++;
+        }
+        if ($broj == 0) {
+            $broj = 1;
+        }
+        $prosek = $suma * 1.0 / $broj;
+        return $prosek;
     }
     
 }

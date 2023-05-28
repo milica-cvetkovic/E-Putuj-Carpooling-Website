@@ -105,10 +105,17 @@
         echo "<div class='row' style='margin-top: 40px;'>";
         $count = 3;
         while($count != 0 && $j < count($ponude)){
-            echo "<div class='col-xl-4 col-lg-4 col-md-6 col-sm-12'>
-                        <a href='prikaz_ponude_gost.html'>
-                            <div class='traveling-box'>"; // ne valja
-            echo "<i><img src='https://www.vivatravel.rs/photo/56518/p/16:10' alt='icon' style='object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;' /></i>";
+            echo "<div class='col-xl-4 col-lg-4 col-md-6 col-sm-12'>";
+            
+            echo "<form name='ponuda{$ponude[$j]->SifP}' id='ponuda{$ponude[$j]->SifP}' method='post' action='";
+            echo site_url('GostController/prikazPonudeGost');
+            echo "'>"; ?>
+            <a href="javascript:{}" onclick="document.getElementById('ponuda<?=$ponude[$j]->SifP?>').submit(); return false;">
+                            <div class='traveling-box'>
+            <?php                    
+            echo "<i><img src='";
+            echo base_url('images/'.$ponude[$j]->Slika);
+            echo "' alt='icon' style='object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;' /></i>";
             echo "<h2>{$ponude[$j]->MestoOd} - {$ponude[$j]->MestoDo}</h2>";
             echo "<p>Datum od: {$ponude[$j]->DatumOd} <br/> Datum do: {$ponude[$j]->DatumDo}</p>";
             echo "<br><img src='";
@@ -116,10 +123,11 @@
             echo "' height='35' width='35'><br>";
             echo "Broj sedišta: {$ponude[$j]->BrMesta}";
             echo "<span><img src='";
-            echo base_url('images/stickman.svg.png'); // promena ikone na osnovu odgovarajuceg prevoznog sredstva - DODATI
+            echo base_url('images/stickman.svg.png'); 
             echo "' height='15' width='15'></span>";
             echo "<h3>{$ponude[$j]->CenaKarte} din.</h3>";
-            echo "</div></a></div>";
+            echo "<input type='hidden' name='izabranaPonuda' value='{$ponude[$j]->SifP}'>";
+            echo "</div></a></form></div>";
             $j++;
             $count--;
         }
