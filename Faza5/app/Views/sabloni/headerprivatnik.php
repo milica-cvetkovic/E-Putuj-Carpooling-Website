@@ -92,7 +92,7 @@
                                         <li id="liInbox">    <a href="<?php echo base_url('PrivatnikController/inboxPrivatnik')?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a></li>
                                         <li id="liNapravi">  <a href="<?php echo base_url('PrivatnikController/napraviPonudu')?>">Napravi ponudu </a></li>
                                         <li id="liAzuriraj"> <a href="<?php echo base_url('PrivatnikController/izborPonudeAzuriranje')?>">Ažuriraj punudu</a></li>
-                                        <li id="liOtkazi">   <a href="otkaziPonudu.html">Otkaži ponudu</a></li>
+                                        <li id="liOtkazi">   <a href="<?php echo base_url('PrivatnikController/otkaziPonudu')?>">Otkaži ponudu</a></li>
                                         <li id="liPretplata"><a href="<?php echo base_url('PrivatnikController/promenaPretplate')?>">Promena pretplate</a></li>
                                         <li id="liPonude">   <a href="<?php echo base_url('PrivatnikController/index#ponude')?>">Postavljene ponude</a></li>
 
@@ -125,6 +125,9 @@
             }
             else if (url.includes("inboxPrivatnik") || url.includes("inboxPrivatnikPoruka")){
                 $("#liInbox").addClass("active");
+            }
+            else if (url.includes("otkazi")){
+                $("#liOtkazi").addClass("active");
             }
             else {
                 $("#liPocetna").addClass("active");

@@ -50,7 +50,7 @@
                                         <td>
                                             <div class="dropdown dugme" style="background-color: white; top: 0; position: absolute;">
                                                 <button class="btn btn-primary" style="background-color: rgb(242, 243, 223); margin-left: 50px;" data-bs-toggle="collapse" data-bs-target="#profil_lista">
-                                                    <img src="<?php echo base_url('images/user.png') ?>" alt="#" style="width: 0.75cm;" /> <span style="color: black;">ivkoviclana</span>
+                                                    <img src="<?php echo base_url('images/user.png') ?>" alt="#" style="width: 0.75cm;" /> <span style="color: black;"><?= session()->get("korisnik")->KorisnickoIme ?></span>
                                                 </button>
                                                 <div id="profil_lista" class="collapse">
                                                     <ul class="dropdown-menu">

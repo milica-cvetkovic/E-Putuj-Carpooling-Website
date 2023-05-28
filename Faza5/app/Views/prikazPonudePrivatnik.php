@@ -118,10 +118,27 @@ $prosek = $suma * 1.0 / $broj;
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6"><a href="<?php echo base_url("PrivatnikController/azurirajPonudu/{$ponuda->SifP}") ?>"><button type="button" class="btn make-offer-btn" style="position: relative; left: 20%;">Ažuriraj ponudu</button></a></div>
-                        <div class="col-sm-6" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;"><a href="#">Otkaži ponudu</a></button></div>
+                        <div class="col-sm-6" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;" data-bs-toggle="modal" data-bs-target="#modalOtkazivanje"><a>Otkaži ponudu</a></button></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="modalOtkazivanje" tabindex="-1" role="dialog" aria-labelledby="modalOtkazivanjeNaslov" aria-hidden="true" data-bs-backdrop="false">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+         <div class="modal-header" style="text-align: center;">
+            <h5 style="color: black" class="modal-title" id="modalOtkazivanjeNaslov">Da li ste sigurni da želite da otkažete ponudu?</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-footer" style="display: flex; justify-content: center;">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Odustani</button>
+            <a href="<?= base_url("PrivatnikController/otkaziPonuduSubmit/{$ponuda->SifP}")?>"><button id="otkazi" type="button" class="btn btn-success">Otkaži ponudu</button></a>
+         </div>
+      </div>
+   </div>
 </div>

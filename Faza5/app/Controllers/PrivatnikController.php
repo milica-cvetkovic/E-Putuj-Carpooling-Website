@@ -271,7 +271,7 @@ class PrivatnikController extends BaseController {
             $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($mestoOd == $mestoDo) {
-            $poruka = "Mesto polaska i dolaska moraju biti različiti." . $mestoOd . "|" . $mestoDo;
+            $poruka = "Mesto polaska i dolaska moraju biti različiti.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($rokZaOtkazivanje <= 0 || (strtotime($datumOd) - strtotime(date("Y-m-d"))) / (60 * 60 * 24) < $rokZaOtkazivanje - 1) {
             $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i da se uklapa u period do realizacije ponude.";
@@ -314,7 +314,6 @@ class PrivatnikController extends BaseController {
                 $builder->where("SifP", $sifP)->delete();
                 $poruka = "Nije uspelo ubacivanje slike";
                 $this->prikaz("azurirajPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
-
             } else {
                 $data = [
                     "Slika" => $imeSlike
@@ -356,7 +355,75 @@ class PrivatnikController extends BaseController {
     }
 
     public function otkaziPonudu() {
-        $this->prikaz("otkaziPonudu", []);
+        $db      = \Config\Database::connect();
+        $builder = $db->table('korisnik');
+
+        $korisnik = ($builder->where("KorisnickoIme", "zeljko123")->get()->getResult())[0];
+        $this->session->set("korisnik", $korisnik);
+
+        $builder = $db->table("ponuda");
+        $ponude = $builder->where("SifK", $korisnik->SifK)->get()->getResult();
+        $this->prikaz("otkaziPonudu", ["ponude" => $ponude]);
+    }
+
+    public function otkaziPonuduSubmit($sifP) {
+        $db      = \Config\Database::connect();
+
+        $builder = $db->table("ponuda");
+        $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+        $builder = $db->table("korisnik");
+        $privatnik = ($builder->where("SifK", $ponuda->SifK)->get()->getResult())[0];
+
+        $builder = $db->table("kupljenakarta");
+        $karte = $builder->where("SifP", $sifP)->get()->getResult();
+        foreach ($karte as $karta) {
+            $builder = $db->table("korisnik");
+            $korisnik = ($builder->where("SifK", $karta->SifK)->get()->getResult())[0];
+
+            $builder = $db->table("uplata");
+            $uplate = $builder->where("SifKar", $karta->SifKar)->get()->getResult();
+            foreach ($uplate as $uplata) {
+                $builder = $db->table("korisnik");
+                $korisnik = ($builder->where("SifK", $karta->SifK)->get()->getResult())[0];
+                $data = [
+                    "Novac" => $korisnik->Novac + $uplata->Iznos
+                ];
+                $builder->where("SifK", $korisnik->SifK);
+                $builder->update($data);
+
+                $builder = $db->table("korisnik");
+                $privatnik = ($builder->where("SifK", $ponuda->SifK)->get()->getResult())[0];
+                $data = [
+                    "Novac" => $privatnik->Novac - $uplata->Iznos
+                ];
+                $builder->where("SifK", $privatnik->SifK);
+                $builder->update($data);
+            }
+            $builder = $db->table("uplata");
+            $builder->where("SifKar", $karta->SifKar);
+            $builder->delete();
+        }
+        $builder = $db->table("kupljenakarta");
+        $builder->where("SifP", $sifP);
+        $builder->delete();
+
+        $builder = $db->table("rezervacija");
+        $builder->where("SifP", $sifP);
+        $builder->delete();
+
+        $builder = $db->table("ponuda");
+        $imeSlike = ($builder->where("SifP", $sifP)->get()->getResult())[0]->Slika;
+        if (file_exists(FCPATH . "images\ponude\\" . $imeSlike)) {
+            unlink(FCPATH . "images\ponude\\" . $imeSlike);
+        }
+
+        $builder = $db->table("ponuda");
+        $builder->where("SifP", $sifP);
+        $builder->delete();
+
+        $builder = $db->table("ponuda");
+        $ponude = $builder->where("SifK", session()->get("korisnik")->SifK)->get()->getResult();
+        $this->prikaz("otkaziPonudu", ["ponude" => $ponude, "poruka" => "Ponuda je otkazana!"]);
     }
 
 
