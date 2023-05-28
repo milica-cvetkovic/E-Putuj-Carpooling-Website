@@ -34,6 +34,20 @@ $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult()
 $rokZaOtkaz = $postavljenaponuda->RokZaOtkazivanje;
 
 $cena = $ponuda->CenaKarte;
+
+$builder = $db->table("ocena");
+$ocene = $builder->where("SifPriv", $ponuda->SifK)->get()->getResult();
+$broj = 0;
+$suma = 0;
+foreach($ocene as $ocena){
+    $suma += $ocena->Ocena;
+    $broj++;
+}
+if ($broj == 0) {
+    $broj = 1;
+}
+$prosek = $suma * 1.0 / $broj;
+
 ?>
 
 
@@ -50,11 +64,11 @@ $cena = $ponuda->CenaKarte;
                     <tr>
                         <!-- nzm sta da radim sa ovim ?? nemamo ocenu u bazi nigde -->
                         <td>Privatnik <?= session()->get("korisnik")->KorisnickoIme ?></td>
-                        <td><span class="fa fa-star star-checked"></span>
-                            <span class="fa fa-star star-checked"></span>
-                            <span class="fa fa-star"></span>
-                            <span class="fa fa-star"></span>
-                            <span class="fa fa-star"></span>
+                        <td><span class="fa fa-star <?php if ($prosek >= 1) echo 'star-checked' ?>"></span>
+                            <span class="fa fa-star <?php if ($prosek >= 2) echo 'star-checked' ?>"></span>
+                            <span class="fa fa-star <?php if ($prosek >= 3) echo 'star-checked' ?>"></span>
+                            <span class="fa fa-star <?php if ($prosek >= 4) echo 'star-checked' ?>"></span>
+                            <span class="fa fa-star <?php if ($prosek >= 5) echo 'star-checked' ?>"></span>
                         </td>
                     </tr>
                     <tr>

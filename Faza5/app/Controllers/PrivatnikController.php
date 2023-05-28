@@ -16,10 +16,10 @@ class PrivatnikController extends BaseController {
 
     private function prikaz($stranica, $podaci) {
 
-        $SifK=session()->get("korisnik")->SifK;
-        $model=new ModelPoruka();
-        $br=$model->select("count(*) as br")->where("SifPriv",$SifK)->where("SmerPoruke",1)->findAll()[0]->br;
-        echo view("sabloni/headerprivatnik",["brPoruka"=>$br]);
+        $SifK = session()->get("korisnik")->SifK;
+        $model = new ModelPoruka();
+        $br = $model->select("count(*) as br")->where("SifPriv", $SifK)->where("SmerPoruke", 1)->findAll()[0]->br;
+        echo view("sabloni/headerprivatnik", ["brPoruka" => $br]);
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
     }
@@ -154,7 +154,7 @@ class PrivatnikController extends BaseController {
             $builder->where("SifP", $sifP);
             $builder->update($data);
 
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno napravljena ponuda!"]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno azurirana ponuda!"]);
         }
     }
 
@@ -162,93 +162,103 @@ class PrivatnikController extends BaseController {
      * Anja Curic 2020/0513
      */
     public function inboxPrivatnik() {
-        $Kime=session()->get("korisnik")->KorisnickoIme;
-        $model=new ModelPoruka();
-        $modelK=new ModelKorisnik();
-        $modelP=new ModelPonuda(); 
-        $modelM=new ModelMesto();
+        $Kime = session()->get("korisnik")->KorisnickoIme;
+        $model = new ModelPoruka();
+        $modelK = new ModelKorisnik();
+        $modelP = new ModelPonuda();
+        $modelM = new ModelMesto();
 
-        $korisnik=$modelK->where("KorisnickoIme",$Kime)->findAll()[0];
+        $korisnik = $modelK->where("KorisnickoIme", $Kime)->findAll()[0];
 
-        $poruke=$model->where("SifPriv",$korisnik->SifK)->where("SmerPoruke",1)->findAll();
-        foreach($poruke as $poruka){ 
-            $ponuda=$modelP->where("SifP",$poruka->SifPonuda)->findAll()[0];
-            $poruka->mestoOd=$modelM->where("SifM",$ponuda->SifMesOd)->findAll()[0];
-            $poruka->korisnik=$modelK->where("SifK",$poruka->SifKor)->findAll()[0]->KorisnickoIme;
+        $poruke = $model->where("SifPriv", $korisnik->SifK)->where("SmerPoruke", 1)->findAll();
+        foreach ($poruke as $poruka) {
+            $ponuda = $modelP->where("SifP", $poruka->SifPonuda)->findAll()[0];
+            $poruka->mestoOd = $modelM->where("SifM", $ponuda->SifMesOd)->findAll()[0];
+            $poruka->korisnik = $modelK->where("SifK", $poruka->SifKor)->findAll()[0]->KorisnickoIme;
         }
-        
-        $this->prikaz("inboxPrivatnik", ["poruke"=>$poruke]);
+
+        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke]);
     }
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
     public function inboxPrivatnikPoruka() {
-        $izbor=$this->request->getVar("poruka");
-        $Kime=session()->get("korisnik")->KorisnickoIme;
-        $model=new ModelPoruka();
-        $modelK=new ModelKorisnik();
-        $modelZ=new ModelZahtevPonuda();
-        $modelP=new ModelPonuda(); 
-        $modelM=new ModelMesto();
-        $modelS=new ModelSredstvo();
+        $izbor = $this->request->getVar("poruka");
+        $Kime = session()->get("korisnik")->KorisnickoIme;
+        $model = new ModelPoruka();
+        $modelK = new ModelKorisnik();
+        $modelZ = new ModelZahtevPonuda();
+        $modelP = new ModelPonuda();
+        $modelM = new ModelMesto();
+        $modelS = new ModelSredstvo();
 
-        $korisnik=$modelK->where("KorisnickoIme",$Kime)->findAll()[0];
+        $korisnik = $modelK->where("KorisnickoIme", $Kime)->findAll()[0];
 
-        $poruke=$model->where("SifPriv",$korisnik->SifK)->where("SmerPoruke",1)->findAll();
-        foreach($poruke as $poruka){ 
-            $ponuda=$modelP->where("SifP",$poruka->SifPonuda)->findAll()[0];
-            $poruka->mestoOd=$modelM->where("SifM",$ponuda->SifMesOd)->findAll()[0];
-            $poruka->korisnik=$modelK->where("SifK",$poruka->SifKor)->findAll()[0]->KorisnickoIme;
+        $poruke = $model->where("SifPriv", $korisnik->SifK)->where("SmerPoruke", 1)->findAll();
+        foreach ($poruke as $poruka) {
+            $ponuda = $modelP->where("SifP", $poruka->SifPonuda)->findAll()[0];
+            $poruka->mestoOd = $modelM->where("SifM", $ponuda->SifMesOd)->findAll()[0];
+            $poruka->korisnik = $modelK->where("SifK", $poruka->SifKor)->findAll()[0]->KorisnickoIme;
         }
-        
-        $izbor=$model->where("SifPor",$izbor)->findAll()[0];
-        $odabrana=$modelP->where("SifP",$izbor->SifPonuda)->findAll()[0];
-        $odabrana->CenaOd=$modelZ->where("SifP",$izbor->SifPonuda)->findAll()[0]->CenaOd;
-        $odabrana->CenaDo=$modelZ->where("SifP",$izbor->SifPonuda)->findAll()[0]->CenaDo;
-        $odabrana->mestoOd=$modelM->where("SifM",$odabrana->SifMesOd)->findAll()[0];
-        $odabrana->mestoDo=$modelM->where("SifM",$odabrana->SifMesDo)->findAll()[0];
-        $odabrana->sredstvo=$modelS->where("SifSred",$odabrana->SifSred)->findAll()[0]->Naziv;
-        $this->prikaz("inboxPrivatnik", ["poruke"=>$poruke,"odabrana"=>$odabrana]);
+
+        $izbor = $model->where("SifPor", $izbor)->findAll()[0];
+        $odabrana = $modelP->where("SifP", $izbor->SifPonuda)->findAll()[0];
+        $odabrana->CenaOd = $modelZ->where("SifP", $izbor->SifPonuda)->findAll()[0]->CenaOd;
+        $odabrana->CenaDo = $modelZ->where("SifP", $izbor->SifPonuda)->findAll()[0]->CenaDo;
+        $odabrana->mestoOd = $modelM->where("SifM", $odabrana->SifMesOd)->findAll()[0];
+        $odabrana->mestoDo = $modelM->where("SifM", $odabrana->SifMesDo)->findAll()[0];
+        $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
+        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke, "odabrana" => $odabrana]);
     }
 
     public function napraviPonudu() {
-        $SifK=$this->request->getVar("SifK");
-        $this->prikaz("napraviPonudu", ["SifK"=>$SifK]);
+        $SifK = $this->request->getVar("SifK");
+        $this->prikaz("napraviPonudu", ["SifK" => $SifK]);
     }
 
     public function napraviPonuduSubmit() {
         $prevoznosredstvo = $this->request->getVar("prevoznoSredstvo");
+        session()->set("prevoznoSredstvo", $prevoznosredstvo);
         $mestoOd = $this->request->getVar("mestoPolaska");
+        session()->set("mestoOd", $mestoOd);
         $mestoDo = $this->request->getVar("mestoDolaska");
+        session()->set("mestoDo", $mestoDo);
         $cena = $this->request->getVar("cenaKarte");
+        session()->set("cenaKarte", $cena);
         $brMesta = $this->request->getVar("brMesta");
+        session()->set("brMesta", $brMesta);
         $datumOd = $this->request->getVar("datumOd");
+        session()->set("datumOd", $datumOd);
         $datumDo = $this->request->getVar("datumDo");
+        session()->set("datumDo", $datumDo);
         $vremeOd = $this->request->getVar("vremeOd");
+        session()->set("vremeOd", $vremeOd);
         $vremeDo = $this->request->getVar("vremeDo");
+        session()->set("vremeDo", $vremeDo);
         // fotografija.......
         $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
-        $SifK=$this->request->getVar("SifK");
+        session()->set("rokZaOtkazivanje", $rokZaOtkazivanje);
+        $SifK = $this->request->getVar("SifK");
         if ($cena <= 0) {
             $poruka = "Cena mora da bude pozitivan broj.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($datumOd . " " . $vremeOd <= date("Y-m-d H:i:s") || $datumDo . " " . $vremeDo <= date("Y-m-d H:i:s")) {
             $poruka = "Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($datumOd > $datumDo) {
             $poruka = "Datum dolaska mora biti kasnije od datuma polaska.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($datumOd == $datumDo && $vremeOd >= $vremeDo) {
             $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($mestoOd == $mestoDo) {
             $poruka = "Mesto polaska i dolaska moraju biti različiti." . $mestoOd . "|" . $mestoDo;
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($rokZaOtkazivanje <= 0 || (strtotime($datumOd) - strtotime(date("Y-m-d"))) / (60 * 60 * 24) < $rokZaOtkazivanje - 1) {
             $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i da se uklapa u period do realizacije ponude.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else if ($brMesta <= 0) {
             $poruka = "Broj slobodnih mesta mora da bude pozitivan broj.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka,"SifK"=>$SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
         } else {
             $db      = \Config\Database::connect();
             $builder = $db->table("mesto");
@@ -282,18 +292,27 @@ class PrivatnikController extends BaseController {
             $builder->insert($data);
 
 
-            if(!empty($SifK) && $SifK!=-1){ 
-                $model=new ModelPoruka();
-                $modelP=new ModelPonuda();
+            if (!empty($SifK) && $SifK != -1) {
+                $model = new ModelPoruka();
+                $modelP = new ModelPonuda();
 
-                $SifPonuda=$modelP->orderBy("SifP","desc")->findAll()[0]->SifP;
-                $SifPriv=session()->get("korisnik")->SifK;
+                $SifPonuda = $modelP->orderBy("SifP", "desc")->findAll()[0]->SifP;
+                $SifPriv = session()->get("korisnik")->SifK;
 
-                $model->insert(["SifPondida"=>$SifPonuda,"SifPriv"=>$SifPriv,"SifKor"=>$SifK,"SmerPoruke"=>"2"]);
-
+                $model->insert(["SifPondida" => $SifPonuda, "SifPriv" => $SifPriv, "SifKor" => $SifK, "SmerPoruke" => "2"]);
             }
             session()->remove('zatrazenaPonuda');
-            // mozda da se ode na prikaz te ponude??
+            session()->remove("prevoznoSredstvo");
+            session()->remove("mestoOd");
+            session()->remove("mestoDo");
+            session()->remove("cenaKarte");
+            session()->remove("brMesta");
+            session()->remove("datumOd");
+            session()->remove("datumDo");
+            session()->remove("vremeOd");
+            session()->remove("vremeDo");
+            // fotografija.......
+            session()->remove("rokZaOtkazivanje");
             $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!"]);
         }
     }
@@ -332,8 +351,7 @@ class PrivatnikController extends BaseController {
                 $poruka = "Uspesno ažuriranje";
                 $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka]);
             }
-        }
-        else {
+        } else {
             if ($pretplata->Naziv == "Standard") {
                 $poruka = "Vec imate standard pretplatu.";
                 $this->prikaz("promenaPretplate", ["poruka" => $poruka]);

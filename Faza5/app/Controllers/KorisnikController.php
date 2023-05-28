@@ -10,7 +10,7 @@ class KorisnikController extends BaseController {
         $SifK=session()->get("korisnik")->SifK;
         $model=new ModelPoruka();
         $br=$model->select("count(*) as br")->where("SifKor",$SifK)->where("SmerPoruke",2)->findAll()[0]->br;
-        echo view("sabloni/headerprivatnik",["brPoruka"=>$br]);
+        echo view("sabloni/headerkorisnik",["brPoruka"=>$br]);
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
     }
@@ -90,8 +90,12 @@ class KorisnikController extends BaseController {
         $this->prikaz("prikazPonudeInbox", []);
     }
 
-    public function prikazPonude(){
-        $this->prikaz("prikazPonude", []);
+    public function prikazPonude($sifP){
+        $db      = \Config\Database::connect();
+        $builder = $db->table("ponuda");
+        $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+
+        $this->prikaz("prikazPonude", ["ponuda" => $ponuda]);
     }
 
     public function report(){

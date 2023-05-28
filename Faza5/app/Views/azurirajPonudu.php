@@ -38,12 +38,12 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                         <h5>Mesta polaska i dolaska, kao i datum i vreme se ne mogu ažurirati jer je neko rezervisao.</h5>
                      </div>';
          }
-         if (!empty($poruka)){
+         if (!empty($poruka)) {
             echo "<div style='display: flex; justify-content: center; color: red'
                         <h5>{$poruka}</h5>
                      </div>";
          }
-         if (!empty($porukaUspeh)){
+         if (!empty($porukaUspeh)) {
             echo "<div style='display: flex; justify-content: center; color: green'
                         <h5>{$porukaUspeh}</h5>
                      </div>";
@@ -63,7 +63,10 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                         <label>Mesto od</label>
                         <select class="form-control" name="mestoPolaska" <?php if (!empty($rezervacije)) {
                                                                               echo "readonly";
-                                                                           } ?>>
+                                                                           } else {
+                                                                              echo "required";
+                                                                           }
+                                                                           ?>>
                            <?php
                            echo "<option>{$mestoOd}</option>";
                            foreach ($mesta as $mesto) {
@@ -78,7 +81,10 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                         <label>Mesto do</label>
                         <select class="form-control" name="mestoDolaska" <?php if (!empty($rezervacije)) {
                                                                               echo "readonly";
-                                                                           } ?>>
+                                                                           } else {
+                                                                              echo "required";
+                                                                           }
+                                                                           ?>>
                            <?php
                            echo "<option>{$mestoDo}</option>";
                            foreach ($mesta as $mesto) {
@@ -91,35 +97,47 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                      </div>
                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label>Cena prevoza</label>
-                        <input class="form-control" value="<?= $cena ?>" type="number" name="cenaKarte">
+                        <input class="form-control" value="<?= $cena ?>" type="number" name="cenaKarte" required>
                      </div>
                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label> Broj putnika</label>
-                        <input class="form-control" value="<?= $brMesta ?>" type="number" name="brMesta">
+                        <input class="form-control" value="<?= $brMesta ?>" type="number" name="brMesta" required>
                      </div>
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                         <label>Datum polaska</label>
                         <input class="form-control" value="<?= $datumOd ?>" type="date" name="datumOd" <?php if (!empty($rezervacije)) {
                                                                                                             echo "readonly";
-                                                                                                         } ?>>
+                                                                                                         } else {
+                                                                                                            echo "required";
+                                                                                                         }
+                                                                                                         ?>>
                      </div>
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                         <label>Datum dolaska</label>
                         <input class="form-control" value="<?= $datumDo ?>" type="date" name="datumDo" <?php if (!empty($rezervacije)) {
                                                                                                             echo "readonly";
-                                                                                                         } ?>>
+                                                                                                         } else {
+                                                                                                            echo "required";
+                                                                                                         }
+                                                                                                         ?>>
                      </div>
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                         <label>Vreme polaska</label>
                         <input class="form-control" value="<?= $vremeOd ?>" type="time" name="vremeOd" <?php if (!empty($rezervacije)) {
                                                                                                             echo "readonly";
-                                                                                                         } ?>>
+                                                                                                         } else {
+                                                                                                            echo "required";
+                                                                                                         }
+                                                                                                         ?>>
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
                         <label>Vreme dolaska</label>
                         <input class="form-control" value="<?= $vremeDo ?>" type="time" name="vremeDo" <?php if (!empty($rezervacije)) {
                                                                                                             echo "readonly";
-                                                                                                         } ?>>
+                                                                                                         } else {
+                                                                                                            echo "required";
+                                                                                                         }
+                                                                                                         ?>>
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label>Izaberite fotografiju</label>
@@ -127,7 +145,7 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12" style="margin-bottom:30px">
                         <label style="margin-left:30px">Unesite otkazni rok</label>
-                        <input class="form-control" style="height:40px;width:250px;margin-left:30px" value="<?= $rokZaOtkazivanje ?>" type="number" name="rokZaOtkazivanje">
+                        <input class="form-control" style="height:40px;width:250px;margin-left:30px" value="<?= $rokZaOtkazivanje ?>" type="number" name="rokZaOtkazivanje" required>
                      </div>
                   </div>
                </div>

@@ -99,7 +99,7 @@
             echo '<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">';
             echo "<a href='";
             echo base_url("PrivatnikController/prikazPonude/{$ponuda->SifP}");
-            echo "'>";  // link treba da ima deo za odredjenu ponudu
+            echo "'>"; 
             echo '<div class="traveling-box" >';
             echo '<i><img src="https://www.vivatravel.rs/photo/56518/p/16:10" alt="icon" style="width:250px;height:200px" style="object-fit: scale-down; margin-top: 10px" /></i>
                <h2>' . $mestoOd . ' -> ' . $mestoDo . '</h2>
