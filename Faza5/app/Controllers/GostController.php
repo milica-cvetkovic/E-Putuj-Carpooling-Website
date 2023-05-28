@@ -35,6 +35,10 @@ class GostController extends BaseController {
             return $this->login($poruke);
         }
         
+        if(!$this->registracijaOdobrena($korisnik)){
+            return redirect()->to(site_url("GostController/index"));
+        }
+        
         if($this->proveraKorisnickoIme($korisnickoime) == 0){
             $poruke['korisnickoime'] = "Neispravno korisničko ime.";
             return $this->login($poruke);
@@ -82,8 +86,7 @@ class GostController extends BaseController {
             return $this->registracija($poruke);
         }
        
-         // dodaj 14 karaktera max
-        $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/";
+        $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,14}$/";
         if(preg_match($regex, $lozinka) == 0){
             $poruke['lozinka'] = "Lozinka u neispravnom formatu.";
             return $this->registracija($poruke);
@@ -94,15 +97,8 @@ class GostController extends BaseController {
             return $this->registracija($poruke);
         }
         
-        switch($tip){
-            case "Korisnik":
-                $this->sacuvajObicnogKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka);
-                break;
-            case "Privatnik":
-                // pretplata ? 
-                $this->sacuvajPrivatnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka);
-                break;
-        }
+        $this->sacuvajKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka, $tip);
+        
         return redirect()->to(site_url("GostController/index"));
     }
     
@@ -238,7 +234,29 @@ class GostController extends BaseController {
         
         $builder->where("KorisnickoIme", $korisnickoime);
         
-        return $builder->get()->getResult();
+        return $builder->get()->getResult()[0];
+        
+    }
+    
+    
+    public function sacuvajKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka, $tip){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('korisnik');
+        
+        $data = [
+          "KorisnickoIme" => $korisnickoime,
+          "Lozinka" => $lozinka,
+          "Ime" => $ime,
+          "Prezime" => $prezime,
+          "Email" => $email,
+          "BrTel" => $brtel,
+          "TraziBrisanje" => 0,
+          "PrivatnikIliKorisnik" => $tip,
+          "Novac" => 0
+        ];
+        
+        $builder->insert($data);
         
     }
     
@@ -449,6 +467,29 @@ class GostController extends BaseController {
         
         $builder->limit($start, $numOfResultsOnPage);
         return $builder->get()->getResult();
+        
+    }
+    
+    public function registracijaOdobrena($korisnik){
+        
+        $db      = \Config\Database::connect();
+        
+        if($korisnik->PrivatnikIliKorisnik == "K"){
+            $builder = $db->table('obicankorisnik');
+            $builder->where("SifK", $korisnik->SifK);
+        }
+        else if ($korisnik->PrivatnikIliKorisnik == "P"){
+            $builder = $db->table('privatnik');
+            $builder->where("SifK", $korisnik->SifK);
+        }
+        else{
+            return false;
+        }
+        
+        $count = $builder->get()->getResult();
+        $count = count($count);
+        
+        return ($count!=0);
         
     }
     
