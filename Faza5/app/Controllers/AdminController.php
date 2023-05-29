@@ -154,7 +154,7 @@ class AdminController extends BaseController {
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
         $nalog=$model->where("SifK",$id)->findAll()[0];
-        if($nalog->PrivatnikIliKoirsnik=="K"){ 
+        if($nalog->PrivatnikIliKorisnik=="K"){ 
             $db=\Config\Database::connect();
             $builder=$db->table("obicankorisnik");
             
@@ -223,7 +223,7 @@ class AdminController extends BaseController {
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
         $val=$model->where("SifK",$id)->findAll()[0];
-        $model->update($id,["KorisnickoIme"=>$val->KorisnickoIme,"Lozinka"=>$val->Lozinka,"BrTel"=>$val->BrTel,"Ime"=>$val->Ime,"Prezime"=>$val->Prezime,"Email"=>$val->Email,"PrivatnikIliKoirsnik"=>$val->PrivatnikIliKoirsnik,"TraziBrisanje"=>"0"]);
+        $model->update($id,["KorisnickoIme"=>$val->KorisnickoIme,"Lozinka"=>$val->Lozinka,"BrTel"=>$val->BrTel,"Ime"=>$val->Ime,"Prezime"=>$val->Prezime,"Email"=>$val->Email,"PrivatnikIliKorisnik"=>$val->PrivatnikIliKorisnik,"TraziBrisanje"=>"0"]);
         redirect($this->ukloniNalog());
     }
 

@@ -13,5 +13,5 @@ class ModelKorisnik extends Model
 
     protected $returnType     = 'object';
 
-    protected $allowedFields = ['SifK', 'KorisnickoIme','Lozinka','TraziBrisanje','Ime','Prezime','BrTel','Email','PrivatnikIliKoirsnik'];
+    protected $allowedFields = ['SifK', 'KorisnickoIme','Lozinka','TraziBrisanje','Ime','Prezime','BrTel','Email','PrivatnikIliKorisnik'];
 }

@@ -3,112 +3,76 @@
         <div class="row">
             <div class="col-sm-4 back-image-inbox">
                 <ul style="color:black;">
-                    <li>
-                        <div class="container-fluid" style="margin: 2em;">
-                            <div><b>zex</b></div>
-                            <a href="inbox_korisnik_poruka1.html">
-                                <div class="hoverable-cells div-messages" style="padding-left: 15px;">
-                                    Mesto polaska: Beograd;...
+                    <?php 
+                        foreach($poruke as $poruka){ 
+                            echo "<li>
+                                <div class='container-fluid' style='margin: 2em;'>
+                                    <div><b>".$poruka->korisnik."</b></div>
+                                    <a href=".base_url('KorisnikController/inboxKorisnikPoruka?poruka='.$poruka->SifPor).">
+                                        <div class='hoverable-cells div-messages'style='padding-left: 15px;'>
+                                            Mesto polaska:".$poruka->mestoOd->Naziv."
+                                        </div>
+                                    </a>
                                 </div>
-                            </a>
-                        </div>
-                    </li>
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;">
-                    <li>
-                        <div class="container-fluid" style="margin: 2em;">
-                            <div><b>zeljko.urosevic</b></div>
-                            <a href="inbox_korisnik_poruka1.html">
-                                <div class="hoverable-cells div-messages" style="padding-left: 15px;">
-                                    Mesto polaska: Pozarevac;...
-                                </div>
-                            </a>
-                        </div>
-                    </li>
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;">
-                    <li>
-                        <div class="container-fluid" style="margin: 2em;">
-                            <div><b>peka</b></div>
-                            <a href="inbox_korisnik_poruka1.html">
-                                <div class="hoverable-cells div-messages" style="padding-left: 15px;">
-                                    Mesto polaska: Velika Plana;...
-                                </div>
-                            </a>
-                        </div>
-                    </li>
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;">
-                    <li>
-                        <div class="container-fluid" style="margin: 2em;">
-                            <div><b>mika</b></div>
-                            <a href="inbox_korisnik_poruka1.html">
-                                <div class="hoverable-cells div-messages" style="padding-left: 15px;">
-                                    Mesto polaska: Trebinje;...
-                                </div>
-                            </a>
-                        </div>
-                    </li>
-                    <hr style="height:1px;border:none;color:#333;background-color:#333;">
-                    <li>
-                        <div class="container-fluid" style="margin: 2em;">
-                            <div><b>zika</b></div>
-                            <a href="inbox_korisnik_poruka1.html">
-                                <div class="hoverable-cells div-messages" style="padding-left: 15px;">
-                                    Mesto polaska: Prag;...
-                                </div>
-                            </a>
-                        </div>
-                    </li>
+                            </li>"; 
+                        }
+                    ?>
                 </ul>
             </div>
             <?php
-                echo "<div class='col-sm-8 justify-content-center back-image-message'>
-                <div class='container-fluid'>
-                    <table class='table' style='color: black; border-width: 2px; text-align: center;'>
-                        <tr>
-                            <td>Mesto polaska</td>
-                            <td>Beograd</td>
-                        </tr>
-                        <tr>
-                            <td>Mesto dolaska</td>
-                            <td>Budimpešta</td>
-                        </tr>
-                        <tr>
-                            <td>Datum polaska</td>
-                            <td>24/7/2023</td>
-                        </tr>
-                        <tr>
-                            <td>Datum dolaska</td>
-                            <td>25/7/2023</td>
-                        </tr>
-                        <tr>
-                            <td>Vreme polaska</td>
-                            <td>18:00</td>
-                        </tr>
-                        <tr>
-                            <td>Vreme dolaska</td>
-                            <td>01:00</td>
-                        </tr>
-                        <tr>
-                            <td>Broj slobodnih mesta</td>
-                            <td>5</td>
-                        </tr>
-                        <tr>
-                            <td>Prevozno sredstvo</td>
-                            <td>Automobil</td>
-                        </tr>
-                        <tr>
-                            <td>Rok za otkaz rezervacije</td>
-                            <td>3 dana</td>
-                        </tr>
-                        <tr>
-                            <td>Cena</td>
-                            <td>28€</td>
-                        </tr>
-                    </table>
+                if(!empty($odabrana)){ 
+                    session()->set("zatrazenaPonuda",$odabrana);
+                    echo "<div class='col-sm-8 justify-content-center back-image-message'>
                     <div class='container-fluid'>
-                        <a href='prikaz_ponude_inbox.html'><button type='button' class='btn make-offer-btn' style='position: relative; left: 50%;'>Pogledaj ponudu</button> </a>
-                    </div>
+                       <table class='table' style='color: black; border-width: 2px; text-align: center;'>
+                          <tr>
+                             <td>Mesto polaska</td>
+                             <td>".$odabrana->mestoOd->Naziv."</td>
+                          </tr>
+                          <tr>
+                             <td>Mesto dolaska</td>
+                             <td>".$odabrana->mestoDo->Naziv."</td>
+                          </tr>
+                          <tr>
+                             <td>Datum polaska od</td>
+                             <td>".$odabrana->DatumOd."</td>
+                          </tr>
+                          <tr>
+                             <td>Datum polaska do</td>
+                             <td>".$odabrana->DatumDo."</td>
+                          </tr>
+                          <tr>
+                             <td>Vreme polaska od</td>
+                             <td>".$odabrana->VremeOd."</td>
+                          </tr>
+                          <tr>
+                             <td>Vreme polaska do</td>
+                             <td>".$odabrana->VremeDo."</td>
+                          </tr>
+                          <tr>
+                             <td>Prevozno sredstvo</td>
+                             <td>".$odabrana->sredstvo."</td>
+                          </tr>
+                          <tr>
+                             <td>Rok za otkazivanje</td>
+                             <td>".$odabrana->RokZaOtkazivanje."</td>
+                          </tr>
+                          <tr>
+                             <td>Cena karte</td>
+                             <td>".$odabrana->CenaKarte."</td>
+                          </tr>
+                          <tr>
+                             <td>Broj putnika</td>
+                             <td>".$odabrana->BrMesta."</td>
+                          </tr>
+                       </table>
+                    <div class='container-fluid'>
+                          <a href=".base_url('KorisnikController/prikazPonudeInbox?SifP='.$odabrana->SifP)."><button type='button' class='btn make-offer-btn' style='position: relative; left: 50%;margin-bottom:10%'>Pregledaj
+                                ponudu</button></a>
+                       </div>
                 </div>
             </div>";
+            }
             ?>
         </div>
     </div>

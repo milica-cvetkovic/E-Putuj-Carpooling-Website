@@ -35,7 +35,7 @@ $brMesta = $ponuda->BrMesta - $brojRezervisanihMesta;
 $builder = $db->table("prevoznosredstvo");
 $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
 
-$builder = $db->table("postavljenaponuda");
+$builder = $db->table("vanrednaponuda");
 $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
 $rokZaOtkaz = $postavljenaponuda->RokZaOtkazivanje;
 
@@ -69,7 +69,7 @@ $prosek = $suma * 1.0 / $broj;
                 <table class="table">
                     <tr>
                         <!-- nzm sta da radim sa ovim ?? nemamo ocenu u bazi nigde -->
-                        <td>Privatnik <?= session()->get("korisnik")->KorisnickoIme ?></td>
+                        <td>Privatnik <?= $ponuda->Korisnik ?></td>
                         <td><span class="fa fa-star <?php if ($prosek >= 1) echo 'star-checked' ?>"></span>
                             <span class="fa fa-star <?php if ($prosek >= 2) echo 'star-checked' ?>"></span>
                             <span class="fa fa-star <?php if ($prosek >= 3) echo 'star-checked' ?>"></span>
@@ -86,7 +86,7 @@ $prosek = $suma * 1.0 / $broj;
                         <td>Vreme dolaska: <?= $vremeDo ?></td>
                     </tr>
                     <tr>
-                        <td>Broj slobodnih mesta:</td>
+                        <td>Broj mesta:</td>
                         <td><?= $brMesta ?>
                             <span>
                                 <img src="<?php echo base_url('images/stickman.png') ?>" height="25" width="25">
@@ -117,8 +117,8 @@ $prosek = $suma * 1.0 / $broj;
             <div class="col-sm-8">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-sm-6"><a href="<?php echo base_url("PrivatnikController/azurirajPonudu/{$ponuda->SifP}") ?>"><button type="button" class="btn make-offer-btn" style="position: relative; left: 20%;">Prihvati</button></a></div>
-                        <div class="col-sm-6" style="margin-bottom: 15px;"><button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;"><a href="#">Odbij</a></button></div>
+                        <div class="col-sm-6"><a href="<?php echo base_url("KorisnikController/obrisiPoruku?SifP=".$ponuda->SifP) ?>"><button type="button" class="btn make-offer-btn" style="position: relative; left: 20%;">Prihvati</button></a></div>
+                        <div class="col-sm-6" style="margin-bottom: 15px;"><a href="<?php echo base_url("KorisnikController/obrisiPoruku?SifP=".$ponuda->SifP) ?>"><button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;">Odbij</button></a></div>
                     </div>
                 </div>
             </div>

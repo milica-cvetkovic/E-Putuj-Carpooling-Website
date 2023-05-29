@@ -31,9 +31,11 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
          }
          ?>
          <form style="background-image:url(<?php echo base_url('anja/css/slikaPozadine.jpg') ?>);color:#004043;border-radius:10px;" enctype="multipart/form-data"  method="post" action="<?= site_url("PrivatnikController/napraviPonuduSubmit") ?>">
-            <input type="hidden" value="<?php if (!empty($SifK)) {
-                                             echo $SifK;
-                                          } else echo '-1' ?>" />
+            <input type="hidden" name='SifK' value="<?php 
+            if ($SifK!=null && $SifK>=0) {
+                  echo $SifK;
+            } 
+            else {echo -1; }?>" />
             <div class="row" style="margin-top:50px;margin-right:30px;margin-left:30px;">
                <div class="col-md-12">
                   <div class="row">

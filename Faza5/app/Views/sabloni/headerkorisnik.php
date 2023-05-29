@@ -29,6 +29,8 @@
     <link rel="stylesheet" href="<?php echo base_url('zeljko/css/style.css') ?>">
     <link rel="stylesheet" href="<?php echo base_url('lana/css/pozadina.css') ?>">
     <link rel="stylesheet" href="<?php echo base_url('lana/css/korisnik.css') ?>">
+
+    <script src="<?php echo base_url('milica/js/jquery.min.js') ?>"></script>
 </head>
 
 <body class="main-layout">
@@ -85,15 +87,15 @@
                                 <nav class="main-menu">
                                     <ul class="menu-area-main">
 
-                                        <li class="active"><a href="indexkorisnik.html">Početna</a></li>
-                                        <li><a href="#contact">Kontakt</a></li>
-                                        <li> <a href="inbox_korisnik.html">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
-                                        <li> <a href="indexkorisnik.html#about">O nama</a> </li>
-                                        <li><a href="pregled_ponuda.html">Pretraži ponude</a></li>
-                                        <li><a href="trazenje_voznje.html">Zatraži vožnju</a></li>
-                                        <li><a href="KorisnikController/rezervacije">Moje rezervacije</a></li>
-                                        <li><a href="spinthewheel.html">Točak sreće</a></li>
-                                        <li><a href="KorisnikController/report">Report</a></li>
+                                        <li id="liPocetnaK"><a href="<?php echo base_url('KorisnikController/index') ?>">Početna</a></li>
+                                        <li id="liKontakt"><a href="#contact">Kontakt</a></li>
+                                        <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
+                                        <li id="liONama"> <a href="indexkorisnik.html#about">O nama</a> </li>
+                                        <li id="liPregledaj"><a href="pregled_ponuda.html">Pretraži ponude</a></li>
+                                        <li id="liTrazi"><a href="trazenje_voznje.html">Zatraži vožnju</a></li>
+                                        <li id="liRezervisi"><a href="<?php echo base_url('KorisnikController/rezervacije')?>">Moje rezervacije</a></li>
+                                        <li id="liTocak"><a href="spinthewheel.html">Točak sreće</a></li>
+                                        <li id="liReport"><a href="KorisnikController/report">Report</a></li>
 
                                     </ul>
                                 </nav>
@@ -104,3 +106,30 @@
             </div>
         </div>
     </header>
+    <script>
+        $(document).ready(function(){
+            // inkrementalno dodavati svaki active
+            let url = window.location.href;
+            if (url.includes("napraviPonudu")){
+                $("#liONama").addClass("active");
+            }
+            else if (url.includes("zurira")){
+                $("#liPregledaj").addClass("active");
+            }
+            else if (url.includes("report")){
+                $("#liReport").addClass("active");
+            }
+            else if (url.includes("promenaPretplate")){
+                $("#liPretplata").addClass("active");
+            }
+            else if (url.includes("inboxKorisnik") || url.includes("inboxKorisnikPoruka") || url.includes("prikazPonudeInbox") ){
+                $("#liInboxK").addClass("active");
+            }
+            else if (url.includes("otkazi")){
+                $("#liTrazi").addClass("active");
+            }
+            else {
+                $("#liPocetnaK").addClass("active");
+            }
+        });
+    </script>

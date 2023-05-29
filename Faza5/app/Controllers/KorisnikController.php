@@ -4,6 +4,11 @@ namespace App\Controllers;
 
 use App\Models\ModelPoruka;
 use App\Models\ModelObicanKorisnikLana;
+use App\Models\ModelKorisnik;
+use App\Models\ModelVanrednaPonuda;
+use App\Models\ModelPonuda;
+use App\Models\ModelMesto;
+use App\Models\ModelSredstvo;
 
 class KorisnikController extends BaseController
 {
@@ -30,13 +35,72 @@ class KorisnikController extends BaseController
      */
     public function inboxKorisnik()
     {
-        $this->prikaz("inboxPrivatnik", []);
+        $Kime = session()->get("korisnik")->KorisnickoIme;
+        $model = new ModelPoruka();
+        $modelK = new ModelKorisnik();
+        $modelP = new ModelPonuda();
+        $modelM = new ModelMesto();
+
+        $korisnik = $modelK->where("KorisnickoIme", $Kime)->findAll()[0];
+
+        $poruke = $model->where("SifKor", $korisnik->SifK)->where("SmerPoruke", 2)->findAll();
+        foreach ($poruke as $poruka) {
+            $ponuda = $modelP->where("SifP", $poruka->SifPonuda)->findAll()[0];
+            $poruka->mestoOd = $modelM->where("SifM", $ponuda->SifMesOd)->findAll()[0];
+            $poruka->korisnik = $modelK->where("SifK", $poruka->SifPriv)->findAll()[0]->KorisnickoIme;
+        }
+        $this->prikaz("inboxKorisnik", ["poruke" => $poruke]);
     }
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
+
+    public function obrisiPoruku(){ 
+        $SifP=$this->request->getVar("SifP");
+        $SifK=session()->get("korisnik")->SifK;
+
+        $model=new ModelPoruka();
+
+        $SifPor=$model->where("SifKor",$SifK)->where("SifPonuda",$SifP)->findAll()[0]->SifPor;
+        $model->delete($SifPor);
+       /* $db      = \Config\Database::connect();
+        $builder = $db->table('rezervacija');
+        
+        
+
+        $data = ["SifK"=>$SifK,"SifP"=>$SifP,"DatumRezervacije"=>];
+        
+        $builder->insert($data);//dodavanje rezervacije*/
+        $this->inboxKorisnik();
+        return;
+
+    }
     public function inboxKorisnikPoruka()
     {
-        $this->prikaz("inboxKorisnikPoruka", []);
+        $izbor = $this->request->getVar("poruka");
+        $Kime = session()->get("korisnik")->KorisnickoIme;
+        $model = new ModelPoruka();
+        $modelK = new ModelKorisnik();
+        $modelZ = new ModelVanrednaPonuda();
+        $modelP = new ModelPonuda();
+        $modelM = new ModelMesto();
+        $modelS = new ModelSredstvo();
+
+        $korisnik = $modelK->where("KorisnickoIme", $Kime)->findAll()[0];
+
+        $poruke = $model->where("SifKor", $korisnik->SifK)->where("SmerPoruke", 2)->findAll();
+        foreach ($poruke as $poruka) {
+            $ponuda = $modelP->where("SifP", $poruka->SifPonuda)->findAll()[0];
+            $poruka->mestoOd = $modelM->where("SifM", $ponuda->SifMesOd)->findAll()[0];
+            $poruka->korisnik = $modelK->where("SifK", $poruka->SifPriv)->findAll()[0]->KorisnickoIme;
+        }
+
+        $izbor = $model->where("SifPor", $izbor)->findAll()[0];
+        $odabrana = $modelP->where("SifP", $izbor->SifPonuda)->findAll()[0];
+        $odabrana->RokZaOtkazivanje = $modelZ->where("SifP", $izbor->SifPonuda)->findAll()[0]->RokZaOtkazivanje;
+        $odabrana->mestoOd = $modelM->where("SifM", $odabrana->SifMesOd)->findAll()[0];
+        $odabrana->mestoDo = $modelM->where("SifM", $odabrana->SifMesDo)->findAll()[0];
+        $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
+        $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana]);
     }
 
     public function izmenaProfila()
@@ -93,7 +157,12 @@ class KorisnikController extends BaseController
     // vrv ce moci da se ujedini sa prikazom ponude posto se samo dugmici razlikuju
     public function prikazPonudeInbox()
     {
-        $this->prikaz("prikazPonudeInbox", []);
+        $SifP=$this->request->getVar("SifP");
+        $model=new ModelPonuda();
+        $modelK=new ModelKorisnik();
+        $ponuda=$model->where("SifP",$SifP)->findAll()[0];
+        $ponuda->Korisnik=$modelK->where("SifK",$ponuda->SifK)->findAll()[0]->KorisnickoIme;
+        $this->prikaz("prikazPonudeInbox", ["ponuda"=>$ponuda]);
     }
 
     public function prikazPonude($sifP)

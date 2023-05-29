@@ -233,6 +233,7 @@ class PrivatnikController extends BaseController {
 
     public function napraviPonudu() {
         $SifK = $this->request->getVar("SifK");
+       
         $this->prikaz("napraviPonudu", ["SifK" => $SifK]);
     }
 
@@ -258,6 +259,7 @@ class PrivatnikController extends BaseController {
         $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
         session()->set("rokZaOtkazivanje", $rokZaOtkazivanje);
         $SifK = $this->request->getVar("SifK");
+        
         if ($cena <= 0) {
             $poruka = "Cena mora da bude pozitivan broj.";
             $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
@@ -313,30 +315,55 @@ class PrivatnikController extends BaseController {
                 $builder = $db->table("ponuda");
                 $builder->where("SifP", $sifP)->delete();
                 $poruka = "Nije uspelo ubacivanje slike";
-                $this->prikaz("azurirajPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+                $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
             } else {
-                $data = [
-                    "Slika" => $imeSlike
-                ];
-                $builder = $db->table("ponuda");
-                $builder->where("SifP", $sifP)->update($data);
-
-                $builder = $db->table("postavljenaponuda");
-                $data = [
-                    "SifP" => $sifP,
-                    "RokZaOtkazivanje" => $rokZaOtkazivanje
-                ];
-                $builder->insert($data);
+                
 
 
-                if (!empty($SifK) && $SifK != -1) {
+                if ($SifK!=null && $SifK != -1) {
                     $model = new ModelPoruka();
                     $modelP = new ModelPonuda();
 
-                    $SifPonuda = $modelP->orderBy("SifP", "desc")->findAll()[0]->SifP;
+
                     $SifPriv = session()->get("korisnik")->SifK;
 
-                    $model->insert(["SifPondida" => $SifPonuda, "SifPriv" => $SifPriv, "SifKor" => $SifK, "SmerPoruke" => "2"]);
+                    $model->insert(["SifPriv"=>$SifPriv,"SifKor"=>$SifK,"SifPonuda"=>$sifP,"SmerPoruke"=>"2"]);
+
+                    $data = [
+                        "Slika" => $imeSlike
+                    ];
+                    $builder = $db->table("ponuda");
+                    $builder->where("SifP", $sifP)->update($data);
+    
+                    $builder = $db->table("vanrednaponuda");
+                    $data = [
+                        "SifP" => $sifP,
+                        "RokZaOtkazivanje" => $rokZaOtkazivanje
+                    ];
+                    $builder->insert($data);
+
+                    $ponuda=session()->get("zatrazenaPonuda");
+
+                    $SifPor=$model->where("SifPonuda",$ponuda->SifP)->where("SifKor",$SifK)->where("SifPriv",$SifPriv)->findAll()[0]->SifPor;
+                    $model->delete($SifPor);
+
+                    
+
+
+                }
+                else{ 
+                    $data = [
+                        "Slika" => $imeSlike
+                    ];
+                    $builder = $db->table("ponuda");
+                    $builder->where("SifP", $sifP)->update($data);
+    
+                    $builder = $db->table("postavljenaponuda");
+                    $data = [
+                        "SifP" => $sifP,
+                        "RokZaOtkazivanje" => $rokZaOtkazivanje
+                    ];
+                    $builder->insert($data);
                 }
                 session()->remove('zatrazenaPonuda');
                 session()->remove("prevoznoSredstvo");
@@ -349,7 +376,7 @@ class PrivatnikController extends BaseController {
                 session()->remove("vremeOd");
                 session()->remove("vremeDo");
                 session()->remove("rokZaOtkazivanje");
-                $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!"]);
+                $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!","SifK"=>-1]);
             }
         }
     }

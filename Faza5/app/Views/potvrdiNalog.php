@@ -39,7 +39,7 @@
                     <h3>Tip</h3>
                     <input type='text' disabled value=";
                     $tip="";
-                    if($odabran->PrivatnikIliKoirsnik=='K')$tip="Običan korisnik";
+                    if($odabran->PrivatnikIliKorisnik=='K')$tip="Običan korisnik";
                     else $tip="Privatnik";
                     echo
                     $tip." />
