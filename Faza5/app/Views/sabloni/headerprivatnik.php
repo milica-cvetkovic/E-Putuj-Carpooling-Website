@@ -56,7 +56,7 @@
                                                 </button>
                                                 <div id="profil_lista" class="collapse">
                                                     <ul class="dropdown-menu">
-                                                        <li><a href="korisnik1.html" class="dropdown-item">Izmeni
+                                                        <li><a href="<?=base_url("PrivatnikController/izmenaProfila")?>" class="dropdown-item">Izmeni
                                                                 profil</a></li>
                                                         <li><a href="index.html" class="dropdown-item">Log out</a></li>
                                                     </ul>

@@ -1,13 +1,17 @@
-let container = document.querySelector(".container");
+$(document).ready(function(){
+	let container = document.querySelector(".container");
 let btn = document.getElementById("spin");
 let number = Math.ceil(Math.random() * 1000);
 
 btn.onclick = function () {
-	
+	// var myButton = $('#spin_dugme');
+	// myButton.disabled = true;
 	console.log("EVPPPPP NE ZNMAM")
 		//disable dugme
-		var myButton = $('#spin');
+		//  myButton = $('#spin');
 		// myButton.disabled = true;
+		myButton = $('#spin_dugme');
+		myButton.disabled = true;
 		if (parseInt($("#tokeni")) == 0) {
 			alert("Nema tokena")
 			return;
@@ -15,12 +19,11 @@ btn.onclick = function () {
 		// console.log(document.getElementById("tokeni"));
 		var podaci = "nista";
 		console.log("teodora");
-		console.log(broj);
+		
 		container.style.transform = "rotate(" + number + "deg)";
 		broj = (number + 22.5) % 360 / 45;
 		number += Math.ceil(Math.random() * 1000);
 
-		console.log(broj);
 		if (parseInt(broj) != 5) {
 			var p = {
 				broj: podaci,
@@ -74,8 +77,12 @@ btn.onclick = function () {
 			// console.log("lanaaa");
 			$("#dobitak").val(podaci);
 			// let myButton = document.getElementById('spin');
+			myButton = $('#spin_dugme');
+			if(myButton.disabled){
+				myButton.disabled = false;
 
-			// myButton.disabled = true;
+			}
+			
 			// myButton = document.getElementById('spin_dugme');
 			// myButton.disabled = false;
 			// console.log(myButton.disabled);
@@ -84,3 +91,4 @@ btn.onclick = function () {
 
 		}, 3000)
 }
+})

@@ -1,6 +1,7 @@
-<!-- Željko Urošević 2020/0073 -->
+    <!-- Željko Urošević 2020/0073 -->
 
 <?php
+
 $db = \Config\Database::connect();
 $builder = $db->table('mesto');
 $mestoOd = ($builder->where("SifM", $ponuda->SifMesOd)->get()->getResult())[0]->Naziv;
@@ -25,12 +26,13 @@ $minutiDo = explode(":", $ponuda->VremeDo)[1];
 $vremeDo = $satiDo . ":" . $minutiDo;
 
 $builder = $db->table("rezervacija");
+$privatnik= $db->table('korisnik')->where("SifK",$ponuda->SifK)->get()->getResult()[0]->KorisnickoIme;
 $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
 $brojRezervisanihMesta = 0;
 foreach ($rezervacije as $rezervacija) {
     $brojRezervisanihMesta += $rezervacija->BrMesta;
 }
-$brMesta = $ponuda->BrMesta - $brojRezervisanihMesta;
+$brMesta = $ponuda->BrMesta ;
 
 $builder = $db->table("prevoznosredstvo");
 $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
@@ -71,7 +73,7 @@ $prosek = $suma * 1.0 / $broj;
                 <table class="table">
                     <tr>
                         <!-- nzm sta da radim sa ovim ?? nemamo ocenu u bazi nigde -->
-                        <td>Privatnik <?= session()->get("korisnik")->KorisnickoIme ?></td>
+                        <td>Privatnik <?= $privatnik ?></td>
                         <td><span class="fa fa-star <?php if ($prosek >= 1) echo 'star-checked' ?>"></span>
                             <span class="fa fa-star <?php if ($prosek >= 2) echo 'star-checked' ?>"></span>
                             <span class="fa fa-star <?php if ($prosek >= 3) echo 'star-checked' ?>"></span>
@@ -120,12 +122,12 @@ $prosek = $suma * 1.0 / $broj;
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-sm-6">
-                            <button type="button" class="btn make-offer-btn open-button" style="position: relative; left: 20%;" onclick="openForm()">
+                            <button type="button"  name= "rezervisi" class="btn make-offer-btn open-button" style="position: relative; left: 20%;" onclick="openForm()">
                                 Rezerviši
                             </button>
                             <div class="form-popup" id="myForm">
                                 <table class="table table-borderless" style="opacity:95%;color:white;background-color: #004043;width:400px;height:500px;">
-                                    <form class="form-container ">
+                                    <form class="form-container"  action= "<?=base_url("KorisnikController/prikazPonude/".$ponuda->SifP."/rezervisi")?>"   method="POST" >
 
                                         <tr>
                                             <td colspan='2'>
@@ -145,7 +147,7 @@ $prosek = $suma * 1.0 / $broj;
                                         </tr>
                                         <tr>
                                             <td><label for="psw"><b>Broj mesta</b></label></td>
-                                            <td align="center"><input type="number" id="psw" style="width:100%"></td>
+                                            <td align="center"><input name="BrMesta" type="number" id="psw" style="width:100%"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
@@ -161,12 +163,12 @@ $prosek = $suma * 1.0 / $broj;
                             </div>
                         </div>
                         <div class="col-sm-6" style="margin-bottom: 15px;">
-                            <button type="button" class="btn make-offer-btn" style="position: relative; left: -10%;" onclick="openForm1()">
+                            <button type="button" name= "kupi" class="btn make-offer-btn" style="position: relative; left: -10%;" onclick="openForm1()">
                                 Kupi kartu
                             </button>
                             <div class="form-popup" id="myForm1">
                                 <table class="table table-borderless" style="opacity:95%;color:white;background-color: #004043;width:400px;height:500px;">
-                                    <form class="form-container ">
+                                    <form class="form-container"  action= "<?=base_url("KorisnikController/prikazPonude/".$ponuda->SifP."/kupi")?>" method="POST" >
 
                                         <tr>
                                             <td colspan='2'>
@@ -185,18 +187,19 @@ $prosek = $suma * 1.0 / $broj;
                                         </tr>
                                         <tr>
                                             <td><label for="psw"><b>Broj mesta</b></label></td>
-                                            <td align="center"><input type="number" id="psw" style="width:100%"></td>
+                                            <td align="center"><input name="BrMesta" type="number" id="psw" style="width:100%"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
                                                 <hr />
                                             </td>
                                         </tr>
+                                        
                                         <tr>
                                             <td><label for="placanje"><b>Način plaćanja</b></label></td>
                                             <td align="center"> <select name="placanje" id="placanje" style="width:100%">
                                                     <option value="gotovina">Gotovina</option>
-                                                    <option value="kartica">Kartica</option>
+                                                    
                                                 </select>
                                         <tr>
                                             <td colspan="2">
@@ -205,6 +208,14 @@ $prosek = $suma * 1.0 / $broj;
                                         </tr>
                                         </td>
                                         </tr>
+                                        <?php if (isset($mojenagrade)) : ?>
+                                        <?php foreach ($mojenagrade as $nagrada) : ?>
+                                            <tr>
+                                                <td><label for="opcija1"><b><?= $nagrada->Iznos . $nagrada->TipPoklona ?></b></label><br></td>
+                                                <td><input type="radio" name="grupa" value=<?= $nagrada->SifPokl ?>></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                         <tr>
                                             <td align="center"><button type="submit" class="btn " style="background-color: pink;width:100px;">Kupi</button></td>
                                             <td align="center"><button type="button" class="btn cancel" style="background-color: pink;width:100px" onclick="closeForm1()">Odustani</button></td>

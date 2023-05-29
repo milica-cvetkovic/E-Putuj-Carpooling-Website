@@ -13,6 +13,7 @@ use App\Models\ModelPonuda;
 use App\Models\ModelMesto;
 use App\Models\ModelSredstvo;
 
+use  App\Controllers\GostController;
 
 class KorisnikController extends BaseController
 {
@@ -27,16 +28,17 @@ class KorisnikController extends BaseController
         echo view("sabloni/footer");
     }
 
+
     public function index()
     {
+
+
         $this->prikaz("indexkorisnik", []);
     }
 
     // dalje su samo fje za testiranje prikaza
 
-    /**
-     * Anja Curic 2020/0513
-     */
+
     public function inboxKorisnik()
     {
         $Kime = session()->get("korisnik")->KorisnickoIme;
@@ -58,15 +60,16 @@ class KorisnikController extends BaseController
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
 
-    public function obrisiPoruku(){ 
-        $SifP=$this->request->getVar("SifP");
-        $SifK=session()->get("korisnik")->SifK;
+    public function obrisiPoruku()
+    {
+        $SifP = $this->request->getVar("SifP");
+        $SifK = session()->get("korisnik")->SifK;
 
-        $model=new ModelPoruka();
+        $model = new ModelPoruka();
 
-        $SifPor=$model->where("SifKor",$SifK)->where("SifPonuda",$SifP)->findAll()[0]->SifPor;
+        $SifPor = $model->where("SifKor", $SifK)->where("SifPonuda", $SifP)->findAll()[0]->SifPor;
         $model->delete($SifPor);
-       /* $db      = \Config\Database::connect();
+        /* $db      = \Config\Database::connect();
         $builder = $db->table('rezervacija');
 
         $data = ["SifK"=>$SifK,"SifP"=>$SifP,"DatumRezervacije"=>];
@@ -74,8 +77,8 @@ class KorisnikController extends BaseController
         $builder->insert($data);//dodavanje rezervacije*/
         $this->inboxKorisnik();
         return;
-
     }
+
     public function inboxKorisnikPoruka()
     {
         $izbor = $this->request->getVar("poruka");
@@ -159,21 +162,67 @@ class KorisnikController extends BaseController
     // vrv ce moci da se ujedini sa prikazom ponude posto se samo dugmici razlikuju
     public function prikazPonudeInbox()
     {
-        $SifP=$this->request->getVar("SifP");
-        $model=new ModelPonuda();
-        $modelK=new ModelKorisnik();
-        $ponuda=$model->where("SifP",$SifP)->findAll()[0];
-        $ponuda->Korisnik=$modelK->where("SifK",$ponuda->SifK)->findAll()[0]->KorisnickoIme;
-        $this->prikaz("prikazPonudeInbox", ["ponuda"=>$ponuda]);
+        $SifP = $this->request->getVar("SifP");
+        $model = new ModelPonuda();
+        $modelK = new ModelKorisnik();
+        $ponuda = $model->where("SifP", $SifP)->findAll()[0];
+        $ponuda->Korisnik = $modelK->where("SifK", $ponuda->SifK)->findAll()[0]->KorisnickoIme;
+        $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda]);
     }
 
-    public function prikazPonude($sifP)
+    public function prikazPonude($sifP, $tip = "nista")
     {
+
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        
+
         $db      = \Config\Database::connect();
+
+        $model = new ModelObicanKorisnikLana($db);
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
+        
+        $new_res =[];
+        foreach($res as $r){
+           array_push ($new_res,$r->SifPokl);
 
-        $this->prikaz("prikazPonude", ["ponuda" => $ponuda]);
+        }
+        // print_r($new_res);
+        $res_1 = array_unique($new_res);
+        $res=[];
+        foreach($res_1 as $r){
+            array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
+        }
+        
+        
+        $data['mojenagrade']= $res;
+        
+        if ($this->request->getMethod() == 'post') {
+            if ($_POST) {
+                
+                $BrMesta = $this->request->getVar("BrMesta");
+                if (!empty($BrMesta)) {
+                    $SifPokl="";
+                
+                    if(isset($_POST['grupa'])){
+                    $SifPokl = $_POST['grupa'];}
+                    // echo $SifPokl;
+               
+                    if ($tip == "kupi") {
+                        // echo "kupovina";
+                        $model->kupovina_karata($sifP, $SifK, $BrMesta,$SifPokl);
+                    }
+                    if ($tip == "rezervisi") {
+                        // echo "rezervacija";
+                        $model->rezervacija_karata($sifP, $SifK, $BrMesta);
+                    }
+                }
+            }
+        }
+        $data['ponuda'] = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+        
+        $this->prikaz("prikazPonude", $data);
     }
 
     public function report()
@@ -203,41 +252,80 @@ class KorisnikController extends BaseController
 
     public function rezervacije()
     {
-      
+
         $db = db_connect();
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $model = new ModelObicanKorisnikLana($db);
         $data = [];
-        $SifK = session()->get("korisnik")->SifK;  // dohvati 
-       
-        $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
         
+        $new_res =[];
+        foreach($res as $r){
+           array_push ($new_res,$r->SifPokl);
+
+        }
+        // print_r($new_res);
+        $res_1 = array_unique($new_res);
+        $res=[];
+        foreach($res_1 as $r){
+            array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
+        }
+        
+        
+        $data['mojenagrade']= $res;
+        
+
+        $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
+
         // print_r($data["mojeRezervacije"]);
         $this->prikaz("rezervacije", $data);
     }
-    
-    public function kupi_kartu(){
+
+    public function kupi_kartu()
+    {
         $db = db_connect();
         $data = [];
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
-        $SifK = session()->get("korisnik")->SifK;  // dohvati 
 
+
+
+
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
         
+        $new_res =[];
+        foreach($res as $r){
+           array_push ($new_res,$r->SifPokl);
 
-        $SifK = session()->get("korisnik")->SifK;  // dohvati 
-       
+        }
+        // print_r($new_res);
+        $res_1 = array_unique($new_res);
+        $res=[];
+        foreach($res_1 as $r){
+            array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
+        }
+        
+        
+        $data['mojenagrade']= $res;
+
         if ($this->request->getMethod() == 'post') {
 
 
             if ($_POST) {
-                $SifR= $_POST['SifR'];
+                $SifR = $_POST['SifR'];
                 $BrMesta = $_POST['BrMesta'];
+                $SifPokl="";
+                
+                if(isset($_POST['grupa'])){
+                $SifPokl = $_POST['grupa'];}
+                // echo $SifPokl;
                 // echo $BrMesta;
-                $uspijeh = $model->kupi_kartu($SifR,$SifK,$BrMesta);
+                $uspijeh = $model->kupi_kartu($SifR, $SifK, $BrMesta,$SifPokl);
                 // da dodam neka obavjestenja
-                if(!$uspijeh){
+                if (!$uspijeh) {
                     //alert
-                }else{
+                } else {
                     //nesto alert
                 }
             }
@@ -257,24 +345,27 @@ class KorisnikController extends BaseController
         $data['sredstva'] = $model->svaSredstva();
 
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
-       
+
         if ($this->request->getMethod() == 'post') {
 
 
             if ($_POST) {
                 if (
-                    $_POST['CenaOd'] > $_POST['CenaDo'] ||
+                   
                     $_POST['BrojPutnika'] < 0 ||
-                    $_POST['DatumDo'] < $_POST['DatumOd']
+                    $_POST['DatumOd']." ".$_POST['VremeOd'] <= date("Y-m-d H:i:s")||
+                    $_POST['DatumDo']." ".$_POST['VremeDo'] <= date("Y-m-d H:i:s")||
+                    $_POST['CenaDo']<$_POST['CenaOd'] 
+
+
+                    
                 ) {
-                    // $_POST['VremeDo']<$_POST['VremeOd'] nez 
+                   
+                   
 
                     $data['poruka'] = "Greska pri unosu podataka";
                 } else {
-                    echo $_POST['prevoz'];
-                    echo $_POST['CenaOd'];
-                    echo $_POST['DatumDo'];
-                    echo $_POST['VremeDo'];
+                    
                     $ponuda = [
                         'Sred' => $_POST['prevoz'],
                         'SifMesDo' => $_POST['MesDo'],
@@ -290,7 +381,7 @@ class KorisnikController extends BaseController
 
                     ];
 
-                    print_r($ponuda);
+                    // print_r($ponuda);
 
                     $model = new ModelObicanKorisnikLana($db);
                     $model->posaljiVandrednuVoznju($ponuda);
@@ -308,14 +399,14 @@ class KorisnikController extends BaseController
         $SifK = "2";
         $db = db_connect();
         $data = [];
-        
+
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
-       
+
         if ($this->request->getMethod() == 'post') {
 
             if ($_POST) {
-               
+
                 $poklon = $_POST['poklon'];
                 $model->azuriraj_poklone_i_tokene($poklon, $SifK);
                 $data['tokena'] = $db->table('obicankorisnik')->where('SifK=', $SifK)->get()->getResult()[0]->token; // iz baze za korisnika
@@ -328,7 +419,4 @@ class KorisnikController extends BaseController
 
         echo view('tocakSrece', $data);
     }
-
-   
-    
 }

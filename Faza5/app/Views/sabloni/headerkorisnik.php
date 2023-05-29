@@ -56,7 +56,7 @@
                                                 </button>
                                                 <div id="profil_lista" class="collapse">
                                                     <ul class="dropdown-menu">
-                                                        <li><a href="korisnik1.html" class="dropdown-item">Izmeni
+                                                        <li><a href="<?=base_url("KorisnikController/izmenaProfila")?>" class="dropdown-item">Izmeni
                                                                 profil</a></li>
                                                         <li><a href="index.html" class="dropdown-item">Log out</a></li>
                                                     </ul>
@@ -91,8 +91,8 @@
                                         <li id="liPocetnaK"><a href="<?php echo base_url('KorisnikController/index') ?>">Početna</a></li>
                                         <li><a href="#contact">Kontakt</a></li>
                                         <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
-                                        <li> <a href="indexkorisnik.html#about">O nama</a> </li>
-                                        <li><a href="pregled_ponuda.html">Pretraži ponude</a></li>
+                                        <li> <a href="#about">O nama</a> </li>
+                                        <li><a href="<?=base_url("KorisnikController/index")?>">Pretraži ponude</a></li>
                                         <li><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
                                         <li><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>
                                         <li><a href="<?=base_url("KorisnikController/tocakSrece")?>">Točak sreće</a></li>

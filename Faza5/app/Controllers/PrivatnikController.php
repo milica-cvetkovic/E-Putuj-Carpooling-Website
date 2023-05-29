@@ -2,7 +2,7 @@
 // Željko Urošević 2020/0073 
 
 namespace App\Controllers;
-
+use App\Models\ModelObicanKorisnikLana;
 use App\Models\ModelPoruka;
 use App\Models\ModelKorisnik;
 use App\Models\ModelZahtevPonuda;
@@ -502,6 +502,24 @@ class PrivatnikController extends BaseController {
         }
     }
     public function izmenaProfila() {
-        $this->prikaz("izmenaProfila", []);
+        $data = [];
+        $db = db_connect();
+        $model = new ModelObicanKorisnikLana($db);
+        // $SifK =  session()->get("korisnik")->SifK;
+        $SifK = "2";
+        if ($this->request->getMethod() == 'post') {
+            if ($_POST) {
+                $data['poruka'] = "post";
+                $ime = $_POST['ime'];
+                $prezime = $_POST['prezime'];
+                $lozinka = $_POST['lozinka'];
+                $email = $_POST['email'];
+                // $prfilna = $_POST[''] IZMJENA PROFILNE
+                $profilna = null;
+
+                $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+            }
+        }
+        $this->prikaz("izmenaProfila", $data);
     }
 }
