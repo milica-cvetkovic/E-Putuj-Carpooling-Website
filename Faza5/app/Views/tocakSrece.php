@@ -4,11 +4,12 @@
 <section>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="<?= base_url("lana/css/spin.css")?>">
-    <form action="<?= base_url("KorisnikController/tocakSrece")?>" method="POST" id="myForm">
-    <input type="submit"  id="spin_dugme"  value="Preuzmi nagradu">
-    <button type="submit" id="spin">Spin </button>
+    
+    <button id="spin" >Spin</button>
 
-	
+	<form action="<?= base_url("KorisnikController/tocakSrece")?>" method="POST" id="myForm">
+    <input type="submit"  id="spin_dugme" style="width: 200px; height: 40px; margin-top: 30px;"  value="Preuzmi nagradu">
+    
     
 	<span class="arrow"></span>
 <div class="row">
@@ -24,16 +25,20 @@
     </div>
     
     
+    
 <div class="justify-content-center" style="margin: auto; width: 50%;" ;>
 <label style="font-weight: bold; font-family: Georgia, 'Times New Roman', Times, serif;" >Rezultat: </label>
 <div class="polje justify-content-center" > <input name="poklon" id="dobitak" value="20%" readonly ></div>
 <label style="font-weight: bold; font-family: Georgia, 'Times New Roman', Times, serif;" >Preostalo: </label>
 <div class="polje justify-content-center" > <span id="tokeni"><?=$tokena?> </span></div>
 
+</form>
+
+
 
 </div>
 
-</form>
+
 
 <script src="<?= base_url("lana/js/spininjs.js")?>"></script>
 

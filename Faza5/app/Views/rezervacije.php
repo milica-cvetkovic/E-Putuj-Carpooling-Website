@@ -7,25 +7,32 @@
             </div>
         </div>
     </div>
-    <div class="row" style="margin-top: 40px;">
+    <?php if(isset($mojeRezervacije)):?>
+    <?php 
+        
+         foreach ($mojeRezervacije as $rezervacija):?>
+           
+     <div class="row" style="margin-top: 40px;">
         <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
             <a href="#">
                 <div class="traveling-box">
-                    <i><img src="https://www.vivatravel.rs/photo/56518/p/16:10" alt="icon" style="object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;" /></i>
-                    <h2>Beograd -> Budimpesta</h2>
-                    24/7/2023 <br><img src="<?php echo base_url('images/car_transparent.png') ?>" height="35" width="35"><br>
-                    5 <span><img src="<?php echo base_url('images/stickman.svg.png') ?>" height="15" width="15"></span>
-                    <h3>28€</h3>
+                    
+                    <i><img src="<?= base_url("images/ponude/{$rezervacija->Slika}") ?>" alt="icon" style="object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;" /></i>
+                    <h2><?=$rezervacija->SifMesOd?> -> <?= $rezervacija->SifMesDo?></h2>
+                    <?=$rezervacija->DatumDo?><br><img src="<?php echo base_url("images/car_transparent.png") ?>" height="35" width="35"><br>
+                    <?=$rezervacija->BrMesta?> <span><img src="<?php echo base_url("images/stickman.svg.png") ?>" height="15" width="15"></span>
+                    <h3><?=$rezervacija->CenaKarte?></h3>
                 </div>
             </a>
             <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 kupovina">
                 <button type="button" class="btn make-offer-btn open-button" onclick="openForm()" style="position: relative; left: 100%; margin-right: -55px;">Kupi</button>
                 <div class="form-popup" id="myForm" style="bottom:0%">
                     <table class="table table-borderless" style="opacity:95%;color:white;background-color: #6181aa;width:400px;">
-                        <form class="form-container ">
+                    
+                    <form class="form-container "  action="<?= base_url("KorisnikController/kupi_kartu")?>" method="POST">
 
                             <tr>
-                                <td colspan='2'>
+                                <td colspan="2">
                                     <h1 class="boja" style="font-weight:bold;color:white;">Rezervacija
                                         <hr />
                                     </h1>
@@ -33,7 +40,8 @@
                             </tr>
                             <tr>
                                 <td><label for="brtel"><b>Broj telefona</b></label></td>
-                                <td><span id="brtel">060123456</span></td>
+                                <td><span id="brtel"><?=$rezervacija->KorisnikTel?></span></td>
+                                <td > <input  type="hidden" name="SifR" value= <?=$rezervacija->SifR?>></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -42,7 +50,7 @@
                             </tr>
                             <tr>
                                 <td><label for="psw"><b>Broj mesta</b></label></td>
-                                <td><span id="psw">5</span></td>
+                                <td><input name="BrMesta" value=<?=$rezervacija->BrRez?> id="brojMesta"></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -51,7 +59,7 @@
                             </tr>
                             <tr>
                                 <td><label for="cena"><b>Iznos</b></label></td>
-                                <td> <span id="cena">1500€</span></td>
+                                <td> <span id="cena"><?=$rezervacija->BrRez *$rezervacija->CenaKarte ?>€</span></td>
                             </tr>
                             <tr>
                                 <td colspan="2">
@@ -62,7 +70,7 @@
                                 <td><label for="placanje"><b>Način plaćanja</b></label></td>
                                 <td> <select name="placanje" id="placanje">
                                         <option value="gotovina">Gotovina</option>
-                                        <option value="kartica">Kartica</option>
+                                        
                                     </select>
                                 </td>
                             </tr>
@@ -72,7 +80,9 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td text-align="center"><button type="submit" class="btn " style="background-color: pink;width:100px;">Kupi</button></td>
+                              
+                                <td text-align="center"><button type="submit"  class="btn " style="background-color: pink;width:100px;">Kupi</button></td>
+                                
                                 <td text-align="center"><button type="button" class="btn cancel" style="background-color: pink;width:100px" onclick="closeForm()">Odustani</button></td>
                             </tr>
                         </form>
@@ -80,36 +90,12 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-            <a href="#">
-                <div class="traveling-box">
-                    <i><img src="https://media.danubeogradu.rs/2014/06/beograd-na-vodi.jpg" alt="icon" style="object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;" /></i>
-                    <h2>Prag -> Beograd</h2>
-                    8/9/2023 <br><img src="<?php echo base_url('images/car_transparent.png') ?>" height="35" width="35"><br>
-                    2 <span><img src="<?php echo base_url('images/stickman.svg.png') ?>" height="15" width="15"></span>
-                    <h3>45€</h3>
-                </div>
-            </a>
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 kupovina">
-                <button type="button" class="btn make-offer-btn open-button" onclick="openForm()" style="position: relative; left: 100%; margin-right: -55px;">Kupi</button>
-            </div>
-        </div>
-        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-            <a href="#">
-                <div class="traveling-box">
-                    <i><img src="https://balkanfun.travel/sites/default/files/styles/putovanje_velika_845x450/public/berlin-sumrak-grad.jpg?itok=yBwuHer8" alt="icon" style="object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;" /></i>
-                    <h2>Bec -> Berlin</h2>
-                    10/5/2023 <br><img src="<?php echo base_url('images/car_transparent.png') ?>" height="35" width="35"><br>
-                    1 <span><img src="<?php echo base_url('images/stickman.svg.png') ?>" height="15" width="15"></span>
-                    <h3>50€</h3>
-                </div>
-            </a>
-            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 kupovina">
-                <button type="button" class="btn make-offer-btn open-button" onclick="openForm()" style="position: relative; left: 100%; margin-right: -55px;">Kupi</button>
-
-            </div>
-        </div>
+        
     </div>
+    
+    <?php endforeach; ?>
+    <?php endif; ?>
+   
 
     <!--dugmad za pregled stranica-->
     <div class="row justify-content-center" style="margin-top: 40px; text-align: center;">

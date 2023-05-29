@@ -5,6 +5,8 @@ namespace App\Models;
 use CodeIgniter\Model;
 use CodeIgniter\Database\ConnectionInterface;
 use CodeIgniter\I18n\Time;
+use PDO;
+use PhpParser\Node\Stmt\Echo_;
 
 class ModelObicanKorisnikLana extends Model
 {
@@ -29,8 +31,27 @@ class ModelObicanKorisnikLana extends Model
         return $this->db->table('prevoznosredstvo')->get()->getResult();
     }
     public function mojeRezervacije($SifK){
-        return $this->db->table('rezervacija')->where("SifK=",$SifK)->get()->getResult();
-    }
+        $rezervacije =  $this->db->table('rezervacija')->where("SifK=",$SifK)->get()->getResult();
+    //    print_r($rezervacije);
+    //    echo $SifK;
+        if(count($rezervacije)==0){
+            return [];
+        }
+       
+        $prave_rezervacije=[];
+        foreach($rezervacije as $rezervacija){
+            $cijela_rez = $this->db->table('ponuda')->where("SifP=",$rezervacija->SifP)->get()->getResult()[0];
+            $cijela_rez->SifMesOd = $this->db->table('mesto')->where("SifM=",$cijela_rez->SifMesOd)->get()->getResult()[0]->Naziv;
+            $cijela_rez->SifMesDo= $this->db->table('mesto')->where("SifM=",$cijela_rez->SifMesDo)->get()->getResult()[0]->Naziv;
+            $cijela_rez->BrRez = $rezervacija->BrMesta;
+            $cijela_rez->KorisnikTel=$this->db->table('korisnik')->where("SifK=",$SifK)->get()->getResult()[0]->BrTel;
+            $cijela_rez->SifR = $rezervacija->SifR;
+            array_push($prave_rezervacije,$cijela_rez);
+
+        }
+        // print_r($prave_rezervacije);
+        return $prave_rezervacije;
+    }   
 
     public function izmenaProfila($ime,$prezime,$lozinka,$email,$profilna,$SifK){
         $korisnik = $this->db->table("korisnik")->where("SifK=",$SifK)->get()->getResult()[0];
@@ -163,8 +184,7 @@ public function azuriraj_poklone_i_tokene($poklon, $SifK)
     if($poklon=="nista"){
         return;
     }
-    echo "metodaaa";
-    echo "ovde";
+    
     $poklonobj=[
         'Iznos'=>"",
         'TipPoklona'=>"",
@@ -181,7 +201,7 @@ public function azuriraj_poklone_i_tokene($poklon, $SifK)
     
    
     $korisnik = $this->db->table('obicankorisnik')->where('SifK=',$SifK)->get()->getResult()[0];
-    print_r($korisnik);
+    // print_r($korisnik);
     if($korisnik->token<=0){
         return;
     }
@@ -193,10 +213,41 @@ public function azuriraj_poklone_i_tokene($poklon, $SifK)
         'SifPokl'=>$poklon->SifPokl,
         'Datum'=> Time::now()->toDateTimeString()
     ];
-    print_r($je_dobio);
+    // print_r($je_dobio);
     $this->db->table('jedobio')->insert($je_dobio);
    
 
 
 }
+
+    public function kupi_kartu($SifR,$SifK,$BrMesta){
+        $rezervacija = $this->db->table('rezervacija')->where("SifR=", $SifR)->get()->getResult()[0];
+        $SifP = $rezervacija->SifP;
+        // echo $SifP;
+        $ponuda = $this->db->table('ponuda')->where("SifP=", $SifP)->get()->getResult();
+        // print_r($ponuda);
+        if(count($ponuda)==0 || $BrMesta<=0 ){
+            // echo "lanaaaaaaaaaaa";
+
+            return;
+        }
+        $ponuda = $ponuda[0];
+        
+        if($BrMesta <= $ponuda->BrMesta){
+            // echo "lana";
+            $rezervacija->BrMesta = $BrMesta;
+            $ponuda->BrMesta -= $rezervacija->BrMesta;
+            $this->db->table('rezervacija')->where("SifR=", $rezervacija->SifR)->update($rezervacija);
+            $this->db->table('ponuda')->where("SifP=", $SifP)->update($ponuda);
+            $kupljena_karta =[
+                'NacinPlacanja'=>'gotovina',
+                'SifP'=> $SifP,
+                'SifK'=> $SifK
+            ];
+            $this->db->table('kupljenakarta')->insert($kupljena_karta);
+            $this->db->table('rezervacija')->where("SifR", $rezervacija->SifR)->delete();
+            
+        }
+        
+    }
 }

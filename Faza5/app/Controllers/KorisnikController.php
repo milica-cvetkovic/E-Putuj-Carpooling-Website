@@ -4,11 +4,15 @@ namespace App\Controllers;
 
 use App\Models\ModelPoruka;
 use App\Models\ModelObicanKorisnikLana;
+
+use PhpParser\Node\Stmt\Echo_;
+
 use App\Models\ModelKorisnik;
 use App\Models\ModelVanrednaPonuda;
 use App\Models\ModelPonuda;
 use App\Models\ModelMesto;
 use App\Models\ModelSredstvo;
+
 
 class KorisnikController extends BaseController
 {
@@ -64,8 +68,6 @@ class KorisnikController extends BaseController
         $model->delete($SifPor);
        /* $db      = \Config\Database::connect();
         $builder = $db->table('rezervacija');
-        
-        
 
         $data = ["SifK"=>$SifK,"SifP"=>$SifP,"DatumRezervacije"=>];
         
@@ -201,11 +203,45 @@ class KorisnikController extends BaseController
 
     public function rezervacije()
     {
+      
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
         $data = [];
-        // $SifK = session()->get("korisnik")->SifK;  // dohvati 
-        $SifK = "2";
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+       
+        $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
+        
+        // print_r($data["mojeRezervacije"]);
+        $this->prikaz("rezervacije", $data);
+    }
+    
+    public function kupi_kartu(){
+        $db = db_connect();
+        $data = [];
+        $model = new ModelObicanKorisnikLana($db);
+        $data['poruka'] = "";
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+
+        
+
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+       
+        if ($this->request->getMethod() == 'post') {
+
+
+            if ($_POST) {
+                $SifR= $_POST['SifR'];
+                $BrMesta = $_POST['BrMesta'];
+                // echo $BrMesta;
+                $uspijeh = $model->kupi_kartu($SifR,$SifK,$BrMesta);
+                // da dodam neka obavjestenja
+                if(!$uspijeh){
+                    //alert
+                }else{
+                    //nesto alert
+                }
+            }
+        }
         $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
         $this->prikaz("rezervacije", $data);
     }
@@ -220,8 +256,8 @@ class KorisnikController extends BaseController
         $data['mesta'] = $model->svaMesta();
         $data['sredstva'] = $model->svaSredstva();
 
-        // $SifK = session()->get("korisnik")->SifK;  // dohvati 
-        $SifK = "2";
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+       
         if ($this->request->getMethod() == 'post') {
 
 
@@ -267,7 +303,7 @@ class KorisnikController extends BaseController
     }
     public function tocakSrece()
     {
-        echo "lana";
+        // echo "lana";
         // $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $SifK = "2";
         $db = db_connect();

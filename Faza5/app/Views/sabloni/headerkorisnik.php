@@ -87,15 +87,21 @@
                                 <nav class="main-menu">
                                     <ul class="menu-area-main">
 
+
                                         <li id="liPocetnaK"><a href="<?php echo base_url('KorisnikController/index') ?>">Početna</a></li>
-                                        <li id="liKontakt"><a href="#contact">Kontakt</a></li>
+                                        <li><a href="#contact">Kontakt</a></li>
                                         <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
-                                        <li id="liONama"> <a href="indexkorisnik.html#about">O nama</a> </li>
-                                        <li id="liPregledaj"><a href="pregled_ponuda.html">Pretraži ponude</a></li>
-                                        <li id="liTrazi"><a href="trazenje_voznje.html">Zatraži vožnju</a></li>
-                                        <li id="liRezervisi"><a href="<?php echo base_url('KorisnikController/rezervacije')?>">Moje rezervacije</a></li>
-                                        <li id="liTocak"><a href="spinthewheel.html">Točak sreće</a></li>
-                                        <li id="liReport"><a href="KorisnikController/report">Report</a></li>
+                                        <li> <a href="indexkorisnik.html#about">O nama</a> </li>
+                                        <li><a href="pregled_ponuda.html">Pretraži ponude</a></li>
+                                        <li><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
+                                        <li><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>
+                                        <li><a href="<?=base_url("KorisnikController/tocakSrece")?>">Točak sreće</a></li>
+                                        <li><a href="<?=base_url("KorisnikController/report")?>">Report</a></li>
+
+                                      
+                                       
+                                        
+
 
                                     </ul>
                                 </nav>

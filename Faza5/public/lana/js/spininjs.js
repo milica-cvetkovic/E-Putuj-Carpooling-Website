@@ -1,48 +1,26 @@
-$(document).ready(function () {
-	let myButton = document.getElementById('spin_dugme');
-	myButton.disabled = true;
-	let container = document.querySelector(".container");
-	let btn =$("#spin");
-	let broj;
-	// document.getElementById("dobitak").innerHTML = document.getElementsById("one");
-	let number = Math.ceil(Math.random() * 1000);
-	$('#spin_dugme').click(function () {
-		var myButton = $('#spin_dugme');
-		myButton.disabled = true;
+let container = document.querySelector(".container");
+let btn = document.getElementById("spin");
+let number = Math.ceil(Math.random() * 1000);
 
-	})
-
-
-	var form = $("#myForm");
-
-	// Onemogućiti formu i dugme
-	form.addEventListener("submit", function (event) {
-
-		if (myButton.disabled) {
-			event.preventDefault(); // Spriječiti podnošenje obrasca
-		}else{
-			myButton.disabled=true;
-		}
-	});
-
-
-	$('#spin').click(function () {
-		myButton.disabled = true;
+btn.onclick = function () {
+	
+	console.log("EVPPPPP NE ZNMAM")
 		//disable dugme
 		var myButton = $('#spin');
-		myButton.disabled = true;
+		// myButton.disabled = true;
 		if (parseInt($("#tokeni")) == 0) {
 			alert("Nema tokena")
 			return;
 		}
 		// console.log(document.getElementById("tokeni"));
 		var podaci = "nista";
-		// console.log("teodora");
+		console.log("teodora");
+		console.log(broj);
 		container.style.transform = "rotate(" + number + "deg)";
 		broj = (number + 22.5) % 360 / 45;
 		number += Math.ceil(Math.random() * 1000);
 
-		// console.log(broj);
+		console.log(broj);
 		if (parseInt(broj) != 5) {
 			var p = {
 				broj: podaci,
@@ -95,20 +73,14 @@ $(document).ready(function () {
 			}
 			// console.log("lanaaa");
 			$("#dobitak").val(podaci);
-			let myButton = document.getElementById('spin');
+			// let myButton = document.getElementById('spin');
 
-			myButton.disabled = true;
-			myButton = document.getElementById('spin_dugme');
-			myButton.disabled = false;
+			// myButton.disabled = true;
+			// myButton = document.getElementById('spin_dugme');
+			// myButton.disabled = false;
 			// console.log(myButton.disabled);
 
 
 
 		}, 3000)
-
-
-
-
-
-	})
-})
+}
