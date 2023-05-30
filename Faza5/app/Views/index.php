@@ -15,8 +15,8 @@
                               <select class="form-control" name="prevoznoSredstvo">
                                  <option></option>
                                  <?php
-                                 foreach ($svePonude as $p) {
-                                    echo "<option> {$p->prevoznoSredstvo} </option>";
+                                 foreach ($svaPrevoznaSredstva as $p) {
+                                    echo "<option> {$p->Naziv} </option>";
                                  }
                                  ?>
                               </select>
@@ -26,8 +26,8 @@
                               <select class="form-control" name="mestoDo">
                                  <option></option>
                                  <?php
-                                 foreach ($svePonude as $p) {
-                                    echo "<option> {$p->MestoDo} </option>";
+                                 foreach ($svaMesta as $p) {
+                                    echo "<option> {$p->Naziv} </option>";
                                  }
                                  ?>
                               </select>
@@ -37,8 +37,8 @@
                               <select class="form-control" name="mestoOd">
                                  <option></option>
                                  <?php
-                                 foreach ($svePonude as $p) {
-                                    echo "<option> {$p->MestoOd} </option>";
+                                 foreach ($svaMesta as $p) {
+                                    echo "<option> {$p->Naziv} </option>";
                                  }
                                  ?>
                               </select>
@@ -73,6 +73,7 @@
                            </div>
                         </div>
                      </div>
+                      <input type="hidden" name="resetPage" value="true">
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
                         <a href="#" style="background-color: rgb(6, 47, 60);" onclick="this.closest('form').submit();return false;">Pretraži</a>
                      </div>
@@ -135,8 +136,7 @@
                <p>Ugodne vožnje automobilom</p>
                <br />
                <div class="read-more">
-
-                  <a href="pregled_ponuda_gost.html"> Pročitaj više</a>
+                  <?php echo anchor("GostController/index", "Procitaj vise"); ?>
                </div>
             </div>
          </div>
@@ -146,7 +146,7 @@
                <h3>Putuj autobusom</h3>
                <p> Planiraj putovanje sa društvom, bus ponude su tu!</p>
                <div class="read-more">
-                  <a href="pregled_ponuda_gost.html">Pročitaj više</a>
+                  <?php echo anchor("GostController/index", "Procitaj vise"); ?>
                </div>
             </div>
          </div>
@@ -156,8 +156,7 @@
                <h3>Putuj brodom</h3>
                <p> Letnje avanture, na otvorenom moru!</p>
                <div class="read-more">
-                  <!-- <a href="pregled_ponuda_gost.html">Pročitaj više</a> -->
-                  <?php echo anchor("pregled_ponuda_gost.html", "Procitaj vise"); ?>
+                  <?php echo anchor("GostController/index", "Procitaj vise"); ?>
                </div>
             </div>
          </div>

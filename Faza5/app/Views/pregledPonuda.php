@@ -20,8 +20,8 @@
                             <select class="form-control" name="prevoznoSredstvo">
                                 <option></option>
                                 <?php 
-                                    foreach($svePonude as $p){
-                                        echo "<option> {$p->prevoznoSredstvo} </option>";
+                                    foreach($svaPrevoznaSredstva as $p){
+                                        echo "<option> {$p->Naziv} </option>";
                                     }
                                 ?>
                             </select>
@@ -31,8 +31,8 @@
                             <select class="form-control" name="mestoDo">
                                 <option></option>
                                 <?php 
-                                    foreach($svePonude as $p){
-                                        echo "<option> {$p->MestoDo} </option>";
+                                    foreach($svaMesta as $p){
+                                        echo "<option> {$p->Naziv} </option>";
                                     }
                                 ?>
                             </select>
@@ -42,8 +42,8 @@
                             <select class="form-control" name="mestoOd">
                                 <option></option>
                                 <?php 
-                                    foreach($svePonude as $p){
-                                        echo "<option> {$p->MestoOd} </option>";
+                                    foreach($svaMesta as $p){
+                                        echo "<option> {$p->Naziv} </option>";
                                     }
                                 ?>
                             </select>

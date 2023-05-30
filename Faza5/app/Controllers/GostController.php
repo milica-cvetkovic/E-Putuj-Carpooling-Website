@@ -6,23 +6,56 @@
 
 namespace App\Controllers;
 
+/**
+ * GostController - klasa za pretragu, logovanje i registraciju gosta
+ * 
+ * @version 1.0
+ */
+
 class GostController extends BaseController {
 
+    /**
+     * Prikaz stranica
+     * 
+     * @param string $stranica
+     * @param array $podaci
+     * 
+     * @return void
+     */
     private function prikaz($stranica, $podaci){
         echo view("sabloni/headergost");
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
     }
 
+    /**
+     * Pocetna stranica sajta
+     * 
+     * @return void
+     */
     public function index() {
         $svePonude = $this->dohvatiSvePonude();
-        $this->prikaz("index", ["svePonude"=> $svePonude]);
+        $svaMesta = $this->dohvatiSvaMesta();
+        $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
+        $this->prikaz("index", ["svePonude"=> $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva]);
     }
     
+    /**
+     * Stranica za login korisnika
+     * 
+     * @param array $poruke
+     * 
+     * @return void
+     */
     public function login($poruke = null){
         $this->prikaz("login.php", ["poruke" => $poruke]);
     }
     
+    /**
+     * Submit forme za login i prijavljivanje korisnika
+     * 
+     * @return mixed
+     */
     public function loginSubmit(){
         
         $korisnickoime = $this->request->getVar("username-input");
@@ -54,6 +87,13 @@ class GostController extends BaseController {
         
     }
 
+    /**
+     * Stranica za registraciju korisnika
+     * 
+     * @param array $poruke
+     * 
+     * @return void
+     */
     public function registracija($poruke = null){
         $this->prikaz("registracija.php", ["poruke" => $poruke]);
     }
@@ -102,10 +142,20 @@ class GostController extends BaseController {
         return redirect()->to(site_url("GostController/index"));
     }
     
+    /**
+     * Stranica za povratak zaboravljene lozinke
+     * 
+     * @return void
+     */
     public function zaboravljenalozinka(){
         $this->prikaz("zaboravljenalozinka", []);
     }
 
+    /**
+     * Stranica za pregled postavljenih ponuda
+     * 
+     * @return mixed
+     */
     public function pregledPonuda(){
         
         $totalPages = count($this->dohvatiSvePonude());
@@ -116,9 +166,16 @@ class GostController extends BaseController {
         
         $ponude = $this->dohvatiSvePonudeLimit($page, $numOfResultsOnPage);
         $svePonude = $this->dohvatiSvePonude();
-        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages]);
+        $svaMesta = $this->dohvatiSvaMesta();
+        $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude,"svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages]);
     }
    
+    /**
+     * Pretraga i filtriranje/sortiranje ponuda po izabranim kriterijumima
+     * 
+     * @return mixed
+     */
     public function pretragaPonuda(){
         
         $resetPage = $this->request->getVar("resetPage");
@@ -201,6 +258,8 @@ class GostController extends BaseController {
         }
         
         $svePonude = $this->dohvatiSvePonude();
+        $svaMesta = $this->dohvatiSvaMesta();
+        $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
         
         $sort = $this->request->getVar("sort");
         
@@ -212,10 +271,15 @@ class GostController extends BaseController {
             $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
         }
         $totalPages = count($this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage));
-        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
                 
     }
 
+    /**
+     * Prikaz jedne izabrane ponude
+     * 
+     * @return void
+     */
     public function prikazPonudeGost(){
         $ponuda = $this->request->getVar("izabranaPonuda");
         $ponuda = $this->dohvatiPonudu($ponuda);
@@ -223,6 +287,13 @@ class GostController extends BaseController {
         $this->prikaz("prikazPonudeGost", ["ponuda"=>$ponuda, "prosek" => $prosek]);
     }
     
+    /**
+     * Dohvatanje korisnika iz baze
+     * 
+     * @param string $korisnickoime
+     * 
+     * @return array
+     */
     public function dohvatiKorisnika($korisnickoime){
         
         $db      = \Config\Database::connect();
@@ -234,7 +305,19 @@ class GostController extends BaseController {
         
     }
     
-    
+    /**
+     * Cuvanje korisnika u bazu
+     * 
+     * @param string $ime
+     * @param string $prezime
+     * @param string $brtel
+     * @param string $email
+     * @param string $korisnickoime
+     * @param string $lozinka
+     * @param string $tip
+     * 
+     * @return void
+     */
     public function sacuvajKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka, $tip){
         
         $db      = \Config\Database::connect();
@@ -256,67 +339,13 @@ class GostController extends BaseController {
         
     }
     
-    public function sacuvajObicnogKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka){
-        
-        $db      = \Config\Database::connect();
-        $builder = $db->table('korisnik');
-        
-        $data = [
-          "KorisnickoIme" => $korisnickoime,
-          "Lozinka" => $lozinka
-        ];
-        
-        $builder->insert($data);
-        
-        $builder->select("SifK");
-        $builder->where("KorisnickoIme", $korisnickoime);
-        $id = ($builder->get()->getResult())[0]->SifK;
-        
-        $builder = $db->table('obicankorisnik');
-        
-        
-        $data = [
-          "SifK" => $id,
-          "Ime" => $ime,
-          "Prezime" => $prezime,
-          "Email" => $email,
-          "BrTel" => $brtel
-        ];
-        
-        $builder->insert($data);
-        
-    }
-    
-    public function sacuvajPrivatnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka){
-        
-        $db      = \Config\Database::connect();
-        $builder = $db->table('korisnik');
-        
-        $data = [
-          "KorisnickoIme" => $korisnickoime,
-          "Lozinka" => $lozinka
-        ];
-        
-        $builder->insert($data);
-        
-        $builder->select("SifK");
-        $builder->where("KorisnickoIme", $korisnickoime);
-        $id = ($builder->get()->getResult())[0]->SifK;
-        
-        $builder = $db->table('privatnik');
-        
-        $data = [
-          "SifK" => $id,
-          "Ime" => $ime,
-          "Prezime" => $prezime,
-          "Email" => $email,
-          "BrTel" => $brtel
-        ];
-        
-        $builder->insert($data);
-        
-    }
-    
+    /**
+     * Provera da li korisnicko ime postoji u bazi
+     * 
+     * @param string $korisnickoIme
+     * 
+     * @return int
+     */
     public function proveraKorisnickoIme($korisnickoIme){
         
         $db      = \Config\Database::connect();
@@ -330,6 +359,14 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Provera da li se lozinka poklapa sa zadatim korisnickim imenom u bazi
+     * 
+     * @param string $korisnickoIme
+     * @param string $lozinka
+     * 
+     * @return int
+     */
     public function proveraLozinka($korisnickoIme, $lozinka){
         
         $db      = \Config\Database::connect();
@@ -344,6 +381,13 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Dohvatanje zadate ponude iz baze
+     * 
+     * @param int $ponuda
+     * 
+     * @return mixed
+     */
     public function dohvatiPonudu($ponuda){
         
         $db      = \Config\Database::connect();
@@ -362,6 +406,24 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Pretraga ponuda po zadatim kriterijumima
+     * 
+     * @param string $prevoznoSredstvo
+     * @param string $mestoOd
+     * @param string $mestoDo
+     * @param int $minimalnaCena
+     * @param int $maksimalnaCena
+     * @param int $brojPutnika
+     * @param date $datumOd
+     * @param date $datumDo
+     * @param time $vremeOd
+     * @param time $vremeDo
+     * @param int $page
+     * @param int $numOfResultsOnPage
+     * 
+     * @return array
+     */
     public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage){
         
         $db      = \Config\Database::connect();
@@ -406,6 +468,27 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Pretraga ponuda po zadatim kriterijumima i izvrseno sortiranje
+     * 
+     * @param string $prevoznoSredstvo
+     * @param string $mestoOd
+     * @param string $mestoDo
+     * @param int $minimalnaCena
+     * @param int $maksimalnaCena
+     * @param int $brojPutnika
+     * @param date $datumOd
+     * @param date $datumDo
+     * @param time $vremeOd
+     * @param time $vremeDo
+     * @param int $page
+     * @param int $numOfResultsOnPage
+     * @param mixed $rastuceCena
+     * @param mixed $rastuceDatum
+     * @param mixed $opadajuceCena
+     * @param mixed $opadajuceDatum
+     * @return type
+     */
     public function pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum){
         
         $db      = \Config\Database::connect();
@@ -455,6 +538,13 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Provera da li privatnik ima odgovarajucu pretplatu
+     * 
+     * @param int $SifK
+     * 
+     * @return boolean
+     */
     public function proveriPretplatu($SifK){
         
         $db      = \Config\Database::connect();
@@ -479,6 +569,11 @@ class GostController extends BaseController {
         return false;
     }
     
+    /**
+     * Dohvatanje svih ponuda iz baze
+     * 
+     * @return array
+     */
     public function dohvatiSvePonude(){
         
         $db      = \Config\Database::connect();
@@ -494,7 +589,15 @@ class GostController extends BaseController {
         
     }
     
-        public function dohvatiSvePonudeLimit($page, $numOfResultsOnPage){
+    /**
+     * Dohvatanje svih ponuda sa limitom zbog paginacije
+     * 
+     * @param int $page
+     * @param int $numOfResultsOnPage
+     * 
+     * @return array
+     */
+    public function dohvatiSvePonudeLimit($page, $numOfResultsOnPage){
         
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
@@ -512,6 +615,13 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Provera da li je registracija odobrena
+     * 
+     * @param mixed $korisnik
+     * 
+     * @return boolean
+     */
     public function registracijaOdobrena($korisnik){
         
         $db      = \Config\Database::connect();
@@ -535,6 +645,13 @@ class GostController extends BaseController {
         
     }
     
+    /**
+     * Izracunavanje proseka ocena
+     * 
+     * @param mixed $ponuda
+     * 
+     * @return double
+     */
     public function prosek($ponuda){
         // Zeljkov kod
         $db      = \Config\Database::connect();
@@ -551,6 +668,38 @@ class GostController extends BaseController {
         }
         $prosek = $suma * 1.0 / $broj;
         return $prosek;
+    }
+    
+    /**
+     * Dohvatanje svih prevoznih sredstava iz baze
+     * 
+     * @return array
+     */
+    public function dohvatiSvaPrevoznaSredstva(){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table("prevoznosredstvo");
+        
+        $builder->select("*");
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+    /**
+     * Dohvatanje svih mesta iz baze
+     * 
+     * @return array
+     */
+    public function dohvatiSvaMesta(){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table("mesto");
+        
+        $builder->select("*");
+        
+        return $builder->get()->getResult();
+        
     }
     
 }
