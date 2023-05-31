@@ -24,13 +24,7 @@ $satiDo = explode(":", $ponuda->VremeDo)[0];
 $minutiDo = explode(":", $ponuda->VremeDo)[1];
 $vremeDo = $satiDo . ":" . $minutiDo;
 
-$builder = $db->table("rezervacija");
-$rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
-$brojRezervisanihMesta = 0;
-foreach ($rezervacije as $rezervacija) {
-    $brojRezervisanihMesta += $rezervacija->BrMesta;
-}
-$brMesta = $ponuda->BrMesta - $brojRezervisanihMesta;
+$brMesta = $ponuda->BrMesta;
 
 $builder = $db->table("prevoznosredstvo");
 $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;

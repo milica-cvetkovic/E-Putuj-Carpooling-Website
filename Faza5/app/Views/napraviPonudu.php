@@ -108,7 +108,7 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                                  <?php if (!empty(session()->get("cenaKarte"))) echo "value='".session()->get("cenaKarte")."'" ?>>
                      </div>
                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                        <label> Broj putnika</label>
+                        <label> Broj slobodnih mesta</label>
                         <input class="form-control" placeholder="0" type="text" name="brMesta"  required
                                  <?php if (!empty(session()->get("brMesta"))) {echo "value='".session()->get("brMesta")."'";}
                                  else if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->BrMesta}'";} ?>>

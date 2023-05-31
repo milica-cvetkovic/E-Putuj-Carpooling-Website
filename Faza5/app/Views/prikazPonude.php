@@ -28,10 +28,7 @@ $vremeDo = $satiDo . ":" . $minutiDo;
 $builder = $db->table("rezervacija");
 $privatnik= $db->table('korisnik')->where("SifK",$ponuda->SifK)->get()->getResult()[0]->KorisnickoIme;
 $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
-$brojRezervisanihMesta = 0;
-foreach ($rezervacije as $rezervacija) {
-    $brojRezervisanihMesta += $rezervacija->BrMesta;
-}
+
 $brMesta = $ponuda->BrMesta ;
 
 $builder = $db->table("prevoznosredstvo");

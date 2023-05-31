@@ -72,7 +72,7 @@ class ModelObicanKorisnikLana extends Model
             $korisnik->Email = $email;
         }
         if ($profilna != null) {
-            // $korisnik->
+            $korisnik->ProfilnaSlika = $profilna;
         }
         $this->db->table('korisnik')->where("SifK=", $SifK)->update($korisnik);
     }

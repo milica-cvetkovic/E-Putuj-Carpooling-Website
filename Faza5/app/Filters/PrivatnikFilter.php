@@ -12,7 +12,7 @@ class PrivatnikFilter implements FilterInterface
     {
         $session = session();
         if(!$session->has('korisnik'))
-            return redirect ()->to (site_url ('Gost'));
+            return redirect ()->to (site_url ('GostController'));
         if($session->has('korisnik')){
             $korisnik = $session->get("korisnik");
             if($korisnik->PrivatnikIliKorisnik == "K")
@@ -24,6 +24,6 @@ class PrivatnikFilter implements FilterInterface
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
     {
-        // Do something here
+        // do something
     }
 }

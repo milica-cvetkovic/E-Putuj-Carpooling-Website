@@ -19,6 +19,8 @@ class AdminFilter implements FilterInterface
                 return redirect ()->to (site_url ('PrivatnikController'));
             else if($korisnik->PrivatnikIliKorisnik == "K")
                 return redirect ()->to (site_url ('KorisnikController'));
+            else
+                return redirect ()->to (site_url ('AdminController'));
         }
     }
 

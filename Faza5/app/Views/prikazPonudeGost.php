@@ -2,13 +2,8 @@
 
 <?php 
 $db = \Config\Database::connect();
-$builder = $db->table("rezervacija");
-$rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
-$brojRezervisanihMesta = 0;
-foreach ($rezervacije as $rezervacija) {
-    $brojRezervisanihMesta += $rezervacija->BrMesta;
-}
-$brMesta = $ponuda->BrMesta - $brojRezervisanihMesta;
+
+$brMesta = $ponuda->BrMesta;
 ?>
 
 <div class="back-image-message">

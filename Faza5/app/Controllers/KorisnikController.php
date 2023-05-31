@@ -21,11 +21,9 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
-class KorisnikController extends BaseController
-{
+class KorisnikController extends BaseController {
 
-    private function prikaz($stranica, $podaci)
-    {
+    private function prikaz($stranica, $podaci) {
         $SifK = session()->get("korisnik")->SifK;
         $model = new ModelPoruka();
         $br = $model->select("count(*) as br")->where("SifKor", $SifK)->where("SmerPoruke", 2)->findAll()[0]->br;
@@ -35,18 +33,16 @@ class KorisnikController extends BaseController
     }
 
 
-    public function index()
-    {
-        
+    public function index() {
 
-        $this->prikaz("indexkorisnik", ["kontroler"=>"KorisnikController","stranica"=>"indexkorisnik"]);
+
+        $this->prikaz("indexkorisnik", ["kontroler" => "KorisnikController", "stranica" => "indexkorisnik"]);
     }
 
     // dalje su samo fje za testiranje prikaza
 
 
-    public function inboxKorisnik()
-    {
+    public function inboxKorisnik() {
         $Kime = session()->get("korisnik")->KorisnickoIme;
         $model = new ModelPoruka();
         $modelK = new ModelKorisnik();
@@ -61,13 +57,12 @@ class KorisnikController extends BaseController
             $poruka->mestoOd = $modelM->where("SifM", $ponuda->SifMesOd)->findAll()[0];
             $poruka->korisnik = $modelK->where("SifK", $poruka->SifPriv)->findAll()[0]->KorisnickoIme;
         }
-        $this->prikaz("inboxKorisnik", ["poruke" => $poruke,"kontroler"=>"KorisnikController","stranica"=>"inboxKorisnik"]);
+        $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "kontroler" => "KorisnikController", "stranica" => "inboxKorisnik"]);
     }
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
 
-    public function obrisiPoruku()
-    {
+    public function obrisiPoruku() {
         $SifP = $this->request->getVar("SifP");
         $SifK = session()->get("korisnik")->SifK;
 
@@ -85,8 +80,7 @@ class KorisnikController extends BaseController
         return;
     }
 
-    public function inboxKorisnikPoruka()
-    {
+    public function inboxKorisnikPoruka() {
         $izbor = $this->request->getVar("poruka");
         $Kime = session()->get("korisnik")->KorisnickoIme;
         $model = new ModelPoruka();
@@ -111,16 +105,16 @@ class KorisnikController extends BaseController
         $odabrana->mestoOd = $modelM->where("SifM", $odabrana->SifMesOd)->findAll()[0];
         $odabrana->mestoDo = $modelM->where("SifM", $odabrana->SifMesDo)->findAll()[0];
         $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
-        $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana,"kontroler"=>"KorisnikController","stranica"=>"inboxKorisnik"]);
+        $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana, "kontroler" => "KorisnikController", "stranica" => "inboxKorisnik"]);
     }
 
-    public function izmenaProfila()
-    {
+    public function izmenaProfila() {
         $data = [];
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
-        // $SifK =  session()->get("korisnik")->SifK;
-        $SifK = "2";
+        $SifK =  session()->get("korisnik")->SifK;
+        //$SifK = "2";
+        $poruka = "";
         if ($this->request->getMethod() == 'post') {
             if ($_POST) {
                 $data['poruka'] = "post";
@@ -128,22 +122,38 @@ class KorisnikController extends BaseController
                 $prezime = $_POST['prezime'];
                 $lozinka = $_POST['lozinka'];
                 $email = $_POST['email'];
-                // $prfilna = $_POST[''] IZMJENA PROFILNE
                 $profilna = null;
-
+                $imeSlike = null;
+                if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
+                    // cuvanje slike na serveru
+                    $destinacioniFolder = FCPATH . "images\profilne\\";
+                    $imeSlike = $SifK . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
+                    $destinacioniFajl = $destinacioniFolder . $imeSlike;
+                    if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
+                        $poruka = "Nije uspelo ubacivanje slike";
+                    }
+                }
+                if ($imeSlike != null) {
+                    $imeStareSlike = ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]->ProfilnaSlika;
+                    if (file_exists(FCPATH . "images\profilne\\" . $imeStareSlike) && $imeStareSlike != "") {
+                        unlink(FCPATH . "images\profilne\\" . $imeStareSlike);
+                    }
+                }
+                $profilna = $imeSlike;
                 $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+                session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
             }
 
-            
 
-            $data["kontroler"]="KorisnikController";
-            $data["stranica"]="izmenaProfila";
+            $data["poruka"] = $poruka;
         }
-        $this->prikaz("izmenaProfila",$data);
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "izmenaProfila";
+        $this->prikaz("izmenaProfila", $data);
     }
 
-    public function ocenjivanje()
-    {
+    public function ocenjivanje() {
         $data = [];
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
@@ -162,71 +172,68 @@ class KorisnikController extends BaseController
                 }
             }
         }
-        
-        $data["kontroler"]="KorisnikController";
-        $data["stranica"]="ocenjivanje";
-        $this->prikaz("ocenjivanje",$data);
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "ocenjivanje";
+        $this->prikaz("ocenjivanje", $data);
     }
 
-    public function pregledPonuda()
-    {
-        $this->prikaz("pregledPonuda", ["kontroler"=>"KorisnikController","stranica"=>"PregledPonuda"]);
+    public function pregledPonuda() {
+        $this->prikaz("pregledPonuda", ["kontroler" => "KorisnikController", "stranica" => "PregledPonuda"]);
     }
 
     // vrv ce moci da se ujedini sa prikazom ponude posto se samo dugmici razlikuju
-    public function prikazPonudeInbox()
-    {
+    public function prikazPonudeInbox() {
         $SifP = $this->request->getVar("SifP");
         $model = new ModelPonuda();
         $modelK = new ModelKorisnik();
         $ponuda = $model->where("SifP", $SifP)->findAll()[0];
         $ponuda->Korisnik = $modelK->where("SifK", $ponuda->SifK)->findAll()[0]->KorisnickoIme;
-        $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda,"kontroler"=>"KorisnikController","stranica"=>"prikazPonudeInbox"]);
+        $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda, "kontroler" => "KorisnikController", "stranica" => "prikazPonudeInbox"]);
     }
 
-    public function prikazPonude($sifP, $tip = "nista")
-    {
+    public function prikazPonude($sifP, $tip = "nista") {
 
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
-        
+
 
         $db      = \Config\Database::connect();
 
         $model = new ModelObicanKorisnikLana($db);
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
-        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
-        
-        $new_res =[];
-        foreach($res as $r){
-           array_push ($new_res,$r->SifPokl);
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk', $SifK)->get()->getResult();
 
+        $new_res = [];
+        foreach ($res as $r) {
+            array_push($new_res, $r->SifPokl);
         }
         // print_r($new_res);
         $res_1 = array_unique($new_res);
-        $res=[];
-        foreach($res_1 as $r){
-            array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
+        $res = [];
+        foreach ($res_1 as $r) {
+            array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
         }
-        
-        $data=[];
-        
-        $data['mojenagrade']= $res;
-        
+
+        $data = [];
+
+        $data['mojenagrade'] = $res;
+
         if ($this->request->getMethod() == 'post') {
             if ($_POST) {
-                
+
                 $BrMesta = $this->request->getVar("BrMesta");
                 if (!empty($BrMesta)) {
-                    $SifPokl="";
-                
-                    if(isset($_POST['grupa'])){
-                    $SifPokl = $_POST['grupa'];}
+                    $SifPokl = "";
+
+                    if (isset($_POST['grupa'])) {
+                        $SifPokl = $_POST['grupa'];
+                    }
                     // echo $SifPokl;
-               
+
                     if ($tip == "kupi") {
                         // echo "kupovina";
-                        $model->kupovina_karata($sifP, $SifK, $BrMesta,$SifPokl);
+                        $model->kupovina_karata($sifP, $SifK, $BrMesta, $SifPokl);
                     }
                     if ($tip == "rezervisi") {
                         // echo "rezervacija";
@@ -237,18 +244,17 @@ class KorisnikController extends BaseController
         }
         $data['ponuda'] = ($builder->where("SifP", $sifP)->get()->getResult())[0];
 
-       
-        $data["kontroler"]="KorisninikController";
-        $data["stranica"]="prikazPonude";
-        
+
+        $data["kontroler"] = "KorisninikController";
+        $data["stranica"] = "prikazPonude";
+
         $this->prikaz("prikazPonude", $data);
     }
 
-    public function report()
-    {
+    public function report() {
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
-        $data = ["kontroler"=>"KorisnikController"];
+        $data = ["kontroler" => "KorisnikController"];
         if ($this->request->getMethod() == 'post') {
 
 
@@ -266,49 +272,46 @@ class KorisnikController extends BaseController
                 }
             }
         }
-        
-        $data["kontroler"]="KorisnikController";
-        $data["stranica"]="report";
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "report";
 
         $this->prikaz("report", $data);
     }
 
-    public function rezervacije()
-    {
+    public function rezervacije() {
 
         $db = db_connect();
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $model = new ModelObicanKorisnikLana($db);
-        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
-        
-        $new_res =[];
-        foreach($res as $r){
-           array_push ($new_res,$r->SifPokl);
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk', $SifK)->get()->getResult();
 
+        $new_res = [];
+        foreach ($res as $r) {
+            array_push($new_res, $r->SifPokl);
         }
         // print_r($new_res);
         $res_1 = array_unique($new_res);
-        $res=[];
-        foreach($res_1 as $r){
-            array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
+        $res = [];
+        foreach ($res_1 as $r) {
+            array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
         }
-        
-        
-        $data['mojenagrade']= $res;
-        
+
+
+        $data['mojenagrade'] = $res;
+
 
         $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
 
-        
-        $data["kontroler"]="KorisnikController";
-        $data["stranica"]="rezervacije";
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "rezervacije";
 
         // print_r($data["mojeRezervacije"]);
         $this->prikaz("rezervacije", $data);
     }
 
-    public function kupi_kartu()
-    {
+    public function kupi_kartu() {
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
@@ -317,22 +320,21 @@ class KorisnikController extends BaseController
 
 
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
-        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
-        
-        $new_res =[];
-        foreach($res as $r){
-           array_push ($new_res,$r->SifPokl);
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk', $SifK)->get()->getResult();
 
+        $new_res = [];
+        foreach ($res as $r) {
+            array_push($new_res, $r->SifPokl);
         }
         // print_r($new_res);
         $res_1 = array_unique($new_res);
-        $res=[];
-        foreach($res_1 as $r){
-            array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
+        $res = [];
+        foreach ($res_1 as $r) {
+            array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
         }
-        
-        
-        $data['mojenagrade']= $res;
+
+
+        $data['mojenagrade'] = $res;
 
         if ($this->request->getMethod() == 'post') {
 
@@ -340,13 +342,14 @@ class KorisnikController extends BaseController
             if ($_POST) {
                 $SifR = $_POST['SifR'];
                 $BrMesta = $_POST['BrMesta'];
-                $SifPokl="";
-                
-                if(isset($_POST['grupa'])){
-                $SifPokl = $_POST['grupa'];}
+                $SifPokl = "";
+
+                if (isset($_POST['grupa'])) {
+                    $SifPokl = $_POST['grupa'];
+                }
                 // echo $SifPokl;
                 // echo $BrMesta;
-                $uspijeh = $model->kupi_kartu($SifR, $SifK, $BrMesta,$SifPokl);
+                $uspijeh = $model->kupi_kartu($SifR, $SifK, $BrMesta, $SifPokl);
                 // da dodam neka obavjestenja
                 if (!$uspijeh) {
                     //alert
@@ -357,15 +360,14 @@ class KorisnikController extends BaseController
         }
         $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
 
-        
-        $data["kontroler"]="KorisnikController";
-        $data["stranica"]="rezervacije";
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "rezervacije";
 
         $this->prikaz("rezervacije", $data);
     }
 
-    public function trazenjeVoznje()
-    {
+    public function trazenjeVoznje() {
 
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
@@ -380,21 +382,21 @@ class KorisnikController extends BaseController
 
             if ($_POST) {
                 if (
-                   
+
                     $_POST['BrojPutnika'] < 0 ||
-                    $_POST['DatumOd']." ".$_POST['VremeOd'] <= date("Y-m-d H:i:s")||
-                    $_POST['DatumDo']." ".$_POST['VremeDo'] <= date("Y-m-d H:i:s")||
-                    $_POST['CenaDo']<$_POST['CenaOd'] 
+                    $_POST['DatumOd'] . " " . $_POST['VremeOd'] <= date("Y-m-d H:i:s") ||
+                    $_POST['DatumDo'] . " " . $_POST['VremeDo'] <= date("Y-m-d H:i:s") ||
+                    $_POST['CenaDo'] < $_POST['CenaOd']
 
 
-                    
+
                 ) {
-                   
-                   
+
+
 
                     $data['poruka'] = "Greska pri unosu podataka";
                 } else {
-                    
+
                     $ponuda = [
                         'Sred' => $_POST['prevoz'],
                         'SifMesDo' => $_POST['MesDo'],
@@ -418,19 +420,18 @@ class KorisnikController extends BaseController
             }
         }
 
-        
-        $data["kontroler"]="KorisnikController";
-        $data["stranica"]="trazenjeVoznje";
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "trazenjeVoznje";
 
         $this->prikaz("trazenjeVoznje", $data);
     }
-    public function tocakSrece()
-    {
+    public function tocakSrece() {
         // echo "lana";
         // $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $SifK = "2";
         $db = db_connect();
-        
+
 
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
@@ -446,38 +447,44 @@ class KorisnikController extends BaseController
         }
         $data['tokena'] = $db->table('obicankorisnik')->where('SifK=', $SifK)->get()->getResult()[0]->token; // iz baze za korisnika
 
-        
-        $data["kontroler"]="KorisnikController";
-        $data["stranica"]="tocakSrece";
+
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "tocakSrece";
 
 
         echo view('tocakSrece', $data);
     }
-    public function komentar(){ 
-        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+    public function komentar() {
+        $transport = new EsmtpTransport("smtp-mail.outlook.com", 587);
         $transport->setUsername("pomocniEPUTUJ1@outlook.com");
         $transport->setPassword("RADIMAIL123");
-        $mailer=new Mailer($transport);
+        $mailer = new Mailer($transport);
         $email = (new Email())->from("pomocniEPUTUJ1@outlook.com")->to('sideeyetim@outlook.com')
-        ->subject('Novi komentar')->text('Ime:'.$this->request->getVar('ime').'
-Komentar:'.$this->request->getVar('komentar').'
+            ->subject('Novi komentar')->text('Ime:' . $this->request->getVar('ime') . '
+Komentar:' . $this->request->getVar('komentar') . '
                 ');
 
-        
+
         $mailer->send($email);
 
-        $stranica=$this->request->getVar("stranica");
-        
-        
-        if($stranica=="trazenjeVoznje")$this->trazenjeVoznje();
-        else if($stranica=="rezervacije")$this->rezervacije();
-        else if($stranica=="report")$this->report();
-        else if($stranica="inboxKorisnik")$this->inboxKorisnik();
-        else if($stranica=="indexkorisnik")$this->index();
-        else if($stranica=="izmenaProfila")$this->izmenaProfila();
-        else if($stranica=="prikazPonude")$this->pregledPonuda();
-        else if($stranica=="prikazPonudeInbox")$this->inboxKorisnik();
-        else if($stranica=="ocenjivanje")$this->ocenjivanje();
-        else if($stranica=="pregledPonuda")$this->pregledPonuda();
+        $stranica = $this->request->getVar("stranica");
+
+
+        if ($stranica == "trazenjeVoznje") $this->trazenjeVoznje();
+        else if ($stranica == "rezervacije") $this->rezervacije();
+        else if ($stranica == "report") $this->report();
+        else if ($stranica = "inboxKorisnik") $this->inboxKorisnik();
+        else if ($stranica == "indexkorisnik") $this->index();
+        else if ($stranica == "izmenaProfila") $this->izmenaProfila();
+        else if ($stranica == "prikazPonude") $this->pregledPonuda();
+        else if ($stranica == "prikazPonudeInbox") $this->inboxKorisnik();
+        else if ($stranica == "ocenjivanje") $this->ocenjivanje();
+        else if ($stranica == "pregledPonuda") $this->pregledPonuda();
+    }
+
+    public function logout() {
+        session()->remove("korisnik");
+        $gostController = new GostController();
+        $gostController->index();
     }
 }

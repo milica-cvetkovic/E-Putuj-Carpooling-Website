@@ -100,7 +100,7 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
                         <input class="form-control" value="<?= $cena ?>" type="number" name="cenaKarte" required>
                      </div>
                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
-                        <label> Broj putnika</label>
+                        <label> Broj slobodnih mesta</label>
                         <input class="form-control" value="<?= $brMesta ?>" type="number" name="brMesta" required>
                      </div>
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">

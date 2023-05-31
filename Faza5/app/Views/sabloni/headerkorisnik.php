@@ -58,7 +58,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="<?=base_url("KorisnikController/izmenaProfila")?>" class="dropdown-item">Izmeni
                                                                 profil</a></li>
-                                                        <li><a href="<?php echo base_url('GostController/index') ?>" class="dropdown-item">Log out</a></li>
+                                                        <li><a href="<?php echo base_url('KorisnikController/logout') ?>" class="dropdown-item">Log out</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -93,15 +93,10 @@
                                         <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
                                         <li> <a href="index/#onama">O nama</a> </li>
                                         <li><a href="<?=base_url("KorisnikController/index")?>">Pretraži ponude</a></li>
-                                        <li><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
-                                        <li><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>
+                                        <li id="liTrazi"><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
+                                        <li id="liRezervacije"><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>
                                         <li><a href="<?=base_url("KorisnikController/tocakSrece")?>">Točak sreće</a></li>
-                                        <li><a href="<?=base_url("KorisnikController/report")?>">Report</a></li>
-
-                                      
-                                       
-                                        
-
+                                        <li id="liReport"><a href="<?=base_url("KorisnikController/report")?>">Report</a></li>
 
                                     </ul>
                                 </nav>
@@ -122,17 +117,17 @@
             else if (url.includes("zurira")){
                 $("#liPregledaj").addClass("active");
             }
-            else if (url.includes("report")){
-                $("#liReport").addClass("active");
-            }
-            else if (url.includes("promenaPretplate")){
-                $("#liPretplata").addClass("active");
-            }
             else if (url.includes("inboxKorisnik") || url.includes("inboxKorisnikPoruka") || url.includes("prikazPonudeInbox") ){
                 $("#liInboxK").addClass("active");
             }
-            else if (url.includes("otkazi")){
+            else if (url.includes("otkazi") || url.includes("trazenjeVoznje")){
                 $("#liTrazi").addClass("active");
+            }
+            else if (url.includes("rezervacije")){
+                $("#liRezervacije").addClass("active");
+            }
+            else if (url.includes("report")){
+                $("#liReport").addClass("active");
             }
             else {
                 $("#liPocetnaK").addClass("active");

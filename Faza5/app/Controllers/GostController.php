@@ -297,7 +297,7 @@ class GostController extends BaseController {
      * 
      * @param string $korisnickoime
      * 
-     * @return array
+     * @return object
      */
     public function dohvatiKorisnika($korisnickoime){
         

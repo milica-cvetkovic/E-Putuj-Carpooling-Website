@@ -22,6 +22,7 @@
    <link rel="stylesheet" href="<?php echo base_url('milica/css/owl.carousel.min.css') ?>">
    <link rel="stylesheet" href="<?php echo base_url('milica/css/owl.theme.default.min.css') ?>">
 
+   <script src="<?php echo base_url('milica/js/jquery.min.js') ?>"></script>
 
 </head>
 
@@ -71,10 +72,10 @@
                         <nav class="main-menu">
                            <ul class="menu-area-main">
 
-                              <li> <a href="<?= site_url("GostController/index") ?>">Početna</a> </li> <!-- ovde treba prosledjivati sta je aktivno, vrv moze preko js -->
-                              <li> <a href="index#onama">O nama</a> </li>
-                              <li><a href="<?php echo site_url("GostController/pretragaPonuda")?>">Ponude</a></li>
-                              <li><a href="#contact">Kontakt</a></li>
+                              <li id="liPocetna"> <a href="<?= site_url("GostController/index") ?>">Početna</a> </li> <!-- ovde treba prosledjivati sta je aktivno, vrv moze preko js -->
+                              <li>                <a href="index#onama">O nama</a> </li>
+                              <li id="liPretraga"><a href="<?php echo site_url("GostController/pretragaPonuda")?>">Ponude</a></li>
+                              <li id="liKontakt"> <a href="#contact">Kontakt</a></li>
 
                            </ul>
                         </nav>
@@ -85,3 +86,15 @@
          </div>
       </div>
    </header>
+
+   <script>
+        $(document).ready(function(){
+            let url = window.location.href;
+            if (url.includes("pretragaPonuda")){
+                $("#liPretraga").addClass("active");
+            }
+            else {
+                $("#liPocetna").addClass("active");
+            }
+        });
+    </script>
