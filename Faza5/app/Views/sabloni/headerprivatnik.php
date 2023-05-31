@@ -58,7 +58,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="<?=base_url("PrivatnikController/izmenaProfila")?>" class="dropdown-item">Izmeni
                                                                 profil</a></li>
-                                                        <li><a href="index.html" class="dropdown-item">Log out</a></li>
+                                                        <li><a href="<?php echo base_url('GostController/index') ?>" class="dropdown-item">Log out</a></li>
                                                     </ul>
                                                 </div>
                                             </div>

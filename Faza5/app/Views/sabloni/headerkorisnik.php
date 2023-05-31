@@ -58,7 +58,7 @@
                                                     <ul class="dropdown-menu">
                                                         <li><a href="<?=base_url("KorisnikController/izmenaProfila")?>" class="dropdown-item">Izmeni
                                                                 profil</a></li>
-                                                        <li><a href="index.html" class="dropdown-item">Log out</a></li>
+                                                        <li><a href="<?php echo base_url('GostController/index') ?>" class="dropdown-item">Log out</a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -77,7 +77,7 @@
                     <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
                         <div class="full">
                             <div class="center-desk">
-                                <div class="logo"> <a href="privatnikPocetna.html"><img src="<?php echo base_url('images/logo.jfif') ?>" style="height:50%; width:50%" alt="#"></a> </div>
+                                <div class="logo"> <a href="<?php echo base_url('KorisnikController/index') ?>"><img src="<?php echo base_url('images/logo.jfif') ?>" style="height:50%; width:50%" alt="#"></a> </div>
                             </div>
                         </div>
                     </div>
@@ -91,7 +91,7 @@
                                         <li id="liPocetnaK"><a href="<?php echo base_url('KorisnikController/index') ?>">Početna</a></li>
                                         <li><a href="#contact">Kontakt</a></li>
                                         <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
-                                        <li> <a href="#about">O nama</a> </li>
+                                        <li> <a href="index/#onama">O nama</a> </li>
                                         <li><a href="<?=base_url("KorisnikController/index")?>">Pretraži ponude</a></li>
                                         <li><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
                                         <li><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>

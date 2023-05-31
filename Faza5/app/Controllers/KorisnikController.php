@@ -15,6 +15,12 @@ use App\Models\ModelSredstvo;
 
 use  App\Controllers\GostController;
 
+
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+
 class KorisnikController extends BaseController
 {
 
@@ -31,9 +37,9 @@ class KorisnikController extends BaseController
 
     public function index()
     {
+        
 
-
-        $this->prikaz("indexkorisnik", []);
+        $this->prikaz("indexkorisnik", ["kontroler"=>"KorisnikController","stranica"=>"indexkorisnik"]);
     }
 
     // dalje su samo fje za testiranje prikaza
@@ -55,7 +61,7 @@ class KorisnikController extends BaseController
             $poruka->mestoOd = $modelM->where("SifM", $ponuda->SifMesOd)->findAll()[0];
             $poruka->korisnik = $modelK->where("SifK", $poruka->SifPriv)->findAll()[0]->KorisnickoIme;
         }
-        $this->prikaz("inboxKorisnik", ["poruke" => $poruke]);
+        $this->prikaz("inboxKorisnik", ["poruke" => $poruke,"kontroler"=>"KorisnikController","stranica"=>"inboxKorisnik"]);
     }
 
     // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
@@ -105,7 +111,7 @@ class KorisnikController extends BaseController
         $odabrana->mestoOd = $modelM->where("SifM", $odabrana->SifMesOd)->findAll()[0];
         $odabrana->mestoDo = $modelM->where("SifM", $odabrana->SifMesDo)->findAll()[0];
         $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
-        $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana]);
+        $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana,"kontroler"=>"KorisnikController","stranica"=>"inboxKorisnik"]);
     }
 
     public function izmenaProfila()
@@ -127,8 +133,13 @@ class KorisnikController extends BaseController
 
                 $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
             }
+
+            
+
+            $data["kontroler"]="KorisnikController";
+            $data["stranica"]="izmenaProfila";
         }
-        $this->prikaz("izmenaProfila", $data);
+        $this->prikaz("izmenaProfila",$data);
     }
 
     public function ocenjivanje()
@@ -151,12 +162,15 @@ class KorisnikController extends BaseController
                 }
             }
         }
-        $this->prikaz("ocenjivanje", $data);
+        
+        $data["kontroler"]="KorisnikController";
+        $data["stranica"]="ocenjivanje";
+        $this->prikaz("ocenjivanje",$data);
     }
 
     public function pregledPonuda()
     {
-        $this->prikaz("pregledPonuda", []);
+        $this->prikaz("pregledPonuda", ["kontroler"=>"KorisnikController","stranica"=>"PregledPonuda"]);
     }
 
     // vrv ce moci da se ujedini sa prikazom ponude posto se samo dugmici razlikuju
@@ -167,7 +181,7 @@ class KorisnikController extends BaseController
         $modelK = new ModelKorisnik();
         $ponuda = $model->where("SifP", $SifP)->findAll()[0];
         $ponuda->Korisnik = $modelK->where("SifK", $ponuda->SifK)->findAll()[0]->KorisnickoIme;
-        $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda]);
+        $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda,"kontroler"=>"KorisnikController","stranica"=>"prikazPonudeInbox"]);
     }
 
     public function prikazPonude($sifP, $tip = "nista")
@@ -195,6 +209,7 @@ class KorisnikController extends BaseController
             array_push($res, $db->table('poklon')->where("SifPokl",$r)->get()->getResult()[0]);
         }
         
+        $data=[];
         
         $data['mojenagrade']= $res;
         
@@ -221,6 +236,10 @@ class KorisnikController extends BaseController
             }
         }
         $data['ponuda'] = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+
+       
+        $data["kontroler"]="KorisninikController";
+        $data["stranica"]="prikazPonude";
         
         $this->prikaz("prikazPonude", $data);
     }
@@ -229,7 +248,7 @@ class KorisnikController extends BaseController
     {
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
-        $data = [];
+        $data = ["kontroler"=>"KorisnikController"];
         if ($this->request->getMethod() == 'post') {
 
 
@@ -247,6 +266,10 @@ class KorisnikController extends BaseController
                 }
             }
         }
+        
+        $data["kontroler"]="KorisnikController";
+        $data["stranica"]="report";
+
         $this->prikaz("report", $data);
     }
 
@@ -256,7 +279,6 @@ class KorisnikController extends BaseController
         $db = db_connect();
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $model = new ModelObicanKorisnikLana($db);
-        $data = [];
         $res = $db->table('jedobio')->select("SifPokl")->where('Sifk',$SifK)->get()->getResult();
         
         $new_res =[];
@@ -277,6 +299,10 @@ class KorisnikController extends BaseController
 
         $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
 
+        
+        $data["kontroler"]="KorisnikController";
+        $data["stranica"]="rezervacije";
+
         // print_r($data["mojeRezervacije"]);
         $this->prikaz("rezervacije", $data);
     }
@@ -284,7 +310,6 @@ class KorisnikController extends BaseController
     public function kupi_kartu()
     {
         $db = db_connect();
-        $data = [];
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
 
@@ -331,6 +356,11 @@ class KorisnikController extends BaseController
             }
         }
         $data["mojeRezervacije"] =  $model->mojeRezervacije($SifK);
+
+        
+        $data["kontroler"]="KorisnikController";
+        $data["stranica"]="rezervacije";
+
         $this->prikaz("rezervacije", $data);
     }
 
@@ -338,7 +368,6 @@ class KorisnikController extends BaseController
     {
 
         $db = db_connect();
-        $data = [];
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
         $data['mesta'] = $model->svaMesta();
@@ -389,6 +418,9 @@ class KorisnikController extends BaseController
             }
         }
 
+        
+        $data["kontroler"]="KorisnikController";
+        $data["stranica"]="trazenjeVoznje";
 
         $this->prikaz("trazenjeVoznje", $data);
     }
@@ -398,7 +430,7 @@ class KorisnikController extends BaseController
         // $SifK = session()->get("korisnik")->SifK;  // dohvati 
         $SifK = "2";
         $db = db_connect();
-        $data = [];
+        
 
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
@@ -414,9 +446,38 @@ class KorisnikController extends BaseController
         }
         $data['tokena'] = $db->table('obicankorisnik')->where('SifK=', $SifK)->get()->getResult()[0]->token; // iz baze za korisnika
 
-
+        
+        $data["kontroler"]="KorisnikController";
+        $data["stranica"]="tocakSrece";
 
 
         echo view('tocakSrece', $data);
+    }
+    public function komentar(){ 
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("pomocniEPUTUJ1@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+        $email = (new Email())->from("pomocniEPUTUJ1@outlook.com")->to('sideeyetim@outlook.com')
+        ->subject('Novi komentar')->text('Ime:'.$this->request->getVar('ime').'
+Komentar:'.$this->request->getVar('komentar').'
+                ');
+
+        
+        $mailer->send($email);
+
+        $stranica=$this->request->getVar("stranica");
+        
+        
+        if($stranica=="trazenjeVoznje")$this->trazenjeVoznje();
+        else if($stranica=="rezervacije")$this->rezervacije();
+        else if($stranica=="report")$this->report();
+        else if($stranica="inboxKorisnik")$this->inboxKorisnik();
+        else if($stranica=="indexkorisnik")$this->index();
+        else if($stranica=="izmenaProfila")$this->izmenaProfila();
+        else if($stranica=="prikazPonude")$this->pregledPonuda();
+        else if($stranica=="prikazPonudeInbox")$this->inboxKorisnik();
+        else if($stranica=="ocenjivanje")$this->ocenjivanje();
+        else if($stranica=="pregledPonuda")$this->pregledPonuda();
     }
 }

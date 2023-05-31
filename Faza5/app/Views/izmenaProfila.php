@@ -31,7 +31,7 @@
          <div style="margin-left: 260px;">
             <br>
             <input type="submit" value="Sačuvaj" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
-            <input type="submit" value="Obrisi moj nalog" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
+            <input type="submit" value="Obriši moj nalog" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
 
          </div>
       </div>

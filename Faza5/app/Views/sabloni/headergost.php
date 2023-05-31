@@ -61,7 +61,7 @@
                <div class="col-xl-3 col-lg-3 col-md-3 col-sm-3 col logo_section">
                   <div class="full">
                      <div class="center-desk">
-                        <div class="logo"> <a href="index.html"><img src="<?php echo base_url('images/logo.jpeg') ?>" alt="#"></a> </div>
+                        <div class="logo"> <a href="<?php echo base_url('GostController/index') ?>"><img src="<?php echo base_url('images/logo.jpeg') ?>" alt="#"></a> </div>
                      </div>
                   </div>
                </div>
@@ -72,7 +72,7 @@
                            <ul class="menu-area-main">
 
                               <li> <a href="<?= site_url("GostController/index") ?>">Početna</a> </li> <!-- ovde treba prosledjivati sta je aktivno, vrv moze preko js -->
-                              <li> <a href="#about">O nama</a> </li>
+                              <li> <a href="index#onama">O nama</a> </li>
                               <li><a href="<?php echo site_url("GostController/pretragaPonuda")?>">Ponude</a></li>
                               <li><a href="#contact">Kontakt</a></li>
 

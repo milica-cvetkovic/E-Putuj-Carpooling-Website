@@ -17,19 +17,19 @@
                     ?>
                     <?php
                     
-                        foreach($reportovi as $nalog){ 
-                            echo "<tr>
-                    <td>
-                        <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
+                    foreach($reportovi as $nalog){ 
+                        echo "<tr>
+                <td>
+                    <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
 
-                        <div style='width: 25%'>
-                        <a href=".base_url('AdminController/reportDetalji?izbor='.$nalog->SifPrijavljen)."><button class='dugme'>Pregledaj</button></a>
-                        </div>
-                    </td>
-                </tr>";
-                    
-                        }
-                    ?>
+                    <div style='width: 25%'>
+                    <a href=".base_url('AdminController/reportDetalji?izbor1='.$nalog->SifPrijavljen."&izbor2=".$nalog->SifPrijavio."&r=".$nalog->SifRep)."><button class='dugme'>Pregledaj</button></a>
+                    </div>
+                </td>
+            </tr>";
+                
+                    }
+                ?>
                     
                 </table>
         </div>
@@ -56,7 +56,7 @@
                 <h3>Tip</h3>
                 <input type='text' disabled value=";
                 $tip="";
-                if($odabran1->PrivatnikIliKoirsnik=='K')$tip="Običan korisnik";
+                if($odabran1->PrivatnikIliKorisnik=='K')$tip="Običan korisnik";
                 else $tip="Privatnik";
                 echo
                 $tip." />
@@ -67,7 +67,7 @@
 
             </form>
 
-            <a href="<?= base_url('AdminController/reportDetalji?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK)?>" style="color:white"><button class="dugme">
+            <a href="<?= base_url('AdminController/reportDetalji?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK."&r=".$odabran1->SifRep)?>" style="color:white"><button class="dugme">
                         << Nazad </button></a>
         </div>
     </div>

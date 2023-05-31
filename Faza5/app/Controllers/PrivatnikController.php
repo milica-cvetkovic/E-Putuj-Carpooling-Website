@@ -10,6 +10,11 @@ use App\Models\ModelPonuda;
 use App\Models\ModelMesto;
 use App\Models\ModelSredstvo;
 
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+
 class PrivatnikController extends BaseController {
 
     //....
@@ -36,7 +41,7 @@ class PrivatnikController extends BaseController {
 
         $builder = $db->table("ponuda");
         $ponude = $builder->where("SifK", $korisnik->SifK)->get()->getResult();
-        $this->prikaz("indexprivatnik", ["ponude" => $ponude]);
+        $this->prikaz("indexprivatnik", ["ponude" => $ponude,"kontroler"=>"PrivatnikController","stranica"=>"indexprivatnik"]);
     }
 
     public function izborPonudeAzuriranje() {
@@ -52,7 +57,7 @@ class PrivatnikController extends BaseController {
         $builder = $db->table("ponuda");
         $ponude = $builder->where("SifK", $korisnik->SifK)->get()->getResult();
 
-        $this->prikaz("izborPonudeAzuriranje", ["ponude" => $ponude]);
+        $this->prikaz("izborPonudeAzuriranje", ["ponude" => $ponude,"kontroler"=>"PrivatnikController","stranica"=>"izborPonudeAzuriranje"]);
     }
 
     // prikaz ponude koju je postavio
@@ -61,7 +66,7 @@ class PrivatnikController extends BaseController {
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
 
-        $this->prikaz("prikazPonudePrivatnik", ["ponuda" => $ponuda]);
+        $this->prikaz("prikazPonudePrivatnik", ["ponuda" => $ponuda,"kontroler"=>"PrivatnikController","stranica"=>"prikazPonudePrivatnik"]);
     }
 
     // $sifP je sifra ponude
@@ -70,7 +75,7 @@ class PrivatnikController extends BaseController {
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
 
-        $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda]);
+        $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
     }
 
     public function azuriranjePonudeSubmit($sifP) {
@@ -100,34 +105,34 @@ class PrivatnikController extends BaseController {
         }
         if (strpos($_FILES['slika']['type'], "image") === false) {
             $poruka = "Ubacen fajl nije slika";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($_FILES["slika"]["size"] > 1000000) {
             $poruka = "Maksimalna dozvoljena veličina fajla je 1000000 bajtova.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($brojRezervisanihMesta > $brMesta) {
             $poruka = "Rezervisano je " . $brojRezervisanihMesta . " tako da se ne moze smanjiti broj mesta za ponudu na " . $brMesta . ".";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($cena <= 0) {
             $poruka = "Cena mora da bude pozitivan broj.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if (
             $brojRezervisanihMesta == 0 &&
             ($datumOd . " " . $vremeOd <= date("Y-m-d H:i:s") || $datumDo . " " . $vremeDo <= date("Y-m-d H:i:s"))
         ) {
             $poruka = "Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($brojRezervisanihMesta == 0 && $datumOd > $datumDo) {
             $poruka = "Datum dolaska mora biti kasnije od datuma polaska.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($brojRezervisanihMesta == 0 && $datumOd == $datumDo && $vremeOd >= $vremeDo) {
             $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($brojRezervisanihMesta == 0 && $mestoOd == $mestoDo) {
             $poruka = "Mesto polaska i dolaska moraju biti različiti.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else if ($rokZaOtkazivanje <= 0 || $rokZaOtkazivanje > $trenutniRokZaOtkaz) {
             $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i ne veći od trenutnog roka.";
-            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+            $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
         } else {
 
             // cuvanje slike na serveru
@@ -136,7 +141,7 @@ class PrivatnikController extends BaseController {
             $destinacioniFajl = $destinacioniFolder . $imeSlike;
             if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
                 $poruka = "Nije uspelo ubacivanje slike";
-                $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka]);
+                $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
             } else {
 
                 $builder = $db->table("mesto");
@@ -175,7 +180,7 @@ class PrivatnikController extends BaseController {
                 $builder->where("SifP", $sifP);
                 $builder->update($data);
 
-                $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno azurirana ponuda!"]);
+                $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "porukaUspeh" => "Uspesno azurirana ponuda!","kontroler"=>"PrivatnikController","stranica"=>"azurirajPonudu"]);
             }
         }
     }
@@ -199,7 +204,7 @@ class PrivatnikController extends BaseController {
             $poruka->korisnik = $modelK->where("SifK", $poruka->SifKor)->findAll()[0]->KorisnickoIme;
         }
 
-        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke]);
+        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke,"kontroler"=>"PrivatnikController","stranica"=>"inboxPrivatnik"]);
     }
 
     public function inboxPrivatnikPoruka() {
@@ -228,13 +233,13 @@ class PrivatnikController extends BaseController {
         $odabrana->mestoOd = $modelM->where("SifM", $odabrana->SifMesOd)->findAll()[0];
         $odabrana->mestoDo = $modelM->where("SifM", $odabrana->SifMesDo)->findAll()[0];
         $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
-        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke, "odabrana" => $odabrana]);
+        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke, "odabrana" => $odabrana,"kontroler"=>"PrivatnikController","stranica"=>"inboxPrivatnik"]);
     }
 
     public function napraviPonudu() {
         $SifK = $this->request->getVar("SifK");
        
-        $this->prikaz("napraviPonudu", ["SifK" => $SifK]);
+        $this->prikaz("napraviPonudu", ["SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
     }
 
     public function napraviPonuduSubmit() {
@@ -262,25 +267,25 @@ class PrivatnikController extends BaseController {
         
         if ($cena <= 0) {
             $poruka = "Cena mora da bude pozitivan broj.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else if ($datumOd . " " . $vremeOd <= date("Y-m-d H:i:s") || $datumDo . " " . $vremeDo <= date("Y-m-d H:i:s")) {
             $poruka = "Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else if ($datumOd > $datumDo) {
             $poruka = "Datum dolaska mora biti kasnije od datuma polaska.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else if ($datumOd == $datumDo && $vremeOd >= $vremeDo) {
             $poruka = "Vreme dolaska mora biti kasnije od vremena polaska.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else if ($mestoOd == $mestoDo) {
             $poruka = "Mesto polaska i dolaska moraju biti različiti.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else if ($rokZaOtkazivanje <= 0 || (strtotime($datumOd) - strtotime(date("Y-m-d"))) / (60 * 60 * 24) < $rokZaOtkazivanje - 1) {
             $poruka = "Rok za otkazivanje rezervacije mora da bude pozitivan broj i da se uklapa u period do realizacije ponude.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else if ($brMesta <= 0) {
             $poruka = "Broj slobodnih mesta mora da bude pozitivan broj.";
-            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+            $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
         } else {
 
             $db      = \Config\Database::connect();
@@ -315,7 +320,7 @@ class PrivatnikController extends BaseController {
                 $builder = $db->table("ponuda");
                 $builder->where("SifP", $sifP)->delete();
                 $poruka = "Nije uspelo ubacivanje slike";
-                $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK]);
+                $this->prikaz("napraviPonudu", ["poruka" => $poruka, "SifK" => $SifK,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
             } else {
                 
 
@@ -376,7 +381,7 @@ class PrivatnikController extends BaseController {
                 session()->remove("vremeOd");
                 session()->remove("vremeDo");
                 session()->remove("rokZaOtkazivanje");
-                $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!","SifK"=>-1]);
+                $this->prikaz("napraviPonudu", ["porukaUspeh" => "Napravljena ponuda!","SifK"=>-1,"kontroler"=>"PrivatnikController","stranica"=>"napraviPonudu"]);
             }
         }
     }
@@ -390,7 +395,7 @@ class PrivatnikController extends BaseController {
 
         $builder = $db->table("ponuda");
         $ponude = $builder->where("SifK", $korisnik->SifK)->get()->getResult();
-        $this->prikaz("otkaziPonudu", ["ponude" => $ponude]);
+        $this->prikaz("otkaziPonudu", ["ponude" => $ponude,"kontroler"=>"PrivatnikController","stranica"=>"otkaziPonudu"]);
     }
 
     public function otkaziPonuduSubmit($sifP) {
@@ -450,12 +455,12 @@ class PrivatnikController extends BaseController {
 
         $builder = $db->table("ponuda");
         $ponude = $builder->where("SifK", session()->get("korisnik")->SifK)->get()->getResult();
-        $this->prikaz("otkaziPonudu", ["ponude" => $ponude, "poruka" => "Ponuda je otkazana!"]);
+        $this->prikaz("otkaziPonudu", ["ponude" => $ponude, "poruka" => "Ponuda je otkazana!","kontroler"=>"PrivatnikController","stranica"=>"otkaziPonudu"]);
     }
 
 
     public function promenaPretplate() {
-        $this->prikaz("promenaPretplate", []);
+        $this->prikaz("promenaPretplate", ["kontroler"=>"PrivatnikController","stranica"=>"promenaPretplate"]);
     }
 
     public function promenaPretplateSubmit() {
@@ -470,7 +475,7 @@ class PrivatnikController extends BaseController {
         if ($dugme == "Premium") {
             if ($pretplata->Naziv == "Premium") {
                 $poruka = "Vec imate premium pretplatu.";
-                $this->prikaz("promenaPretplate", ["poruka" => $poruka]);
+                $this->prikaz("promenaPretplate", ["poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"promenaPretplate"]);
             } else {
                 $data = [
                     "SifPret" => ($builder->where("Naziv", "Premium")->get()->getResult())[0]->SifPret
@@ -481,12 +486,12 @@ class PrivatnikController extends BaseController {
                 $builder->where("SifK", $korisnikSifK);
                 $builder->update($data);
                 $poruka = "Uspesno ažuriranje";
-                $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka]);
+                $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"promenaPretplate"]);
             }
         } else {
             if ($pretplata->Naziv == "Standard") {
                 $poruka = "Vec imate standard pretplatu.";
-                $this->prikaz("promenaPretplate", ["poruka" => $poruka]);
+                $this->prikaz("promenaPretplate", ["poruka" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"promenaPretplate"]);
             } else {
                 $data = [
                     "SifPret" => ($builder->where("Naziv", "Standard")->get()->getResult())[0]->SifPret
@@ -497,7 +502,7 @@ class PrivatnikController extends BaseController {
                 $builder->where("SifK", $korisnikSifK);
                 $builder->update($data);
                 $poruka = "Uspesno ažuriranje";
-                $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka]);
+                $this->prikaz("promenaPretplate", ["porukaUspeh" => $poruka,"kontroler"=>"PrivatnikController","stranica"=>"promenaPretplate"]);
             }
         }
     }
@@ -519,7 +524,34 @@ class PrivatnikController extends BaseController {
 
                 $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
             }
+            $data["stranica"]="izmenaProfila";
+            $data["kontroler"]="PrivatnikController";
         }
         $this->prikaz("izmenaProfila", $data);
+    }
+    public function komentar(){ 
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("pomocniEPUTUJ1@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+        $email = (new Email())->from("pomocniEPUTUJ1@outlook.com")->to('sideeyetim@outlook.com')
+        ->subject('Novi komentar')->text('Ime:'.$this->request->getVar('ime').'
+Komentar:'.$this->request->getVar('komentar').'
+                ');
+
+        
+        $mailer->send($email);
+
+        $stranica=$this->request->getVar("stranica");
+        
+        
+        if($stranica=="izmenaProfila")$this->izmenaProfila();
+        else if($stranica=="inboxPrivatnik")$this->inboxPrivatnik();
+        else if($stranica=="napraviPonudu")$this->napraviPonudu();
+        else if($stranica=="azurirajPonudu")$this->izborPonudeAzuriranje();
+        else if($stranica=="izborPonudeAzuriranje")$this->izborPonudeAzuriranje();
+        else if($stranica=="promenaPretplate")$this->promenaPretplate();
+        else if($stranica=="otkaziPonudu")$this->otkaziPonudu();
+        else if($stranica=="prikazPonudePrivatnik")$this->index();
     }
 }

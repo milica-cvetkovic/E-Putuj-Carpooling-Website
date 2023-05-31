@@ -6,6 +6,11 @@
 
 namespace App\Controllers;
 
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+
 /**
  * GostController - klasa za pretragu, logovanje i registraciju gosta
  * 
@@ -37,7 +42,7 @@ class GostController extends BaseController {
         $svePonude = $this->dohvatiSvePonude();
         $svaMesta = $this->dohvatiSvaMesta();
         $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
-        $this->prikaz("index", ["svePonude"=> $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva]);
+        $this->prikaz("index", ["svePonude"=> $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva,"kontroler"=>"GostController","stranica"=>"index"]);
     }
     
     /**
@@ -48,7 +53,7 @@ class GostController extends BaseController {
      * @return void
      */
     public function login($poruke = null){
-        $this->prikaz("login.php", ["poruke" => $poruke]);
+        $this->prikaz("login.php", ["poruke" => $poruke,"kontroler"=>"GostController","stranica"=>"login"]);
     }
     
     /**
@@ -95,7 +100,7 @@ class GostController extends BaseController {
      * @return void
      */
     public function registracija($poruke = null){
-        $this->prikaz("registracija.php", ["poruke" => $poruke]);
+        $this->prikaz("registracija.php", ["poruke" => $poruke,"kontroler"=>"GostController","stranica"=>"registracija"]);
     }
     
     public function registracijaSubmit(){
@@ -148,7 +153,7 @@ class GostController extends BaseController {
      * @return void
      */
     public function zaboravljenalozinka(){
-        $this->prikaz("zaboravljenalozinka", []);
+        $this->prikaz("zaboravljenalozinka", ["kontroler"=>"GostController","stranica"=>"zaboravljenalozinka"]);
     }
 
     /**
@@ -168,7 +173,7 @@ class GostController extends BaseController {
         $svePonude = $this->dohvatiSvePonude();
         $svaMesta = $this->dohvatiSvaMesta();
         $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
-        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude,"svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages]);
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude,"svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages,"kontroler"=>"GostController","stranica"=>"pregledPonuda"]);
     }
    
     /**
@@ -271,7 +276,7 @@ class GostController extends BaseController {
             $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
         }
         $totalPages = count($this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage));
-        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true"]);
+        return $this->prikaz("pregledPonuda", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true","kontroler"=>"GostController","stranica"=>"pregledPonuda"]);
                 
     }
 
@@ -284,7 +289,7 @@ class GostController extends BaseController {
         $ponuda = $this->request->getVar("izabranaPonuda");
         $ponuda = $this->dohvatiPonudu($ponuda);
         $prosek = $this->prosek($ponuda);
-        $this->prikaz("prikazPonudeGost", ["ponuda"=>$ponuda, "prosek" => $prosek]);
+        $this->prikaz("prikazPonudeGost", ["ponuda"=>$ponuda, "prosek" => $prosek,"kontroler"=>"GostController","stranica"=>"prikazPonudeGost"]);
     }
     
     /**
@@ -700,6 +705,31 @@ class GostController extends BaseController {
         
         return $builder->get()->getResult();
         
+    }
+
+
+    public function komentar(){ 
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("pomocniEPUTUJ1@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+        $email = (new Email())->from("pomocniEPUTUJ1@outlook.com")->to('sideeyetim@outlook.com')
+        ->subject('Novi komentar')->text('Ime:'.$this->request->getVar('ime').'
+Komentar:'.$this->request->getVar('komentar').'
+                ');
+
+        
+        $mailer->send($email);
+
+        $stranica=$this->request->getVar("stranica");
+        
+        
+        if($stranica=="login")$this->login();
+        else if($stranica=="registracija")$this->registracija();
+        else if($stranica=="zaboravljenalozinka")$this->zaboravljenalozinka();
+        else if($stranica=="index")$this->index();
+        else if($stranica=="prikazPonudeGost")$this->pretragaPonuda();
+        else if($stranica=="pregledPonuda")$this->pretragaPonuda();
     }
     
 }

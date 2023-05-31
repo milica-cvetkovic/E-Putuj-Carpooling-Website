@@ -23,7 +23,7 @@
                         <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
 
                         <div style='width: 25%'>
-                        <a href=".base_url('AdminController/reportDetalji?izbor='.$nalog->SifPrijavljen)."><button class='dugme'>Pregledaj</button></a>
+                        <a href=".base_url('AdminController/reportDetalji?izbor1='.$nalog->SifPrijavljen."&izbor2=".$nalog->SifPrijavio."&r=".$nalog->SifRep)."><button class='dugme'>Pregledaj</button></a>
                         </div>
                     </td>
                 </tr>";
@@ -52,7 +52,7 @@
                      </tr>
                      <tr>
                         <th style='width:200px'>Razlog report-a: </th>
-                        <td>Lažno predstavljanje</td>
+                        <td>".$razlog."</td>
                      </tr>
                   </table>
                </div>
@@ -62,12 +62,12 @@
        ?>
 
          </form>
-         <a href="<?= base_url('AdminController/detaljiPrivatnikaPosleReporta?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK)?>"
+         <a href="<?= base_url('AdminController/detaljiPrivatnikaPosleReporta?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK."&r=".$odabran1->SifRep)?>"
                   style="color:white;text-decoration:none"><button class="dugme" style="margin-right:10px;">Detalji o nalogu </button></a>
 
-            <a href="<?= base_url('AdminController/posaljiEmail?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK)?>"><button class="dugme" style="margin-right:10px;">Upozori</button></a>
+            <a href="<?= base_url('AdminController/posaljiEmail?izbor1='.$odabran1->SifK.'&izbor2='.$odabran2->SifK."&r=".$odabran1->SifRep)?>"><button class="dugme" style="margin-right:10px;">Upozori</button></a>
 
-           <a href="<?= base_url('AdminController/Obrisi?izbor='.$odabran1->SifK)?>"> <button class="dugme">Ukloni nalog</button></a>
+           <a href="<?= base_url('AdminController/Obrisi?izbor='.$odabran1->SifK.'&izbor2='.$odabran2->SifK."&r=".$odabran1->SifRep)?>"> <button class="dugme">Ukloni nalog</button></a>
       </div>
     </div>
 </div>

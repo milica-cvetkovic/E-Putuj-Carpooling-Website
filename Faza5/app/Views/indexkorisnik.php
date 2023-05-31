@@ -79,13 +79,13 @@
       <div class="row">
          <div class="col-md-12 ">
             <div class="titlepage">
-               <h2 style="margin-top: 100px;">O nama</h2>
+               <h2 style="margin-top: 100px;" id="onama">O nama</h2>
                <span> </span>
             </div>
          </div>
       </div>
    </div>
-   <div class="bg">
+   <div class="bg" >
       <div class="container">
          <div class="row">
             <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">

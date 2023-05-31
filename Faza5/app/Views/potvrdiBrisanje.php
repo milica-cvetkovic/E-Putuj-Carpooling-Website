@@ -15,21 +15,22 @@
                     </tr>";
                         }
                     ?>
-                    <?php
+                   <?php
                     
-                        foreach($reportovi as $nalog){ 
-                            echo "<tr>
-                    <td>
-                        <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
+                    foreach($reportovi as $nalog){ 
+                        echo "<tr>
+                <td>
+                    <h4>Obaveštenje o novom report-u naloga <strong>".$nalog->KorisnickoIme.".</strong></h4>
 
-                        <div style='width: 25%'>
-                        <a href=".base_url('AdminController/reportDetalji?izbor='.$nalog->SifPrijavljen)."><button class='dugme'>Pregledaj</button></a>
-                        </div>
-                    </td>
-                </tr>";
-                    
-                        }
-                    ?>
+                    <div style='width: 25%'>
+                    <a href=".base_url('AdminController/reportDetalji?izbor1='.$nalog->SifPrijavljen."&izbor2=".$nalog->SifPrijavio."&r=".$nalog->SifRep)."><button class='dugme'>Pregledaj</button></a>
+                    </div>
+                </td>
+            </tr>";
+                
+                    }
+                ?>
+                
                     
                 </table>
         </div>
@@ -56,7 +57,7 @@
                     <h3>Tip</h3>
                     <input type='text' disabled value=";
                     $tip="";
-                    if($odabran->PrivatnikIliKoirsnik=='K')$tip="Običan korisnik";
+                    if($odabran->PrivatnikIliKorisnik=='K')$tip="Običan korisnik";
                     else $tip="Privatnik";
                     echo
                     $tip." />

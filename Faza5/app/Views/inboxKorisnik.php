@@ -16,6 +16,13 @@
                                 </div>
                             </li>"; 
                         }
+                        if(empty($poruke)){ 
+                            echo 
+                            "<div class='container-fluid' style='margin: 2em;'>
+                                <div style='padding:25px'><b></b></div>
+                            
+                            </div>";
+                        }
                     ?>
                 </ul>
             </div>
@@ -62,7 +69,7 @@
                              <td>".$odabrana->CenaKarte."</td>
                           </tr>
                           <tr>
-                             <td>Broj putnika</td>
+                             <td>Broj slobodnih mesta</td>
                              <td>".$odabrana->BrMesta."</td>
                           </tr>
                        </table>

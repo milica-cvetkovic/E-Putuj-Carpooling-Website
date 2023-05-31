@@ -14,27 +14,31 @@
                <div class="Follow">
                   <h3>Prečice:</h3>
                   <ul class="link">
-                     <li> <a href="#onama">O nama</a></li>
+                     <li> <a href="index#onama">O nama</a></li>
                   </ul>
                </div>
             </div>
             <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
-               <form>
+               <form action='<?php echo base_url($kontroler."/komentar")?>' method="get">
                   <div class="Follow">
                      <h3>Ostavite komentar:</h3>
 
                      <div class="row">
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                           <input class="Newsletter" placeholder="Name" type="text">
+                           <input class="Newsletter" placeholder="Name" type="text" name="ime">
                         </div>
                         <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
-                           <input class="Newsletter" placeholder="Email" type="text">
+                           <input class="Newsletter" placeholder="Email" type="text" name='email'>
                         </div>
                         <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
-                           <textarea class="textarea" placeholder="Komentar" type="text"></textarea>
+                           <textarea class="textarea" placeholder="Komentar" type="text" name='komentar'></textarea>
                         </div>
+                        <?php  
+                           echo '<input type="hidden" name="stranica" value='.$stranica.'>';
+                        
+                        ?>
                      </div>
-                     <a href="#"><button class="Subscribe">Pošalji</button></a>
+                     <input type="submit" class="Subscribe" value="Pošalji">
                   </div>
                </form>
             </div>

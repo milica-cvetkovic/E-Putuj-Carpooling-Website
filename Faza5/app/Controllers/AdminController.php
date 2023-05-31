@@ -12,7 +12,11 @@ use App\Models\ModelObicanKorisnik;
 use App\Models\ModelPrivatnik;
 use App\Models\ModelReport;
 
-use CodeIgniter\Email\Email;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
+
 
 
 class AdminController extends BaseController {
@@ -63,6 +67,7 @@ class AdminController extends BaseController {
 
         $izbor1=$this->request->getVar("izbor1");
         $izbor2=$this->request->getVar("izbor2");
+        $SifRep=$this->request->getVar("r");
 
         $model=new ModelKorisnik();
         $modelR=new ModelReport();
@@ -78,7 +83,11 @@ class AdminController extends BaseController {
         $odabran1=$model->where("SifK",$izbor1)->findAll()[0];
         $odabran2=$model->where("SifK",$izbor2)->findAll()[0];
 
-        $this->prikaz("detaljiPrivatnikaPosleReporta", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
+        $razlog=$modelR->where("SifRep",$SifRep)->findAll()[0]->Razlog;
+
+        $odabran1->SifRep=$SifRep;
+
+        $this->prikaz("detaljiPrivatnikaPosleReporta", ["razlog"=>$razlog,"broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
     }
 
     public function dodajMesto(){
@@ -180,6 +189,7 @@ class AdminController extends BaseController {
     public function reportDetalji(){
         $izbor1=$this->request->getVar("izbor1");
         $izbor2=$this->request->getVar("izbor2");
+        $SifRep=$this->request->getVar("r");
         $model=new ModelKorisnik();
         $modelR=new ModelReport();
 
@@ -194,7 +204,11 @@ class AdminController extends BaseController {
         $odabran1=$model->where("SifK",$izbor1)->findAll()[0];
         $odabran2=$model->where("SifK",$izbor2)->findAll()[0];
 
-        $this->prikaz("reportDetalji", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
+        $razlog=$modelR->where("SifRep",$SifRep)->findAll()[0]->Razlog;
+
+        $odabran1->SifRep=$SifRep;
+
+        $this->prikaz("reportDetalji", ["razlog"=>$razlog ,"broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
     }
 
     public function ukloniNalog(){
@@ -202,7 +216,7 @@ class AdminController extends BaseController {
         $modelR=new ModelReport();
 
         $nalozi=$model->where("TraziBrisanje","1")->findAll();
-
+        
         $reportovi=$modelR->findAll();
 
         foreach($reportovi as $r){
@@ -215,8 +229,34 @@ class AdminController extends BaseController {
 
     public function Obrisi(){ 
         $model=new ModelKorisnik();
-        $id=(int)$this->request->getVar("izbor");
+        if(!empty($this->request->getVar("izbor")))$id=(int)$this->request->getVar("izbor");
+        else $id=(int)$this->request->getVar("izbor1");
+        $val=$model->where("SifK",$id)->findAll()[0];
         $model->delete($id);
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("sideeyetim@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+       if(empty($this->request->getVar("r"))) {
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($val->Email)
+        ->subject('Obaveštenje o gašenju naloga '.$val->KorisnickoIme.' na sajtu ePutuj')->text('
+Poštovani/a, 
+    Odlukom administratora,a po Vašem zahtevu,Vaš nalog je uklonjen . Za više informacija obratite na se putem mejla ili na broj telefona.   
+S poštovanjem,
+Tim Side-Eye.
+                ');
+       }
+       else{ 
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($val->Email)
+        ->subject('Obaveštenje o gašenju naloga '.$val->KorisnickoIme.' na sajtu ePutuj')->text('
+Poštovani/a, 
+    Odlukom administratora,radi određenog broja report-ova,Vaš nalog je uklonjen . Za više informacija obratite nam se putem mejla ili na broj telefona.   
+S poštovanjem,
+Tim Side-Eye.
+                ');
+       }
+        
+        $mailer->send($email);
         redirect($this->ukloniNalog());
     }
     public function Odbij(){ 
@@ -224,43 +264,60 @@ class AdminController extends BaseController {
         $id=(int)$this->request->getVar("izbor");
         $val=$model->where("SifK",$id)->findAll()[0];
         $model->update($id,["KorisnickoIme"=>$val->KorisnickoIme,"Lozinka"=>$val->Lozinka,"BrTel"=>$val->BrTel,"Ime"=>$val->Ime,"Prezime"=>$val->Prezime,"Email"=>$val->Email,"PrivatnikIliKorisnik"=>$val->PrivatnikIliKorisnik,"TraziBrisanje"=>"0"]);
+
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("sideeyetim@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($val->Email)
+        ->subject('Obaveštenje o odbijanju gašenja naloga '.$val->KorisnickoIme.' na sajtu ePutuj')->text('
+Poštovani/a, 
+    Odlukom administratora,Vaš nalog neće biti uklonjen . Za više informacija obratite nam se putem mejla ili na broj telefona.   
+S poštovanjem,
+Tim Side-Eye.
+                ');
+
+        
+        $mailer->send($email);
         redirect($this->ukloniNalog());
     }
 
     public function posaljiEmail(){
 
-        $izbor1=$this->request->getVar("izbor1");
-        $izbor2=$this->request->getVar("izbor2");
+        $SifRep=$this->request->getVar("r");
         $model=new ModelKorisnik();
         $modelR=new ModelReport();
 
-        $nalozi=$model->where("TraziBrisanje","1")->findAll();
+        $izbor1=$this->request->getVar("izbor1");
+        $izbor2=$this->request->getVar("izbor2");
 
-        $reportovi=$modelR->findAll();
-
-        foreach($reportovi as $r){
-            $r->KorisnickoIme=$model->where("SifK",$r->SifPrijavljen)->findAll()[0]->KorisnickoIme;
-        }
 
         $odabran1=$model->where("SifK",$izbor1)->findAll()[0];
         $odabran2=$model->where("SifK",$izbor2)->findAll()[0];
 
-        $email = new Email();
-
-        $email->setTo('anjacuric96@gmail.com');
-        $email->setFrom('samantamajic12334@gmail.com', '');
-        $email->setSubject('Upozorenje o gašenju naloga na sajtu ePutuj');
-        $email->setMessage('Poštovani/a, 
-Radi određenog broja report-ova na vašem nalogu,obaveštavamo Vas o mogućem gašenju istog.
-
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("sideeyetim@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($odabran1->Email)
+        ->subject('Upozorenje o gašenju naloga '.$odabran1->KorisnickoIme.' na sajtu ePutuj')->text('
+Poštovani/a, 
+    Radi određenog broja report-ova na Vašem nalogu,obaveštavamo Vas o mogućem gašenju istog . Poslednji primljeni report:
+    
+    Od naloga: '.$odabran2->KorisnickoIme.'
+    Razlog report-a:'.$modelR->where("SifRep",$SifRep)->findAll()[0]->Razlog.'.
+    
 S poštovanjem,
 Tim Side-Eye.
-        ');
+                ');
 
-        $email->send();
+        
+        $mailer->send($email);
 
-        $email->clear();
-        $this->prikaz("reportDetalji", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
+        $modelR->delete($SifRep);
+        
+  
+        $this->ukloniNalog();
 
 
     }
