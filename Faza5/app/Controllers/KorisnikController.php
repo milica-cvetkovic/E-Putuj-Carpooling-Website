@@ -34,9 +34,10 @@ class KorisnikController extends BaseController {
 
 
     public function index() {
-
-
-        $this->prikaz("indexkorisnik", ["kontroler" => "KorisnikController", "stranica" => "indexkorisnik"]);
+        $svePonude = $this->dohvatiSvePonude();
+        $svaMesta = $this->dohvatiSvaMesta();
+        $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
+        $this->prikaz("indexkorisnik", ["svePonude"=> $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva,"kontroler"=>"GostController","stranica" => "indexkorisnik"]);
     }
 
     // dalje su samo fje za testiranje prikaza
@@ -178,9 +179,6 @@ class KorisnikController extends BaseController {
         $this->prikaz("ocenjivanje", $data);
     }
 
-    public function pregledPonuda() {
-        $this->prikaz("pregledPonuda", ["kontroler" => "KorisnikController", "stranica" => "PregledPonuda"]);
-    }
 
     // vrv ce moci da se ujedini sa prikazom ponude posto se samo dugmici razlikuju
     public function prikazPonudeInbox() {
@@ -486,5 +484,416 @@ Komentar:' . $this->request->getVar('komentar') . '
         session()->remove("korisnik");
         $gostController = new GostController();
         $gostController->index();
+    }
+    
+    
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
+     * Pretraga i filtriranje/sortiranje ponuda po izabranim kriterijumima
+     * 
+     * @return mixed
+     */
+    public function pretragaPonuda(){
+        
+        $resetPage = $this->request->getVar("resetPage");
+        $sortiranje = $this->request->getVar("sortiranje");
+        
+        if($sortiranje != null){
+            $this->session->set("sortiranje", $sortiranje);
+        }
+        
+        if($resetPage != null || $sortiranje != null){
+            $page = 1;
+        }
+        else{
+            $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        }
+
+        $numOfResultsOnPage = 9;
+                
+        if($resetPage != null){
+            
+            $prevoznoSredstvo = $this->request->getVar("prevoznoSredstvo");
+            $mestoOd = $this->request->getVar("mestoOd");
+            $mestoDo = $this->request->getVar("mestoDo");
+            $minimalnaCena = $this->request->getVar("minimalnaCena");
+            $maksimalnaCena = $this->request->getVar("maksimalnaCena");
+            $brojPutnika = $this->request->getVar("brojPutnika");
+            $datumOd = $this->request->getVar("datumOd");
+            $datumDo = $this->request->getVar("datumDo");
+            $vremeOd = $this->request->getVar("vremeOd");
+            $vremeDo = $this->request->getVar("vremeDo");
+           
+            $this->session->set("prevoznoSredstvo", $prevoznoSredstvo);
+            $this->session->set("mestoOd", $mestoOd);
+            $this->session->set("mestoDo", $mestoDo);
+            $this->session->set("minimalnaCena", $minimalnaCena);
+            $this->session->set("maksimalnaCena", $maksimalnaCena);
+            $this->session->set("brojPutnika", $brojPutnika);
+            $this->session->set("datumOd", $datumOd);
+            $this->session->set("datumDo", $datumDo);
+            $this->session->set("vremeOd", $vremeOd);
+            $this->session->set("vremeDo", $vremeDo);
+            
+            $this->session->set("sort", null);
+            $this->session->set("sortiranje", null);
+        }
+        
+        $prevoznoSredstvo =$this->session->get("prevoznoSredstvo" );
+        $mestoOd = $this->session->get("mestoOd");
+        $mestoDo= $this->session->get("mestoDo");
+        $minimalnaCena =$this->session->get("minimalnaCena");
+        $maksimalnaCena = $this->session->get("maksimalnaCena");
+        $brojPutnika = $this->session->get("brojPutnika");
+        $datumOd = $this->session->get("datumOd");
+        $datumDo = $this->session->get("datumDo");
+        $vremeOd = $this->session->get("vremeOd");
+        $vremeDo = $this->session->get("vremeDo");
+        
+        $sortiranje = $this->session->get("sortiranje");
+        
+        $rastuceCena = null;
+        $rastuceDatum = null;
+        $opadajuceCena = null;
+        $opadajuceDatum = null;
+        
+        switch($sortiranje){
+            case "rastuceCena":
+                $rastuceCena = $sortiranje;
+                break;
+            case "rastuceDatum":
+                $rastuceDatum = $sortiranje;
+                break;
+            case "opadajuceCena":
+                $opadajuceCena = $sortiranje;
+                break;
+            case "opadajuceDatum":
+                $opadajuceDatum = $sortiranje;
+                break;
+            default:
+                break;
+        }
+        
+        $svePonude = $this->dohvatiSvePonude();
+        $svaMesta = $this->dohvatiSvaMesta();
+        $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
+        
+        $sort = $this->request->getVar("sort");
+        
+        if($sort != null || $this->session->get("sort") != null){
+            $temp = $this->session->get("sort");
+            $this->session->set("sort", $sort);
+            $ponude = $this->pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum);
+        }else{
+            $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
+        }
+        $totalPages = count($this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage));
+        return $this->prikaz("pregledPonudaKorisnik", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true","kontroler"=>"KorisnikController","stranica"=>"pregledPonudaKorisnik"]);
+                
+    }
+    
+     /**
+      * @author Milica Cvetković 2020/0003
+      * 
+     * Dohvatanje svih prevoznih sredstava iz baze
+     * 
+     * @return array
+     */
+    public function dohvatiSvaPrevoznaSredstva(){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table("prevoznosredstvo");
+        
+        $builder->select("*");
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
+     * Dohvatanje svih mesta iz baze
+     * 
+     * @return array
+     */
+    public function dohvatiSvaMesta(){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table("mesto");
+        
+        $builder->select("*");
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+     /**
+      * @author Milica Cvetković 2020/0003
+      * 
+     * Dohvatanje svih ponuda iz baze
+     * 
+     * @return array
+     */
+    public function dohvatiSvePonude(){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
+     * Pretraga ponuda po zadatim kriterijumima
+     * 
+     * @param string $prevoznoSredstvo
+     * @param string $mestoOd
+     * @param string $mestoDo
+     * @param int $minimalnaCena
+     * @param int $maksimalnaCena
+     * @param int $brojPutnika
+     * @param date $datumOd
+     * @param date $datumDo
+     * @param time $vremeOd
+     * @param time $vremeDo
+     * @param int $page
+     * @param int $numOfResultsOnPage
+     * 
+     * @return array
+     */
+    public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.VremeOd as VremeOd, ponuda.VremeDo as VremeDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo, ponuda.Slika as Slika, P.Naziv as NazivPretplate, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as Korisnik");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        $builder->join("privatnik", "privatnik.SifK = korisnik.SifK");
+        $builder->join("pretplata as P", "P.SifPret = privatnik.SifPret");
+       
+        if($prevoznoSredstvo != null)
+            $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
+        if($mestoOd != null)
+            $builder->like("mOd.Naziv" , $mestoOd);
+        if($mestoDo != null)
+            $builder->like("mDo.Naziv", $mestoDo);
+        if($minimalnaCena != null)
+            $builder->where("ponuda.CenaKarte >=", $minimalnaCena);
+        if($maksimalnaCena != null)
+            $builder->where("CenaKarte <=", (float)$maksimalnaCena);
+        if($brojPutnika != null)
+            $builder->where ("ponuda.BrMesta <=", $brojPutnika);
+        if($datumOd != null)
+            $builder->where("ponuda.DatumOd >=", $datumOd);
+        if($datumDo != null)
+            $builder->where("ponuda.DatumDo <=", $datumDo);
+        if($vremeOd != null)
+            $builder->where("ponuda.VremeOd >=", $vremeOd);
+        if($vremeDo != null)
+            $builder->where("ponuda.VremeDo <=", $vremeDo);
+        
+        $builder->orderBy("NazivPretplate", "asc");
+        
+        $start = ($page - 1) * $numOfResultsOnPage;
+        
+        $builder->limit($start, $numOfResultsOnPage);
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
+     * Pretraga ponuda po zadatim kriterijumima i izvrseno sortiranje
+     * 
+     * @param string $prevoznoSredstvo
+     * @param string $mestoOd
+     * @param string $mestoDo
+     * @param int $minimalnaCena
+     * @param int $maksimalnaCena
+     * @param int $brojPutnika
+     * @param date $datumOd
+     * @param date $datumDo
+     * @param time $vremeOd
+     * @param time $vremeDo
+     * @param int $page
+     * @param int $numOfResultsOnPage
+     * @param mixed $rastuceCena
+     * @param mixed $rastuceDatum
+     * @param mixed $opadajuceCena
+     * @param mixed $opadajuceDatum
+     * @return type
+     */
+    public function pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo,ponuda.Slika as Slika, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as Korisnik, ponuda.SifK as SifK");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        if($rastuceCena != null)
+            $builder->orderBy("ponuda.CenaKarte", "asc");
+        if($rastuceDatum != null)
+            $builder->orderBy("ponuda.DatumOd", "asc");
+        if($opadajuceCena != null)
+            $builder->orderBy("ponuda.CenaKarte", "desc");
+        if($opadajuceDatum != null)
+            $builder->orderBy("ponuda.DatumOd", "desc");
+       
+        if($prevoznoSredstvo != null)
+            $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
+        if($mestoOd != null)
+            $builder->like("mOd.Naziv" , $mestoOd);
+        if($mestoDo != null)
+            $builder->like("mDo.Naziv", $mestoDo);
+        if($minimalnaCena != null)
+            $builder->where("ponuda.CenaKarte >=", $minimalnaCena);
+        if($maksimalnaCena != null)
+            $builder->where("CenaKarte <=", (float)$maksimalnaCena);
+        if($brojPutnika != null)
+            $builder->where ("ponuda.BrMesta <=", $brojPutnika);
+        if($datumOd != null)
+            $builder->where("ponuda.DatumOd >=", $datumOd);
+        if($datumDo != null)
+            $builder->where("ponuda.DatumDo <=", $datumDo);
+        if($vremeOd != null)
+            $builder->where("ponuda.VremeOd >=", $vremeOd);
+        if($vremeDo != null)
+            $builder->where("ponuda.VremeDo <=", $vremeDo);
+                    
+        $start = ($page - 1) * $numOfResultsOnPage;
+        
+        $builder->limit($start, $numOfResultsOnPage);
+        
+        return $builder->get()->getResult();
+        
+    }
+    
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
+     * Provera da li privatnik ima odgovarajucu pretplatu
+     * 
+     * @param int $SifK
+     * 
+     * @return boolean
+     */
+    public function proveriPretplatu($SifK){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('privatnik');
+        
+        $builder->where("SifK", $SifK);
+        $result = $builder->get()->getResult()[0];
+        
+        $pretplata = $result->SifPret;
+        
+        $builder = $db->table('pretplata');
+        
+        $builder->where("SifPret", $pretplata);
+        $result = $builder->get()->getResult()[0];
+        
+        $pretplata = $result->Naziv;
+        
+        if($pretplata == "Premium"){
+            return true;
+        }
+        
+        return false;
+    }
+    
+     /**
+      * @author Milica Cvetković 2020/0003
+      * 
+     * Dohvatanje svih ponuda sa limitom zbog paginacije
+     * 
+     * @param int $page
+     * @param int $numOfResultsOnPage
+     * 
+     * @return array
+     */
+    public function dohvatiSvePonudeLimit($page, $numOfResultsOnPage){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table('ponuda');
+        
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, ponuda.SifP as SifP,ponuda.Slika as Slika, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
+        $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
+        $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
+        $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        $start = ($page - 1) * $numOfResultsOnPage;
+        
+        $builder->limit($start, $numOfResultsOnPage);
+        return $builder->get()->getResult();
+        
+    }
+    
+    /**
+     * @author Željko Urošević 2020/0073
+     * 
+     * Izracunavanje proseka ocena
+     * 
+     * @param mixed $ponuda
+     * 
+     * @return double
+     */
+    public function prosek($ponuda){
+        
+        $db      = \Config\Database::connect();
+        $builder = $db->table("ocena");
+        $ocene = $builder->where("SifPriv", $ponuda->SifK)->get()->getResult();
+        $broj = 0;
+        $suma = 0;
+        foreach($ocene as $ocena){
+            $suma += $ocena->Ocena;
+            $broj++;
+        }
+        if ($broj == 0) {
+            $broj = 1;
+        }
+        $prosek = $suma * 1.0 / $broj;
+        return $prosek;
+    }
+    
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
+     * Stranica za pregled postavljenih ponuda
+     * 
+     * @return mixed
+     */
+    public function pregledPonuda(){
+        
+        $totalPages = count($this->dohvatiSvePonude());
+        
+        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        
+        $numOfResultsOnPage = 9;
+        
+        $ponude = $this->dohvatiSvePonudeLimit($page, $numOfResultsOnPage);
+        $svePonude = $this->dohvatiSvePonude();
+        $svaMesta = $this->dohvatiSvaMesta();
+        $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
+        return $this->prikaz("pregledPonudaKorisnik", ["ponude" => $ponude, "svePonude" => $svePonude,"svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages,"kontroler"=>"GostController","stranica"=>"pregledPonuda"]);
     }
 }

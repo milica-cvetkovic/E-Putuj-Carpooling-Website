@@ -607,7 +607,7 @@ class GostController extends BaseController {
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
         
-        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
+        $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, ponuda.SifP as SifP,ponuda.Slika as Slika, prevoznosredstvo.Naziv as prevoznoSredstvo");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
@@ -651,6 +651,8 @@ class GostController extends BaseController {
     }
     
     /**
+     * @author Željko Urošević 2020/0073
+     * 
      * Izracunavanje proseka ocena
      * 
      * @param mixed $ponuda
@@ -658,7 +660,7 @@ class GostController extends BaseController {
      * @return double
      */
     public function prosek($ponuda){
-        // Zeljkov kod
+        
         $db      = \Config\Database::connect();
         $builder = $db->table("ocena");
         $ocene = $builder->where("SifPriv", $ponuda->SifK)->get()->getResult();
