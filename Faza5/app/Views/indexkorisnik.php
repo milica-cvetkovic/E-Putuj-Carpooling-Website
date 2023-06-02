@@ -1,8 +1,8 @@
 <section>
     <!--Milica Cvetković 2020/0003-->
    <div class="banner-main">
-      <img src="<?php echo base_url('images/pinksky.jpg') ?>" alt="#" style="width:100%;" />
-      <div class="container">
+      <img src="<?php echo base_url('images/header-bgsilk.jpg') ?>" alt="#" style="width:100%;" />
+      <!-- <div class="container"> -->
          <div class="text-bg">
             <div class="container">
                <form class="main-form" action="<?= site_url("KorisnikController/pretragaPonuda") ?>" method="post">

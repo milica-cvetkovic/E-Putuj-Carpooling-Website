@@ -1,11 +1,15 @@
 <?php
 
-        if(isset($poruka) && $poruka!=""){
-           
-            echo '<script>
-                alert('.$poruka.');
-            </script>';
-        }
+if (!empty($poruka)) {
+    echo "<div style='display: flex; justify-content: center; color: red'
+                <h5>{$poruka}</h5>
+             </div>";
+ }
+ if (!empty($porukaUspeh)) {
+    echo "<div style='display: flex; justify-content: center; color: green'
+                <h5>{$porukaUspeh}</h5>
+             </div>";
+ }
 
 ?>
 <div class="back-image-inbox" style="padding-bottom: 40px;">

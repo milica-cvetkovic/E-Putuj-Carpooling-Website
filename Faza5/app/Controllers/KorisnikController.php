@@ -21,9 +21,11 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
-class KorisnikController extends BaseController {
-
-    private function prikaz($stranica, $podaci) {
+class KorisnikController extends BaseController
+{
+     
+    private function prikaz($stranica, $podaci)
+    {
         $SifK = session()->get("korisnik")->SifK;
         $model = new ModelPoruka();
         $br = $model->select("count(*) as br")->where("SifKor", $SifK)->where("SmerPoruke", 2)->findAll()[0]->br;
@@ -31,19 +33,33 @@ class KorisnikController extends BaseController {
         echo view($stranica, $podaci);
         echo view("sabloni/footer");
     }
+    /**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Prikazivanje glavne starnice korisnika
+     * 
+     * @return void
+     */
 
-
-    public function index() {
+    public function index()
+    {
         $svePonude = $this->dohvatiSvePonude();
         $svaMesta = $this->dohvatiSvaMesta();
         $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
-        $this->prikaz("indexkorisnik", ["svePonude"=> $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva,"kontroler"=>"GostController","stranica" => "indexkorisnik"]);
+        $this->prikaz("indexkorisnik", ["svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "kontroler" => "GostController", "stranica" => "indexkorisnik"]);
     }
 
-    // dalje su samo fje za testiranje prikaza
+    /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Inbox korisnika
+     * 
+     * @return void
+     */
 
 
-    public function inboxKorisnik() {
+    public function inboxKorisnik()
+    {
         $Kime = session()->get("korisnik")->KorisnickoIme;
         $model = new ModelPoruka();
         $modelK = new ModelKorisnik();
@@ -60,10 +76,18 @@ class KorisnikController extends BaseController {
         }
         $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "kontroler" => "KorisnikController", "stranica" => "inboxKorisnik"]);
     }
+  /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Brisanje poruke iz inboxa
+     * 
+     * @return void
+     */
 
-    // ova stranica vrv nece da postoji, nego ce se ugraditi prikaz direktno
 
-    public function obrisiPoruku() {
+
+    public function obrisiPoruku()
+    {
         $SifP = $this->request->getVar("SifP");
         $SifK = session()->get("korisnik")->SifK;
 
@@ -80,8 +104,17 @@ class KorisnikController extends BaseController {
         $this->inboxKorisnik();
         return;
     }
+     /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Inbox korisnika poruka
+     * 
+     * @return void
+     */
 
-    public function inboxKorisnikPoruka() {
+
+    public function inboxKorisnikPoruka()
+    {
         $izbor = $this->request->getVar("poruka");
         $Kime = session()->get("korisnik")->KorisnickoIme;
         $model = new ModelPoruka();
@@ -108,8 +141,15 @@ class KorisnikController extends BaseController {
         $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
         $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana, "kontroler" => "KorisnikController", "stranica" => "inboxKorisnik"]);
     }
-
-    public function izmenaProfila() {
+    /**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Izmena profila korisnika
+     * 
+     * @return void
+     */
+    public function izmenaProfila()
+    {
         $data = [];
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
@@ -153,8 +193,15 @@ class KorisnikController extends BaseController {
         $data["stranica"] = "izmenaProfila";
         $this->prikaz("izmenaProfila", $data);
     }
-
-    public function ocenjivanje() {
+     /**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Ocenjivanje privatnika od strane korisnika
+     * 
+     * @return void
+     */
+    public function ocenjivanje()
+    {
         $data = [];
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
@@ -169,6 +216,7 @@ class KorisnikController extends BaseController {
                 if ($ocena == null) {
                     $data['poruka'] = "Privatnik ne postoji!";
                 } else {
+                    $data['porukaUspeha'] = "Uspesno ste ocenili privatnika";
                     $db->table('ocena')->insert($ocena);
                 }
             }
@@ -180,8 +228,15 @@ class KorisnikController extends BaseController {
     }
 
 
-    // vrv ce moci da se ujedini sa prikazom ponude posto se samo dugmici razlikuju
-    public function prikazPonudeInbox() {
+    /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Prikaz ponude u inboxu korisnika
+     * 
+     * @return void
+     */
+    public function prikazPonudeInbox()
+    {
         $SifP = $this->request->getVar("SifP");
         $model = new ModelPonuda();
         $modelK = new ModelKorisnik();
@@ -189,8 +244,16 @@ class KorisnikController extends BaseController {
         $ponuda->Korisnik = $modelK->where("SifK", $ponuda->SifK)->findAll()[0]->KorisnickoIme;
         $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda, "kontroler" => "KorisnikController", "stranica" => "prikazPonudeInbox"]);
     }
-
-    public function prikazPonude($sifP, $tip = "nista") {
+/**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Prikaz odabrane ponude korisnika: sa dijelom za rezervaciju i kupovinu
+     * @param int sifra ponude koja se prikazuje
+     * @param string tip akcije koji ce se izvrsiti: kovina ili rezervacija
+     * @return array
+     */
+    public function prikazPonude($sifP, $tip = "nista")
+    {
 
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
 
@@ -198,24 +261,17 @@ class KorisnikController extends BaseController {
         $db      = \Config\Database::connect();
 
         $model = new ModelObicanKorisnikLana($db);
-        $builder = $db->table("ponuda");
-        $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
-        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk', $SifK)->get()->getResult();
+        $builder = $db->table("postavljenaponuda");
+        $ponuda = ($builder->where("SifP", $sifP)->get()->getResult());
 
-        $new_res = [];
-        foreach ($res as $r) {
-            array_push($new_res, $r->SifPokl);
+        if (count($ponuda) == 0) {
+
+            $this->pretragaPonuda();
+            return;
         }
-        // print_r($new_res);
-        $res_1 = array_unique($new_res);
-        $res = [];
-        foreach ($res_1 as $r) {
-            array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
-        }
+        $ponuda = $db->table("ponuda")->where("SifP", $sifP)->get()->getResult()[0];
 
-        $data = [];
 
-        $data['mojenagrade'] = $res;
 
         if ($this->request->getMethod() == 'post') {
             if ($_POST) {
@@ -227,57 +283,98 @@ class KorisnikController extends BaseController {
                     if (isset($_POST['grupa'])) {
                         $SifPokl = $_POST['grupa'];
                     }
-                    // echo $SifPokl;
+
 
                     if ($tip == "kupi") {
-                        // echo "kupovina";
-                        $model->kupovina_karata($sifP, $SifK, $BrMesta, $SifPokl);
+
+                        $uspijeh =  $model->kupovina_karata($sifP, $SifK, $BrMesta, $SifPokl);
+                        if ($uspijeh) {
+                            $data['porukaUspeh'] = "Uspešno ste kupili kartu!";
+                        } else {
+                            $data['poruka'] = "Neuspešna kupovina karte!";
+                        }
                     }
                     if ($tip == "rezervisi") {
-                        // echo "rezervacija";
-                        $model->rezervacija_karata($sifP, $SifK, $BrMesta);
+                        $uspijeh = $model->rezervacija_karata($sifP, $SifK, $BrMesta);
+                        if ($uspijeh) {
+                            $data['porukaUspeh'] = "Uspešno ste rezervisali kartu!";
+                        } else {
+                            $data['poruka'] = "Neuspešna rezervacija karte!";
+                        }
                     }
                 }
             }
         }
-        $data['ponuda'] = ($builder->where("SifP", $sifP)->get()->getResult())[0];
+        $res = $db->table('jedobio')->select("SifPokl")->where('Sifk', $SifK)->get()->getResult();
 
+        $data['ponuda'] = ($db->table('ponuda')->where("SifP", $sifP)->get()->getResult())[0];
+        $new_res = [];
+        foreach ($res as $r) {
+            array_push($new_res, $r->SifPokl);
+        }
+        
+        $res_1 = array_unique($new_res);
+        $res = [];
+        foreach ($res_1 as $r) {
+            array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
+        }
+
+
+
+        $data['mojenagrade'] = $res;
 
         $data["kontroler"] = "KorisninikController";
         $data["stranica"] = "prikazPonude";
 
         $this->prikaz("prikazPonude", $data);
     }
-
-    public function report() {
+/**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Prijavljivanje privatnika
+     * 
+     * @return void
+     */
+    public function report()
+    {
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
         $data = ["kontroler" => "KorisnikController"];
+        $SifPrijavitelja =  session()->get("korisnik")->SifK;
+
         if ($this->request->getMethod() == 'post') {
-
-
             if ($_POST) {
                 $SifK = $_POST['SifK'];
                 $komentar = $_POST['komentar'];
-
-                // $SifPrijavitelja =  session()->get("korisnik")->SifK;
                 $SifPrijavitelja = "2";
                 $prijava =  $model->report($SifK, $komentar, $SifPrijavitelja);
                 if ($prijava == null) {
                     $data['poruka'] = "Privatnik ne postoji!";
                 } else {
-                    $db->table('report')->insert($prijava);
+                    if($komentar!=""){
+                        $data['porukaUspeh'] = "Uspesno ste prijavili privatnika!";
+                        $db->table('report')->insert($prijava);
+                    }else{
+                        $data['poruka'] = "Opis prijave je prazan, neophodno ga je popuniti!";
+                    }
+                    
                 }
             }
         }
 
         $data["kontroler"] = "KorisnikController";
         $data["stranica"] = "report";
-
         $this->prikaz("report", $data);
     }
-
-    public function rezervacije() {
+/**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Rezervacije ulogovanog korisnika
+     * 
+     * @return void
+     */
+    public function rezervacije()
+    {
 
         $db = db_connect();
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
@@ -308,12 +405,21 @@ class KorisnikController extends BaseController {
         // print_r($data["mojeRezervacije"]);
         $this->prikaz("rezervacije", $data);
     }
+/**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Kupovina karte kao i mogucnost otkazivanja rezervacije od strane ulogovanog korisnika
+     * 
+     * @return void
+     */
 
-    public function kupi_kartu() {
+    public function kupi_kartu()
+    {
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
         $data['poruka'] = "";
 
+        $dugme = $this->request->getVar("kupi");
 
 
 
@@ -321,18 +427,22 @@ class KorisnikController extends BaseController {
         $res = $db->table('jedobio')->select("SifPokl")->where('Sifk', $SifK)->get()->getResult();
 
         $new_res = [];
-        foreach ($res as $r) {
-            array_push($new_res, $r->SifPokl);
+        if (count($res)) {
+            foreach ($res as $r) {
+                array_push($new_res, $r->SifPokl);
+            }
+            // print_r($new_res);
+            $res_1 = array_unique($new_res);
+            $res = [];
+            foreach ($res_1 as $r) {
+                array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
+            }
+        } else {
+            $res = [];
         }
-        // print_r($new_res);
-        $res_1 = array_unique($new_res);
-        $res = [];
-        foreach ($res_1 as $r) {
-            array_push($res, $db->table('poklon')->where("SifPokl", $r)->get()->getResult()[0]);
-        }
-
 
         $data['mojenagrade'] = $res;
+
 
         if ($this->request->getMethod() == 'post') {
 
@@ -341,18 +451,20 @@ class KorisnikController extends BaseController {
                 $SifR = $_POST['SifR'];
                 $BrMesta = $_POST['BrMesta'];
                 $SifPokl = "";
+                if ($dugme == 'kupi') {
 
-                if (isset($_POST['grupa'])) {
-                    $SifPokl = $_POST['grupa'];
-                }
-                // echo $SifPokl;
-                // echo $BrMesta;
-                $uspijeh = $model->kupi_kartu($SifR, $SifK, $BrMesta, $SifPokl);
-                // da dodam neka obavjestenja
-                if (!$uspijeh) {
-                    //alert
-                } else {
-                    //nesto alert
+
+                    if (isset($_POST['grupa'])) {
+                        $SifPokl = $_POST['grupa'];
+                    }
+                    $uspijeh = $model->kupi_kartu($SifR, $SifK, $BrMesta, $SifPokl);
+                    if ($uspijeh) {
+                        $data['porukaUspeh'] = "Uspešno ste kupili kartu!";
+                    } else {
+                        $data['poruka'] = "Neuspešna kupovina karte!";
+                    }
+                } else if ($dugme == 'odustani') {
+                    $model->otkazi_rezervaciju($SifR);
                 }
             }
         }
@@ -364,12 +476,18 @@ class KorisnikController extends BaseController {
 
         $this->prikaz("rezervacije", $data);
     }
-
-    public function trazenjeVoznje() {
+/**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Podnosenje zahteva za vandrednu voznju od strane ulogovanog korisnika
+     * 
+     * @return void
+     */
+    public function trazenjeVoznje()
+    {
 
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
-        $data['poruka'] = "";
         $data['mesta'] = $model->svaMesta();
         $data['sredstva'] = $model->svaSredstva();
 
@@ -379,41 +497,48 @@ class KorisnikController extends BaseController {
 
 
             if ($_POST) {
+
+
+
                 if (
-
-                    $_POST['BrojPutnika'] < 0 ||
-                    $_POST['DatumOd'] . " " . $_POST['VremeOd'] <= date("Y-m-d H:i:s") ||
-                    $_POST['DatumDo'] . " " . $_POST['VremeDo'] <= date("Y-m-d H:i:s") ||
-                    $_POST['CenaDo'] < $_POST['CenaOd']
-
-
-
+                    isset($_POST['CenaOd']) && isset($_POST['CenaDo'])
+                    && isset($_POST['BrojPutnika']) && isset($_POST['DatumDo']) && isset($_POST['DatumOd']) && isset($_POST['VremeDo']) && isset($_POST['VremeOd'])
                 ) {
+                    if (
+                        $_POST['DatumOd'] . " " . $_POST['VremeOd'] <= date("Y-m-d H:i:s") ||
+                        $_POST['DatumDo'] . " " . $_POST['VremeDo'] <= date("Y-m-d H:i:s")
+                    ) {
 
+                        $data['poruka'] = "Greska pri unosu podataka za datum i vrijeme ostvarivanja vozanje";
+                    } else if ($_POST['BrojPutnika'] <= 0) {
+                        $data['poruka'] = "Neophodno je da Broj Putnika bude veca od nule";
+                    } else if ($_POST['CenaDo'] < $_POST['CenaOd']) {
+                        $data['poruka'] = "Cena Do mora biti veca od Cene od!";
+                    } else {
 
+                        $ponuda = [
+                            'Sred' => $_POST['prevoz'],
+                            'SifMesDo' => $_POST['MesDo'],
+                            'SifMesOd' => $_POST['MesOd'],
+                            'CenaOd' => $_POST['CenaOd'],
+                            'CenaDo' => $_POST['CenaDo'],
+                            'BrMesta' => $_POST['BrojPutnika'],
+                            'DatumDo' => $_POST['DatumDo'],
+                            'DatumOd' => $_POST['DatumOd'],
+                            'VremeDo' => $_POST['VremeDo'],
+                            'VremeOd' => $_POST['VremeOd'],
+                            'SifK' => $SifK
 
-                    $data['poruka'] = "Greska pri unosu podataka";
+                        ];
+
+                        $data['porukaUspeha'] = "Uspešno ste izvršili tražnju vožnje!";
+                        $data['poruka'] = "";
+
+                        $model = new ModelObicanKorisnikLana($db);
+                        $model->posaljiVandrednuVoznju($ponuda);
+                    }
                 } else {
-
-                    $ponuda = [
-                        'Sred' => $_POST['prevoz'],
-                        'SifMesDo' => $_POST['MesDo'],
-                        'SifMesOd' => $_POST['MesOd'],
-                        'CenaOd' => $_POST['CenaOd'],
-                        'CenaDo' => $_POST['CenaDo'],
-                        'BrMesta' => $_POST['BrojPutnika'],
-                        'DatumDo' => $_POST['DatumDo'],
-                        'DatumOd' => $_POST['DatumOd'],
-                        'VremeDo' => $_POST['VremeDo'],
-                        'VremeOd' => $_POST['VremeOd'],
-                        'SifK' => $SifK
-
-                    ];
-
-                    // print_r($ponuda);
-
-                    $model = new ModelObicanKorisnikLana($db);
-                    $model->posaljiVandrednuVoznju($ponuda);
+                    $data['poruka'] = "Neophodno je da popunite sva polja, kako bi uspešno zatražili vožnju!";
                 }
             }
         }
@@ -424,10 +549,39 @@ class KorisnikController extends BaseController {
 
         $this->prikaz("trazenjeVoznje", $data);
     }
-    public function tocakSrece() {
+    /**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     *Tocak srece prikaz stranice
+     * 
+     * @return void
+     */
+    public function spintheweel()
+    {
+        $data = [];
+        $db = db_connect();
+        $model = new ModelObicanKorisnikLana($db);
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        $data['tokena'] = $db->table('obicankorisnik')->where('SifK=', $SifK)->get()->getResult()[0]->token; // iz baze za korisnika
+        $data["kontroler"] = "KorisnikController";
+        $data["stranica"] = "tocakSrece";
+
+        echo view('tocakSrece', $data);
+    }
+    /**
+     * @author  Lana Ivkovic 2020/0480
+     * 
+     * Obrada nagrade(Tocak srece) ulogovanog korisnika
+     * 
+     * @return void
+     */
+    public function tocakSrece()
+    {
+        ////----->
+
         // echo "lana";
-        // $SifK = session()->get("korisnik")->SifK;  // dohvati 
-        $SifK = "2";
+        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        // $SifK = "2";
         $db = db_connect();
 
 
@@ -449,10 +603,19 @@ class KorisnikController extends BaseController {
         $data["kontroler"] = "KorisnikController";
         $data["stranica"] = "tocakSrece";
 
-
-        echo view('tocakSrece', $data);
+        /// modalni prozor: modal-> otkazi ponudu samo mu reci gdje ce
+        /// PREBACII I LIJEPO POSLAJI ZA INDEX -> PODATKE I PROMJENI U HEADERU
+        $this->index();
     }
-    public function komentar() {
+    /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Komentari
+     * 
+     * @return void
+     */
+    public function komentar()
+    {
         $transport = new EsmtpTransport("smtp-mail.outlook.com", 587);
         $transport->setUsername("pomocniEPUTUJ1@outlook.com");
         $transport->setPassword("RADIMAIL123");
@@ -479,14 +642,22 @@ Komentar:' . $this->request->getVar('komentar') . '
         else if ($stranica == "ocenjivanje") $this->ocenjivanje();
         else if ($stranica == "pregledPonuda") $this->pregledPonuda();
     }
+    /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Logout za korisnike
+     * 
+     * @return void
+     */
 
-    public function logout() {
+    public function logout()
+    {
         session()->remove("korisnik");
         $gostController = new GostController();
         $gostController->index();
     }
-    
-    
+
+
     /**
      * @author Milica Cvetković 2020/0003
      * 
@@ -494,26 +665,26 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return mixed
      */
-    public function pretragaPonuda(){
-        
+    public function pretragaPonuda()
+    {
+
         $resetPage = $this->request->getVar("resetPage");
         $sortiranje = $this->request->getVar("sortiranje");
-        
-        if($sortiranje != null){
+
+        if ($sortiranje != null) {
             $this->session->set("sortiranje", $sortiranje);
         }
-        
-        if($resetPage != null || $sortiranje != null){
+
+        if ($resetPage != null || $sortiranje != null) {
             $page = 1;
-        }
-        else{
-            $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
+        } else {
+            $page = $this->request->getVar("page") != null ? $this->request->getVar("page") : 1;
         }
 
         $numOfResultsOnPage = 9;
-                
-        if($resetPage != null){
-            
+
+        if ($resetPage != null) {
+
             $prevoznoSredstvo = $this->request->getVar("prevoznoSredstvo");
             $mestoOd = $this->request->getVar("mestoOd");
             $mestoDo = $this->request->getVar("mestoDo");
@@ -524,7 +695,7 @@ Komentar:' . $this->request->getVar('komentar') . '
             $datumDo = $this->request->getVar("datumDo");
             $vremeOd = $this->request->getVar("vremeOd");
             $vremeDo = $this->request->getVar("vremeDo");
-           
+
             $this->session->set("prevoznoSredstvo", $prevoznoSredstvo);
             $this->session->set("mestoOd", $mestoOd);
             $this->session->set("mestoDo", $mestoDo);
@@ -535,30 +706,30 @@ Komentar:' . $this->request->getVar('komentar') . '
             $this->session->set("datumDo", $datumDo);
             $this->session->set("vremeOd", $vremeOd);
             $this->session->set("vremeDo", $vremeDo);
-            
+
             $this->session->set("sort", null);
             $this->session->set("sortiranje", null);
         }
-        
-        $prevoznoSredstvo =$this->session->get("prevoznoSredstvo" );
+
+        $prevoznoSredstvo = $this->session->get("prevoznoSredstvo");
         $mestoOd = $this->session->get("mestoOd");
-        $mestoDo= $this->session->get("mestoDo");
-        $minimalnaCena =$this->session->get("minimalnaCena");
+        $mestoDo = $this->session->get("mestoDo");
+        $minimalnaCena = $this->session->get("minimalnaCena");
         $maksimalnaCena = $this->session->get("maksimalnaCena");
         $brojPutnika = $this->session->get("brojPutnika");
         $datumOd = $this->session->get("datumOd");
         $datumDo = $this->session->get("datumDo");
         $vremeOd = $this->session->get("vremeOd");
         $vremeDo = $this->session->get("vremeDo");
-        
+
         $sortiranje = $this->session->get("sortiranje");
-        
+
         $rastuceCena = null;
         $rastuceDatum = null;
         $opadajuceCena = null;
         $opadajuceDatum = null;
-        
-        switch($sortiranje){
+
+        switch ($sortiranje) {
             case "rastuceCena":
                 $rastuceCena = $sortiranje;
                 break;
@@ -574,43 +745,42 @@ Komentar:' . $this->request->getVar('komentar') . '
             default:
                 break;
         }
-        
+
         $svePonude = $this->dohvatiSvePonude();
         $svaMesta = $this->dohvatiSvaMesta();
         $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
-        
+
         $sort = $this->request->getVar("sort");
-        
-        if($sort != null || $this->session->get("sort") != null){
+
+        if ($sort != null || $this->session->get("sort") != null) {
             $temp = $this->session->get("sort");
             $this->session->set("sort", $sort);
             $ponude = $this->pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum);
-        }else{
+        } else {
             $ponude = $this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage);
         }
         $totalPages = count($this->pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage));
-        return $this->prikaz("pregledPonudaKorisnik", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true","kontroler"=>"KorisnikController","stranica"=>"pregledPonudaKorisnik"]);
-                
+        return $this->prikaz("pregledPonudaKorisnik", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page" => $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "submitted" => "true", "kontroler" => "KorisnikController", "stranica" => "pregledPonudaKorisnik"]);
     }
-    
-     /**
-      * @author Milica Cvetković 2020/0003
-      * 
+
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
      * Dohvatanje svih prevoznih sredstava iz baze
      * 
      * @return array
      */
-    public function dohvatiSvaPrevoznaSredstva(){
-        
+    public function dohvatiSvaPrevoznaSredstva()
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table("prevoznosredstvo");
-        
+
         $builder->select("*");
-        
+
         return $builder->get()->getResult();
-        
     }
-    
+
     /**
      * @author Milica Cvetković 2020/0003
      * 
@@ -618,39 +788,39 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return array
      */
-    public function dohvatiSvaMesta(){
-        
+    public function dohvatiSvaMesta()
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table("mesto");
-        
+
         $builder->select("*");
-        
+
         return $builder->get()->getResult();
-        
     }
-    
-     /**
-      * @author Milica Cvetković 2020/0003
-      * 
+
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
      * Dohvatanje svih ponuda iz baze
      * 
      * @return array
      */
-    public function dohvatiSvePonude(){
-        
+    public function dohvatiSvePonude()
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
-        
+
         $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
-        
+
         return $builder->get()->getResult();
-        
     }
-    
+
     /**
      * @author Milica Cvetković 2020/0003
      * 
@@ -671,11 +841,12 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return array
      */
-    public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage){
-        
+    public function pretraga($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage)
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
-        
+
         $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.VremeOd as VremeOd, ponuda.VremeDo as VremeDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo, ponuda.Slika as Slika, P.Naziv as NazivPretplate, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as Korisnik");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
@@ -683,38 +854,37 @@ Komentar:' . $this->request->getVar('komentar') . '
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
         $builder->join("privatnik", "privatnik.SifK = korisnik.SifK");
         $builder->join("pretplata as P", "P.SifPret = privatnik.SifPret");
-       
-        if($prevoznoSredstvo != null)
+
+        if ($prevoznoSredstvo != null)
             $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
-        if($mestoOd != null)
-            $builder->like("mOd.Naziv" , $mestoOd);
-        if($mestoDo != null)
+        if ($mestoOd != null)
+            $builder->like("mOd.Naziv", $mestoOd);
+        if ($mestoDo != null)
             $builder->like("mDo.Naziv", $mestoDo);
-        if($minimalnaCena != null)
+        if ($minimalnaCena != null)
             $builder->where("ponuda.CenaKarte >=", $minimalnaCena);
-        if($maksimalnaCena != null)
+        if ($maksimalnaCena != null)
             $builder->where("CenaKarte <=", (float)$maksimalnaCena);
-        if($brojPutnika != null)
-            $builder->where ("ponuda.BrMesta <=", $brojPutnika);
-        if($datumOd != null)
+        if ($brojPutnika != null)
+            $builder->where("ponuda.BrMesta <=", $brojPutnika);
+        if ($datumOd != null)
             $builder->where("ponuda.DatumOd >=", $datumOd);
-        if($datumDo != null)
+        if ($datumDo != null)
             $builder->where("ponuda.DatumDo <=", $datumDo);
-        if($vremeOd != null)
+        if ($vremeOd != null)
             $builder->where("ponuda.VremeOd >=", $vremeOd);
-        if($vremeDo != null)
+        if ($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
-        
+
         $builder->orderBy("NazivPretplate", "asc");
-        
+
         $start = ($page - 1) * $numOfResultsOnPage;
-        
+
         $builder->limit($start, $numOfResultsOnPage);
-        
+
         return $builder->get()->getResult();
-        
     }
-    
+
     /**
      * @author Milica Cvetković 2020/0003
      * 
@@ -738,55 +908,55 @@ Komentar:' . $this->request->getVar('komentar') . '
      * @param mixed $opadajuceDatum
      * @return type
      */
-    public function pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum){
-        
+    public function pretragaSort($prevoznoSredstvo, $mestoOd, $mestoDo, $minimalnaCena, $maksimalnaCena, $brojPutnika, $datumOd, $datumDo, $vremeOd, $vremeDo, $page, $numOfResultsOnPage, $rastuceCena, $rastuceDatum, $opadajuceCena, $opadajuceDatum)
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
-        
+
         $builder->select("ponuda.SifP as SifP, mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, prevoznosredstvo.Naziv as prevoznoSredstvo,ponuda.Slika as Slika, korisnik.Ime as Ime, korisnik.Prezime as Prezime, korisnik.KorisnickoIme as Korisnik, ponuda.SifK as SifK");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
-        
-        if($rastuceCena != null)
+
+        if ($rastuceCena != null)
             $builder->orderBy("ponuda.CenaKarte", "asc");
-        if($rastuceDatum != null)
+        if ($rastuceDatum != null)
             $builder->orderBy("ponuda.DatumOd", "asc");
-        if($opadajuceCena != null)
+        if ($opadajuceCena != null)
             $builder->orderBy("ponuda.CenaKarte", "desc");
-        if($opadajuceDatum != null)
+        if ($opadajuceDatum != null)
             $builder->orderBy("ponuda.DatumOd", "desc");
-       
-        if($prevoznoSredstvo != null)
+
+        if ($prevoznoSredstvo != null)
             $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
-        if($mestoOd != null)
-            $builder->like("mOd.Naziv" , $mestoOd);
-        if($mestoDo != null)
+        if ($mestoOd != null)
+            $builder->like("mOd.Naziv", $mestoOd);
+        if ($mestoDo != null)
             $builder->like("mDo.Naziv", $mestoDo);
-        if($minimalnaCena != null)
+        if ($minimalnaCena != null)
             $builder->where("ponuda.CenaKarte >=", $minimalnaCena);
-        if($maksimalnaCena != null)
+        if ($maksimalnaCena != null)
             $builder->where("CenaKarte <=", (float)$maksimalnaCena);
-        if($brojPutnika != null)
-            $builder->where ("ponuda.BrMesta <=", $brojPutnika);
-        if($datumOd != null)
+        if ($brojPutnika != null)
+            $builder->where("ponuda.BrMesta <=", $brojPutnika);
+        if ($datumOd != null)
             $builder->where("ponuda.DatumOd >=", $datumOd);
-        if($datumDo != null)
+        if ($datumDo != null)
             $builder->where("ponuda.DatumDo <=", $datumDo);
-        if($vremeOd != null)
+        if ($vremeOd != null)
             $builder->where("ponuda.VremeOd >=", $vremeOd);
-        if($vremeDo != null)
+        if ($vremeDo != null)
             $builder->where("ponuda.VremeDo <=", $vremeDo);
-                    
+
         $start = ($page - 1) * $numOfResultsOnPage;
-        
+
         $builder->limit($start, $numOfResultsOnPage);
-        
+
         return $builder->get()->getResult();
-        
     }
-    
+
     /**
      * @author Milica Cvetković 2020/0003
      * 
@@ -796,33 +966,34 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return boolean
      */
-    public function proveriPretplatu($SifK){
-        
+    public function proveriPretplatu($SifK)
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table('privatnik');
-        
+
         $builder->where("SifK", $SifK);
         $result = $builder->get()->getResult()[0];
-        
+
         $pretplata = $result->SifPret;
-        
+
         $builder = $db->table('pretplata');
-        
+
         $builder->where("SifPret", $pretplata);
         $result = $builder->get()->getResult()[0];
-        
+
         $pretplata = $result->Naziv;
-        
-        if($pretplata == "Premium"){
+
+        if ($pretplata == "Premium") {
             return true;
         }
-        
+
         return false;
     }
-    
-     /**
-      * @author Milica Cvetković 2020/0003
-      * 
+
+    /**
+     * @author Milica Cvetković 2020/0003
+     * 
      * Dohvatanje svih ponuda sa limitom zbog paginacije
      * 
      * @param int $page
@@ -830,24 +1001,24 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return array
      */
-    public function dohvatiSvePonudeLimit($page, $numOfResultsOnPage){
-        
+    public function dohvatiSvePonudeLimit($page, $numOfResultsOnPage)
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table('ponuda');
-        
+
         $builder->select("mOd.Naziv as MestoOd, mDo.Naziv as MestoDo, ponuda.DatumOd as DatumOd, ponuda.DatumDo as DatumDo, ponuda.BrMesta as BrMesta, ponuda.CenaKarte as CenaKarte, ponuda.SifP as SifP,ponuda.Slika as Slika, prevoznosredstvo.Naziv as prevoznoSredstvo");
         $builder->join("mesto as mOd", "mOd.SifM = ponuda.SifMesOd");
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
-        
+
         $start = ($page - 1) * $numOfResultsOnPage;
-        
+
         $builder->limit($start, $numOfResultsOnPage);
         return $builder->get()->getResult();
-        
     }
-    
+
     /**
      * @author Željko Urošević 2020/0073
      * 
@@ -857,14 +1028,15 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return double
      */
-    public function prosek($ponuda){
-        
+    public function prosek($ponuda)
+    {
+
         $db      = \Config\Database::connect();
         $builder = $db->table("ocena");
         $ocene = $builder->where("SifPriv", $ponuda->SifK)->get()->getResult();
         $broj = 0;
         $suma = 0;
-        foreach($ocene as $ocena){
+        foreach ($ocene as $ocena) {
             $suma += $ocena->Ocena;
             $broj++;
         }
@@ -874,7 +1046,7 @@ Komentar:' . $this->request->getVar('komentar') . '
         $prosek = $suma * 1.0 / $broj;
         return $prosek;
     }
-    
+
     /**
      * @author Milica Cvetković 2020/0003
      * 
@@ -882,18 +1054,33 @@ Komentar:' . $this->request->getVar('komentar') . '
      * 
      * @return mixed
      */
-    public function pregledPonuda(){
-        
+    public function pregledPonuda()
+    {
+
         $totalPages = count($this->dohvatiSvePonude());
-        
-        $page = $this->request->getVar("page") != null ? $this->request->getVar("page"): 1;
-        
+
+        $page = $this->request->getVar("page") != null ? $this->request->getVar("page") : 1;
+
         $numOfResultsOnPage = 9;
-        
+
         $ponude = $this->dohvatiSvePonudeLimit($page, $numOfResultsOnPage);
         $svePonude = $this->dohvatiSvePonude();
         $svaMesta = $this->dohvatiSvaMesta();
         $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();
-        return $this->prikaz("pregledPonudaKorisnik", ["ponude" => $ponude, "svePonude" => $svePonude,"svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page"=> $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages,"kontroler"=>"GostController","stranica"=>"pregledPonuda"]);
+        return $this->prikaz("pregledPonudaKorisnik", ["ponude" => $ponude, "svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "page" => $page, "numOfResultsOnPage" => $numOfResultsOnPage, "totalPages" => $totalPages, "kontroler" => "GostController", "stranica" => "pregledPonuda"]);
+    }
+
+
+    public function metoda(){
+        echo 'lanaa';
+        // Dohvati podatke poslane putem AJAX zahtjeva
+        $data = $this->request->getPost(); // ili $this->request->getJSON() za JSON zahtjeve
+
+    
+        $response = [
+            'status' => 'success',
+            'message' => 'Ajax zahtjev je uspješno primljen!',
+            'data' => $data
+        ];
     }
 }

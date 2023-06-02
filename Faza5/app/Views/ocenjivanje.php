@@ -1,13 +1,15 @@
 <?php
 
-        if(isset($poruka)){
-
-            echo '<script>
-                // Vaš JavaScript kod ovdje
-                alert('.$poruka.');
-            </script>';
-        }
-
+if (!empty($poruka)) {
+    echo "<div style='display: flex; justify-content: center; color: red'
+                <h5>{$poruka}</h5>
+             </div>";
+ }
+ if (!empty($porukaUspeh)) {
+    echo "<div style='display: flex; justify-content: center; color: green'
+                <h5>{$porukaUspeh}</h5>
+             </div>";
+ }
 ?>
 <div class="back-image-inbox" style="padding-bottom: 15px">
     <div class="row">

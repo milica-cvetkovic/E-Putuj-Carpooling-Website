@@ -2,6 +2,18 @@
 
 <?php
 
+if (!empty($poruka)) {
+    echo "<div style='display: flex; justify-content: center; color: red'
+                <h5>{$poruka}</h5>
+             </div>";
+ }
+ if (!empty($porukaUspeh)) {
+    echo "<div style='display: flex; justify-content: center; color: green'
+                <h5>{$porukaUspeh}</h5>
+             </div>";
+ }
+ 
+
 $db = \Config\Database::connect();
 $builder = $db->table('mesto');
 $mestoOd = ($builder->where("SifM", $ponuda->SifMesOd)->get()->getResult())[0]->Naziv;
@@ -35,6 +47,7 @@ $builder = $db->table("prevoznosredstvo");
 $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;
 
 $builder = $db->table("postavljenaponuda");
+
 $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
 $rokZaOtkaz = $postavljenaponuda->RokZaOtkazivanje;
 

@@ -20,7 +20,7 @@ use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
 
 class AdminController extends BaseController {
-
+     
     private function prikaz($stranica, $podaci){
         $model=new ModelKorisnik();
         $modelO=new ModelObicanKorisnik();
@@ -41,7 +41,14 @@ class AdminController extends BaseController {
        echo view("sabloni/headeradmin",["broj"=>$podaci["broj"],"nalog"=>$brojac,"brisanje"=>$brojac1]);
        echo view($stranica, $podaci);
     }
-
+    /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Prikazivanje glavne starnice admin
+     * 
+     * 
+     * @return array
+     */
     public function index() {
         $model=new ModelKorisnik();
         $modelO=new ModelObicanKorisnik();
@@ -63,6 +70,7 @@ class AdminController extends BaseController {
 
     // dalje su samo testiranja prikaza, vrv ce se neke stranice spojiti jedna sa drugom
     // ali dok se ne krene implementacija jos ne moze
+   
     public function detaljiPrivatnikaPosleReporta(){
 
         $izbor1=$this->request->getVar("izbor1");
@@ -89,6 +97,14 @@ class AdminController extends BaseController {
 
         $this->prikaz("detaljiPrivatnikaPosleReporta", ["razlog"=>$razlog,"broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
     }
+     /**
+     * @author  Anja Curic 2020/0513
+     * Dodavanje mesta
+     * 
+     * 
+     * 
+     * @return array
+     */
 
     public function dodajMesto(){
         $this->prikaz("dodajMesto", ["broj"=>"3"]);
@@ -117,6 +133,14 @@ class AdminController extends BaseController {
         }
         else $this->prikaz("dodajMesto", ["poruka_neuspeh"=>"Niste uneli naziv mesta!","broj"=>"3"]);
     }
+     /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * 
+     * Brisanje naloga korisnika
+     * 
+     * @return array
+     */
 
     public function potvrdiBrisanje(){
         $izbor=$this->request->getVar("izbor");
@@ -135,7 +159,14 @@ class AdminController extends BaseController {
 
         $this->prikaz("potvrdiBrisanje", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran"=>$odabran]);
     }
-
+     /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Potvrda naloga
+     * 
+     * 
+     * @return array
+     */
     public function potvrdiNalog(){
         $izbor=$this->request->getVar("izbor");
         $model=new ModelKorisnik();
@@ -159,6 +190,14 @@ class AdminController extends BaseController {
     }
 
     //ako se pritisne dugme potvrde naloga
+     /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Potvrda kreiranja naloga
+     * 
+     * 
+     * @return array
+     */
     public function potvrdiKreiranje(){ 
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
@@ -179,6 +218,7 @@ class AdminController extends BaseController {
     }
 
     //ako se pritisne dugme odbijanja potvrde
+    
     public function potvrdiOdbijanje(){ 
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
@@ -210,7 +250,14 @@ class AdminController extends BaseController {
 
         $this->prikaz("reportDetalji", ["razlog"=>$razlog ,"broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
     }
-
+ /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Uklanjanje naloga korisnika
+     * 
+     * 
+     * @return array
+     */
     public function ukloniNalog(){
         $model=new ModelKorisnik();
         $modelR=new ModelReport();
@@ -226,6 +273,13 @@ class AdminController extends BaseController {
 
         $this->prikaz("ukloniNalog", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi]);
     }
+     /**
+     * @author  Anja Curic 2020/0513
+     * Brisanje naloga korsnika
+     * 
+     * 
+     * @return array
+     */
 
     public function Obrisi(){ 
         $model=new ModelKorisnik();
@@ -259,6 +313,14 @@ Tim Side-Eye.
         $mailer->send($email);
         redirect($this->ukloniNalog());
     }
+     /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * 
+     * Odbijanje naloga korsinika
+     * 
+     * @return array
+     */
     public function Odbij(){ 
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
@@ -281,7 +343,14 @@ Tim Side-Eye.
         $mailer->send($email);
         redirect($this->ukloniNalog());
     }
-
+ /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Posalji Email potvrde korisniku
+     * 
+     * 
+     * @return array
+     */
     public function posaljiEmail(){
 
         $SifRep=$this->request->getVar("r");

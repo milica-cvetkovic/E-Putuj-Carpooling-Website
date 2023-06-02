@@ -95,7 +95,7 @@
                                         <li><a href="<?=base_url("KorisnikController/pregledPonuda")?>">Pretraži ponude</a></li>
                                         <li id="liTrazi"><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
                                         <li id="liRezervacije"><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>
-                                        <li><a href="<?=base_url("KorisnikController/tocakSrece")?>">Točak sreće</a></li>
+                                        <li><a href="<?=base_url("KorisnikController/spintheweel")?>">Točak sreće</a></li>
                                         <li id="liReport"><a href="<?=base_url("KorisnikController/report")?>">Report</a></li>
 
                                     </ul>

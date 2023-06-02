@@ -1,25 +1,23 @@
-$(document).ready(function(){
+$(document).ready(function () {
 	let container = document.querySelector(".container");
-let btn = document.getElementById("spin");
-let number = Math.ceil(Math.random() * 1000);
+	let btn = $('#spin');
+	let number = Math.ceil(Math.random() * 1000);
 
-btn.onclick = function () {
-	// var myButton = $('#spin_dugme');
-	// myButton.disabled = true;
-	console.log("EVPPPPP NE ZNMAM")
-		//disable dugme
-		//  myButton = $('#spin');
-		// myButton.disabled = true;
-		myButton = $('#spin_dugme');
-		myButton.disabled = true;
-		if (parseInt($("#tokeni")) == 0) {
+	$('#spin').click(function () {
+
+
+
+		myButton = $('#spin');
+		myButton.prop('disabled', true);
+		if (parseInt($("#tokeni").html()) == 0) {
 			alert("Nema tokena")
 			return;
 		}
-		// console.log(document.getElementById("tokeni"));
+
+		console.log(parseInt($("#tokeni").html()));
 		var podaci = "nista";
 		console.log("teodora");
-		
+
 		container.style.transform = "rotate(" + number + "deg)";
 		broj = (number + 22.5) % 360 / 45;
 		number += Math.ceil(Math.random() * 1000);
@@ -31,13 +29,20 @@ btn.onclick = function () {
 			};
 
 		}
-		// console.log("lana");
-		// console.log(document.getElementsById("two").innerHTML);
-		// console.log(document.getElementById("dobitak").innerText);
+		axios.post('/KorisnikController/metoda', { parametar: podaci })
+			.then(function (response) {
+				console.log(response.data);
+				console.log("uspijeh");
+			})
+			.catch(function (error) {
+				console.log(error);
+				console.log("error");
+			});
+
 		setTimeout(function () {
 			//vrati dugme;
 
-			// console.log("lll");
+			
 			switch (parseInt(broj)) {
 				case 0:
 					document.getElementById("dobitak").innerHTML = "20%";
@@ -45,11 +50,11 @@ btn.onclick = function () {
 					break;
 				case 1:
 					document.getElementById("dobitak").innerHTML = "1000din";
-					podaci = "1000din";
+					podaci = "20€";
 					break;
 				case 2:
 					document.getElementById("dobitak").innerHTML = "2000din";
-					podaci = "2000din";
+					podaci = "40€";
 					break;
 				case 3:
 					document.getElementById("dobitak").innerHTML = "10%";
@@ -64,7 +69,7 @@ btn.onclick = function () {
 					break;
 				case 6:
 					document.getElementById("dobitak").innerHTML = "1500din";
-					podaci = "1500din";
+					podaci = "15€";
 					break;
 				case 7:
 					document.getElementById("dobitak").innerHTML = "8%";
@@ -74,21 +79,22 @@ btn.onclick = function () {
 
 
 			}
-			// console.log("lanaaa");
+
 			$("#dobitak").val(podaci);
-			// let myButton = document.getElementById('spin');
+
 			myButton = $('#spin_dugme');
-			if(myButton.disabled){
-				myButton.disabled = false;
+			if (myButton.prop('disabled')) {
+				myButton.prop('disabled', false);
 
 			}
-			
-			// myButton = document.getElementById('spin_dugme');
-			// myButton.disabled = false;
-			// console.log(myButton.disabled);
+
+
 
 
 
 		}, 3000)
-}
+	})
+
 })
+
+

@@ -192,7 +192,7 @@ class ModelObicanKorisnikLana extends Model
             $poklonobj['TipPoklona'] = "%";
         } else {
             $poklonobj['Iznos'] = intval(substr($poklon, 0, -3));
-            $poklonobj['TipPoklona'] = "din";
+            $poklonobj['TipPoklona'] = "€";
         }
 
 
@@ -232,10 +232,10 @@ class ModelObicanKorisnikLana extends Model
 
     public function kupovina_karata($SifP, $SifK, $BrMesta,$SifPokl)
     {
-        // echo $SifP, $SifK, $BrMesta;
-        // echo "nezzz";
+        
+        
         $ponuda = $this->db->table('ponuda')->where("SifP=", $SifP)->get()->getResult()[0];
-        if ($ponuda->BrMesta > $BrMesta) {
+        if ($ponuda->BrMesta >= $BrMesta) {
             $ponuda->BrMesta = $ponuda->BrMesta - $BrMesta;
             for ($i = 0; $i < $BrMesta; $i++) {
                 $kupljena_karta = [
@@ -272,26 +272,37 @@ class ModelObicanKorisnikLana extends Model
             $privatnik = $this->db->table('korisnik')->where("SifK=", $ponuda->SifK)->get()->getResult()[0];
             $privatnik->Novac += $ponuda->CenaKarte*$BrMesta;
             $this->db->table('korisnik')->where("SifK=", $privatnik->SifK)->update($privatnik);
+            return true;
         }
+        return false;
     }
+    public function otkazi_rezervaciju($SifR){
+        $rezervacija = $this->db->table('rezervacija')->where("SifR=", $SifR)->get()->getResult()[0];
+        $SifP = $rezervacija->SifP;
+        // echo $SifP;
+        $ponuda = $this->db->table('ponuda')->where("SifP=", $SifP)->get()->getResult()[0];
+        $ponuda->BrMesta += $rezervacija->BrMesta;
+        $this->db->table('ponuda')->where("SifP=", $SifP)->update($ponuda);
+        $this->db->table('rezervacija')->where("SifR=",$SifR)->delete();
 
+
+    }
     public function kupi_kartu($SifR, $SifK, $BrMesta, $SifPokl)
     {
         $rezervacija = $this->db->table('rezervacija')->where("SifR=", $SifR)->get()->getResult()[0];
         $SifP = $rezervacija->SifP;
-        // echo $SifP;
         $ponuda = $this->db->table('ponuda')->where("SifP=", $SifP)->get()->getResult();
-        // print_r($ponuda);
         if (count($ponuda) == 0 || $BrMesta <= 0) {
-            // echo "lanaaaaaaaaaaa";
-
             return;
         }
         $ponuda = $ponuda[0];
-
+        
         if (($BrMesta-$rezervacija->BrMesta)<= $ponuda->BrMesta) {
-            // echo "lana";
-            $ponuda->BrMesta -= ($BrMesta-$rezervacija->BrMesta);
+            if(($BrMesta-$rezervacija->BrMesta)<0){
+                $ponuda->BrMesta += ($BrMesta-$rezervacija->BrMesta);
+            }else{
+                $ponuda->BrMesta -= ($BrMesta-$rezervacija->BrMesta);
+            }
             $rezervacija->BrMesta = $BrMesta;
             
             $this->db->table('rezervacija')->where("SifR=", $rezervacija->SifR)->update($rezervacija);
@@ -318,11 +329,16 @@ class ModelObicanKorisnikLana extends Model
                     $this->db->table('jedobio')->where("JeDobioPK",$OVAJ)->delete();
                 }
                 
-                else{
+                else if ($nagrada->TipPoklona == "€"){
+                    echo "€";
                     $suma = $ponuda->CenaKarte *$BrMesta - $nagrada->Iznos;
                     if($suma<0){$suma=0;}
                     $korisnik->Novac = $korisnik->Novac -$suma ;
+                    $OVAJ = $this->db->table('jedobio')->where("SifK", $SifK)->where("SifPokl",$SifPokl)->get()->getResult()[0]->JeDobioPK;
+                    echo $OVAJ;
+                    $this->db->table('jedobio')->where("JeDobioPK",$OVAJ)->delete();
                 }
+
             }else{
                 $korisnik->Novac -=$ponuda->CenaKarte*$BrMesta;
             }

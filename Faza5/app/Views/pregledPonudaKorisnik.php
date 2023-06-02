@@ -108,7 +108,7 @@
             echo "<div class='col-xl-4 col-lg-4 col-md-6 col-sm-12'>";
             
             echo "<form name='ponuda{$ponude[$j]->SifP}' id='ponuda{$ponude[$j]->SifP}' method='post' action='";
-            echo site_url('KorisnikController/prikazPonude');
+            echo site_url('KorisnikController/prikazPonude/'.$ponude[$j]->SifP);
             echo "'>"; ?>
             <a href="javascript:{}" onclick="document.getElementById('ponuda<?=$ponude[$j]->SifP?>').submit(); return false;">
                             <div class='traveling-box'>
