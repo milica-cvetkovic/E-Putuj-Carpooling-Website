@@ -65,9 +65,9 @@ class Filters extends BaseConfig
      * 'isLoggedIn' => ['before' => ['account/*', 'profiles/*']]
      */
     public array $filters = [
-       'gost' => ['before' => ['GostController', '/', 'GostController/*']],
-       'obicankorisnik' => ['before' => ['KorisnikController', 'KorisnikController/*']],
-       'privatnik' => ['before' => ['PrivatnikController', 'PrivatnikController/*']],
-       'admin' => ['before' => ['AdminController', 'AdminController/*']]
+    //    'gost' => ['before' => ['GostController', '/', 'GostController/*']],
+    //    'obicankorisnik' => ['before' => ['KorisnikController', 'KorisnikController/*']],
+    //    'privatnik' => ['before' => ['PrivatnikController', 'PrivatnikController/*']],
+    //    'admin' => ['before' => ['AdminController', 'AdminController/*']]
     ];
 }
