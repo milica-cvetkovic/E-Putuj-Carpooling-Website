@@ -66,20 +66,20 @@ class GostController extends BaseController {
         $korisnickoime = $this->request->getVar("username-input");
         $lozinka = $this->request->getVar("password-input");
         
-        $korisnik = $this->dohvatiKorisnika($korisnickoime);
-        
         if($korisnickoime == null || $lozinka == null){
             $poruke['prazno'] = "Popunjavanje svih polja je obavezno.";
             return $this->login($poruke);
         }
         
-        if(!$this->registracijaOdobrena($korisnik)){
-            return redirect()->to(site_url("GostController/index"));
-        }
-        
         if($this->proveraKorisnickoIme($korisnickoime) == 0){
             $poruke['korisnickoime'] = "Neispravno korisničko ime.";
             return $this->login($poruke);
+        }
+        
+        $korisnik = $this->dohvatiKorisnika($korisnickoime);
+        
+        if(!$this->registracijaOdobrena($korisnik)){
+            return redirect()->to(site_url("GostController/index"));
         }
         
         if($this->proveraLozinka($korisnickoime, $lozinka) == 0){
@@ -441,7 +441,10 @@ class GostController extends BaseController {
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
         $builder->join("privatnik", "privatnik.SifK = korisnik.SifK");
         $builder->join("pretplata as P", "P.SifPret = privatnik.SifPret");
-       
+        
+        $zahtevponuda = $db->table('zahtevponuda')->select('SifP');
+        $builder->whereNotIn("SifP", $zahtevponuda);
+        
         if($prevoznoSredstvo != null)
             $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
         if($mestoOd != null)
@@ -504,6 +507,9 @@ class GostController extends BaseController {
         $builder->join("mesto as mDo", "mDo.SifM = ponuda.SifMesDo");
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
+        
+        $zahtevponuda = $db->table('zahtevponuda')->select('SifP');
+        $builder->whereNotIn("SifP", $zahtevponuda);
         
         if($rastuceCena != null)
             $builder->orderBy("ponuda.CenaKarte", "asc");

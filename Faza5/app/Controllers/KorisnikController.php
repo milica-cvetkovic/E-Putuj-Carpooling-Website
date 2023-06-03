@@ -855,6 +855,9 @@ Komentar:' . $this->request->getVar('komentar') . '
         $builder->join("privatnik", "privatnik.SifK = korisnik.SifK");
         $builder->join("pretplata as P", "P.SifPret = privatnik.SifPret");
 
+         $zahtevponuda = $db->table('zahtevponuda')->select('SifP');
+        $builder->whereNotIn("SifP", $zahtevponuda);
+        
         if ($prevoznoSredstvo != null)
             $builder->like("prevoznosredstvo.Naziv", $prevoznoSredstvo);
         if ($mestoOd != null)
@@ -920,6 +923,9 @@ Komentar:' . $this->request->getVar('komentar') . '
         $builder->join("prevoznosredstvo", "prevoznosredstvo.SifSred = ponuda.SifSred");
         $builder->join("korisnik", "korisnik.SifK = ponuda.SifK");
 
+         $zahtevponuda = $db->table('zahtevponuda')->select('SifP');
+        $builder->whereNotIn("SifP", $zahtevponuda);
+        
         if ($rastuceCena != null)
             $builder->orderBy("ponuda.CenaKarte", "asc");
         if ($rastuceDatum != null)
