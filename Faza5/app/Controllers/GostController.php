@@ -645,6 +645,10 @@ class GostController extends BaseController {
             $builder = $db->table('privatnik');
             $builder->where("SifK", $korisnik->SifK);
         }
+        else if ($korisnik->PrivatnikIliKorisnik == "A"){
+            $builder = $db->table('admin');
+            $builder->where("SifK", $korisnik->SifK);
+        }
         else{
             return false;
         }

@@ -17,6 +17,7 @@ class ObicanKorisnikFilter implements FilterInterface
             $korisnik = $session->get("korisnik");
             if($korisnik->PrivatnikIliKorisnik == "P")
                 return redirect ()->to (site_url ('PrivatnikController'));
+         
             else if($korisnik->PrivatnikIliKorisnik == "A")
                 return redirect ()->to (site_url ('AdminController'));
         }

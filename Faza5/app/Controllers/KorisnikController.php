@@ -261,14 +261,14 @@ class KorisnikController extends BaseController
         $db      = \Config\Database::connect();
 
         $model = new ModelObicanKorisnikLana($db);
-        $builder = $db->table("postavljenaponuda");
-        $ponuda = ($builder->where("SifP", $sifP)->get()->getResult());
+        // $builder = $db->table("postavljenaponuda");
+        // $ponuda = ($builder->where("SifP", $sifP)->get()->getResult());
 
-        if (count($ponuda) == 0) {
+        // if (count($ponuda) == 0) {
 
-            $this->pretragaPonuda();
-            return;
-        }
+        //     $this->pretragaPonuda();
+        //     return;
+        // }
         $ponuda = $db->table("ponuda")->where("SifP", $sifP)->get()->getResult()[0];
 
 

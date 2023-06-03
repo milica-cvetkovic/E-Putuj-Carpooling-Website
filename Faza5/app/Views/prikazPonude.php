@@ -48,7 +48,15 @@ $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getRes
 
 $builder = $db->table("postavljenaponuda");
 
-$postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
+$postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult());
+if(count($postavljenaponuda)==0){
+    $builder = $db->table("vanrednaponuda");
+    $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
+}else{
+    $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
+}
+
+
 $rokZaOtkaz = $postavljenaponuda->RokZaOtkazivanje;
 
 $cena = $ponuda->CenaKarte;

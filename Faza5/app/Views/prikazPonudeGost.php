@@ -2,6 +2,14 @@
 
 <?php 
 $db = \Config\Database::connect();
+$builder = $db->table("postavljenaponuda");
+$postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult());
+if(count($postavljenaponuda)==0){
+    $builder = $db->table("vanrednaponuda");
+    $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
+}else{
+    $postavljenaponuda = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0];
+}
 
 $brMesta = $ponuda->BrMesta;
 ?>
@@ -46,7 +54,7 @@ $brMesta = $ponuda->BrMesta;
                         </tr>
                         <tr>
                             <td>Rok za otkaz rezervacije</td>
-                            <td>3 dana</td>
+                            <td><?= $postavljenaponuda->RokZaOtkazivanje?> dana</td>
                         </tr>
                     </table>
                 </div>
