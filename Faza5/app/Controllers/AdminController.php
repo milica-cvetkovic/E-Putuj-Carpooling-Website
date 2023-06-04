@@ -390,5 +390,20 @@ Tim Side-Eye.
 
 
     }
+    
+    /**
+     * @author  Anja Curic 2020/0513
+     * 
+     * Logout za admina
+     * 
+     * @return void
+     */
+
+    public function logout()
+    {
+        session()->remove("korisnik");
+        $gostController = new GostController();
+        $gostController->index();
+    }
 }
 

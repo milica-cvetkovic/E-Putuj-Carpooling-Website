@@ -48,7 +48,7 @@
                                                 </button>
                                                 <div id="profil_lista" class="collapse">
                                                     <ul class="dropdown-menu">
-                                                        <li><a href="<?php echo base_url('GostController/index') ?>" class="dropdown-item">Log out</a></li>
+                                                        <li><a href="<?php echo base_url('AdminController/logout') ?>" class="dropdown-item">Log out</a></li>
                                                     </ul>
                                                 </div>
                                             </div>

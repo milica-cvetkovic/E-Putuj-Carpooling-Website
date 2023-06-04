@@ -88,8 +88,13 @@ class GostController extends BaseController {
         }
         
         $this->session->set("korisnik", $korisnik);
-        return redirect()->to(site_url("KorisnikController"));
-        
+        if($korisnik->PrivatnikIliKorisnik == "K")
+            return redirect()->to(site_url("KorisnikController"));
+         if($korisnik->PrivatnikIliKorisnik == "P")
+            return redirect()->to(site_url("PrivatnikController"));
+          if($korisnik->PrivatnikIliKorisnik == "A"){
+            return redirect()->to(site_url("AdminController"));
+          }
     }
 
     /**
@@ -154,6 +159,26 @@ class GostController extends BaseController {
      */
     public function zaboravljenalozinka(){
         $this->prikaz("zaboravljenalozinka", ["kontroler"=>"GostController","stranica"=>"zaboravljenalozinka"]);
+    }
+    
+    /**
+     * Zahtev za povratak lozinke
+     * 
+     * @return void
+     */
+    public function zaboravljenaLozinkaSubmit(){
+        
+        
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("sideeyetim@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($this->request->getVar('emailReset'))
+        ->subject('Zahtev za reset lozinke')->text('Vaša nova lozinka je '.rand());
+        
+        $mailer->send($email);
+        
+        return $this->index();
     }
 
     /**
@@ -718,7 +743,6 @@ class GostController extends BaseController {
         return $builder->get()->getResult();
         
     }
-
 
     public function komentar(){ 
         $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
