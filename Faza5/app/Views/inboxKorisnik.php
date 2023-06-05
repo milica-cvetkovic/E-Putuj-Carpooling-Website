@@ -74,7 +74,7 @@
                           </tr>
                        </table>
                     <div class='container-fluid'>
-                          <a href=".base_url('KorisnikController/prikazPonudeInbox?SifP='.$odabrana->SifP)."><button type='button' class='btn make-offer-btn' style='position: relative; left: 50%;margin-bottom:10%'>Pregledaj
+                          <a href=".base_url('KorisnikController/prikazPonude/'.$odabrana->SifP)."><button type='button' class='btn make-offer-btn' style='position: relative; left: 50%;margin-bottom:10%'>Pregledaj
                                 ponudu</button></a>
                        </div>
                 </div>

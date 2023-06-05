@@ -92,11 +92,12 @@
                                         <li><a href="#contact">Kontakt</a></li>
                                         <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
                                         <li> <a href="index/#onama">O nama</a> </li>
-                                        <li><a href="<?=base_url("KorisnikController/pregledPonuda")?>">Pretraži ponude</a></li>
+                                        <li id="liPregled"><a href="<?=base_url("KorisnikController/pretragaPonuda")?>">Pretraži ponude</a></li>
                                         <li id="liTrazi"><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
                                         <li id="liRezervacije"><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>
                                         <li><a href="<?=base_url("KorisnikController/spintheweel")?>">Točak sreće</a></li>
                                         <li id="liReport"><a href="<?=base_url("KorisnikController/report")?>">Report</a></li>
+                                        <li id="liOceni"><a href="<?=base_url("KorisnikController/ocenjivanje")?>">Oceni privatnika</a></li>
 
                                     </ul>
                                 </nav>
@@ -128,6 +129,12 @@
             }
             else if (url.includes("report")){
                 $("#liReport").addClass("active");
+            }
+            else if (url.includes("pregledPonuda")){
+                $("#liPregled").addClass("active");
+            }
+            else if (url.includes("ocenjivanje")){
+                $("#liOceni").addClass("active");
             }
             else {
                 $("#liPocetnaK").addClass("active");

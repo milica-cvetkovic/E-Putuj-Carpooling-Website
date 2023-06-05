@@ -165,24 +165,38 @@ class KorisnikController extends BaseController
                 $email = $_POST['email'];
                 $profilna = null;
                 $imeSlike = null;
-                if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
-                    // cuvanje slike na serveru
-                    $destinacioniFolder = FCPATH . "images\profilne\\";
-                    $imeSlike = $SifK . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
-                    $destinacioniFajl = $destinacioniFolder . $imeSlike;
-                    if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
-                        $poruka = "Nije uspelo ubacivanje slike";
+                $dugme = $this->request->getVar("dugme");
+                if($dugme=="Sačuvaj"){
+                    if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
+                        // cuvanje slike na serveru
+                        $destinacioniFolder = FCPATH . "images\profilne\\";
+                        $imeSlike = $SifK . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
+                        $destinacioniFajl = $destinacioniFolder . $imeSlike;
+                        if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
+                            $poruka = "Nije uspelo ubacivanje slike";
+                        }
                     }
-                }
-                if ($imeSlike != null) {
-                    $imeStareSlike = ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]->ProfilnaSlika;
-                    if (file_exists(FCPATH . "images\profilne\\" . $imeStareSlike) && $imeStareSlike != "") {
-                        unlink(FCPATH . "images\profilne\\" . $imeStareSlike);
+                    if ($imeSlike != null) {
+                        $imeStareSlike = ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]->ProfilnaSlika;
+                        if (file_exists(FCPATH . "images\profilne\\" . $imeStareSlike) && $imeStareSlike != "") {
+                            unlink(FCPATH . "images\profilne\\" . $imeStareSlike);
+                        }
                     }
+                    $profilna = $imeSlike;
+                    $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+                    session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
+                }else{
+                    $db      = \Config\Database::connect();
+                    $data = [
+                        'TraziBrisanje' => 1
+                    ];
+
+                    $builder = $db->table("korisnik");
+                    $builder->where("SifK", $SifK);
+                    $builder->update($data);
+                    $data['porukaUspeh'] = "Uspesno poslat zahtev za brisanje!";
                 }
-                $profilna = $imeSlike;
-                $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
-                session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
+              
             }
 
 
@@ -210,8 +224,7 @@ class KorisnikController extends BaseController
                 $Imeprivatnika = $_POST['Imeprivatnika'];
                 $ocena = $_POST['ocena'];
                 $komentar = $_POST['komentar'];
-                // $SifK =  session()->get("korisnik")->SifK;
-                $SifK = "2";
+                $SifK =  session()->get("korisnik")->SifK;
                 $ocena = $model->ocenjivanje($Imeprivatnika, $komentar, $ocena, $SifK);
                 if ($ocena == null) {
                     $data['poruka'] = "Privatnik ne postoji!";
@@ -254,8 +267,11 @@ class KorisnikController extends BaseController
      */
     public function prikazPonude($sifP, $tip = "nista")
     {
+        $SifP = $sifP;
+        $SifK = session()->get("korisnik")->SifK;
 
-        $SifK = session()->get("korisnik")->SifK;  // dohvati 
+        
+        // $this->inboxKorisnik();
 
 
         $db      = \Config\Database::connect();
@@ -284,12 +300,18 @@ class KorisnikController extends BaseController
                         $SifPokl = $_POST['grupa'];
                     }
 
-
+                    $modelP = new ModelPoruka();
                     if ($tip == "kupi") {
 
                         $uspijeh =  $model->kupovina_karata($sifP, $SifK, $BrMesta, $SifPokl);
                         if ($uspijeh) {
                             $data['porukaUspeh'] = "Uspešno ste kupili kartu!";
+                            $SifPor = $modelP->where("SifKor", $SifK)->where("SifPonuda", $SifP)->findAll();
+                            if(!empty($SifPor)){ 
+                                $SifPor=$SifPor[0]->SifPor;
+                                $modelP->delete($SifPor);
+                            }
+                            
                         } else {
                             $data['poruka'] = "Neuspešna kupovina karte!";
                         }
@@ -298,6 +320,11 @@ class KorisnikController extends BaseController
                         $uspijeh = $model->rezervacija_karata($sifP, $SifK, $BrMesta);
                         if ($uspijeh) {
                             $data['porukaUspeh'] = "Uspešno ste rezervisali kartu!";
+                            $SifPor = $modelP->where("SifKor", $SifK)->where("SifPonuda", $SifP)->findAll();
+                            if(!empty($SifPor)){ 
+                                $SifPor=$SifPor[0]->SifPor;
+                                $modelP->delete($SifPor);
+                            }
                         } else {
                             $data['poruka'] = "Neuspešna rezervacija karte!";
                         }
@@ -492,7 +519,6 @@ class KorisnikController extends BaseController
         $data['sredstva'] = $model->svaSredstva();
 
         $SifK = session()->get("korisnik")->SifK;  // dohvati 
-
         if ($this->request->getMethod() == 'post') {
 
 
@@ -509,12 +535,17 @@ class KorisnikController extends BaseController
                         $_POST['DatumDo'] . " " . $_POST['VremeDo'] <= date("Y-m-d H:i:s")
                     ) {
 
-                        $data['poruka'] = "Greska pri unosu podataka za datum i vrijeme ostvarivanja vozanje";
+                        $data['poruka'] = "Greska pri unosu podataka za datum i vreme ostvarivanja voznje";
                     } else if ($_POST['BrojPutnika'] <= 0) {
                         $data['poruka'] = "Neophodno je da Broj Putnika bude veca od nule";
-                    } else if ($_POST['CenaDo'] < $_POST['CenaOd']) {
-                        $data['poruka'] = "Cena Do mora biti veca od Cene od!";
-                    } else {
+                    } else if ($_POST['CenaDo'] < $_POST['CenaOd'] || $_POST['CenaDo']<0 || $_POST['CenaOd']<0) {
+                        
+                        $data['poruka'] = "Cena mora biti pozitivna i Cena Do mora biti veca od Cene od!";
+                    }
+                    else if ($_POST['MesOd'] == $_POST['MesDo']){
+                        $data['poruka'] = "Mesto polaska i dolaska se moraju razlikovati!";        
+                    } 
+                    else {
 
                         $ponuda = [
                             'Sred' => $_POST['prevoz'],

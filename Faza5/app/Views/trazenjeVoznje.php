@@ -73,28 +73,28 @@ if (!empty($poruka)) {
                             <input class="form-control" placeholder="0" type="text" name="BrojPutnika">
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
-                            <label>Datum do</label>
-                            <input class="form-control" placeholder="Any" type="date" name="DatumDo">
-                        </div>
-                        <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                             <label>Datum od</label>
                             <input class="form-control" placeholder="Any" type="date" name="DatumOd">
                         </div>
                         <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
-                            <label>Vreme do</label>
-                            <input class="form-control" placeholder="Any" type="time" name="VremeDo">
+                            <label>Datum do</label>
+                            <input class="form-control" placeholder="Any" type="date" name="DatumDo">
                         </div>
-                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+                        <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                             <label>Vreme od</label>
                             <input class="form-control" placeholder="Any" type="time" name="VremeOd">
+                        </div>
+                        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
+                            <label>Vreme do</label>
+                            <input class="form-control" placeholder="Any" type="time" name="VremeDo">
                         </div>
 
 
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 col-sm-12 col-12">
-                    <!-- <a href="" style="background-color: rgb(6, 47, 60);">Zatraži</a> -->
-                    <input type="submit" value="Zatraži" style="background-color: rgb(6, 47, 10); width: 200px; height: 80px; font-size: 20px; color:white; "> 
+                    <input type="submit" value="Zatraži" style="background-color: rgb(6, 47, 10); width: 200px; font-size: 20px; color:white; margin-top: 80px"> 
+                   
                 </div>
 
 

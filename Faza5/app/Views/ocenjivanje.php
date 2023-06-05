@@ -41,15 +41,15 @@ if (!empty($poruka)) {
                 </div>
                 <div class="col-sm-4"><label style="margin-left: 10px; margin-top: 30px;"></label></div>
             </div>
-            <div class="row" style="margin-top: 30px;">
-                <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-12" >
                     <label>Komentar</label>
-                    <input type="textarea" name="komentar" class="form-control" rows="4" style="height: 100%;">
+                    <input type="textarea" name="komentar" class="form-control" rows="5">
                 </div>
             </div>
             <div class="row">
                 <div class="col-sm-12">
-                    <input type="submit" value="Oceni" style="background-color: rgb(6, 47, 10); width: 200px; height: 80px; font-size: 20px; color:white; ">
+                    <input type="submit" value="Oceni" style="background-color: rgb(6, 47, 10); width: 200px; font-size: 20px; color:white; ">
                 </div>
             </div>
         </form>

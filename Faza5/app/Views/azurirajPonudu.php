@@ -18,7 +18,14 @@ $builder = $db->table("rezervacija");
 $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
 
 $builder = $db->table("postavljenaponuda");
-$rokZaOtkazivanje = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
+if (!empty($builder->where("SifP", $ponuda->SifP)->get()->getResult())){
+   $builder = $db->table("postavljenaponuda");
+   $rokZaOtkazivanje = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
+}
+else {
+   $builder = $db->table("vanrednaponuda");
+   $rokZaOtkazivanje = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
+}
 
 $builder = $db->table("prevoznosredstvo");
 $prevoznoSredstvo = ($builder->where("SifSred", $ponuda->SifSred)->get()->getResult())[0]->Naziv;

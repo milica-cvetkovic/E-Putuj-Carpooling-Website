@@ -47,7 +47,7 @@
                           </tr>
                           <tr>
                              <td>Datum polaska do</td>
-                             <td></td>
+                             <td>".$odabrana->DatumDo."</td>
                           </tr>
                           <tr>
                              <td>Vreme polaska od</td>
@@ -55,7 +55,7 @@
                           </tr>
                           <tr>
                              <td>Vreme polaska do</td>
-                             <td></td>
+                             <td>".$odabrana->VremeDo."</td>
                           </tr>
                           <tr>
                              <td>Prevozno sredstvo</td>

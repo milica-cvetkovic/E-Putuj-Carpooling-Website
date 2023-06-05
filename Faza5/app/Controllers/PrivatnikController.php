@@ -59,7 +59,12 @@ class PrivatnikController extends BaseController {
         // dohvataju se ponude privatnika da bi se prikazale
         $korisnik = session()->get("korisnik");
         $builder = $db->table("ponuda");
-        $ponude = $builder->where("SifK", $korisnik->SifK)->get()->getResult();
+        $ponude = $builder->where("SifK", $korisnik->SifK)->join("postavljenaponuda", "postavljenaponuda.SifP = ponuda.SifP")->get()->getResult();
+        $builder = $db->table("ponuda");
+        $vanredneponude = $builder->where("SifK", $korisnik->SifK)->join("vanrednaponuda", "vanrednaponuda.SifP = ponuda.SifP")->get()->getResult();
+        foreach ($vanredneponude as $ponuda) {
+            array_push($ponude, $ponuda);
+        }
         $this->prikaz("indexprivatnik", ["ponude" => $ponude, "kontroler" => "PrivatnikController", "stranica" => "indexprivatnik"]);
     }
 
@@ -138,7 +143,13 @@ class PrivatnikController extends BaseController {
         $rokZaOtkazivanje = $this->request->getVar("rokZaOtkazivanje");
 
         $builder = $db->table("postavljenaponuda");
-        $trenutniRokZaOtkaz = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
+        if (!empty($builder->where("SifP", $ponuda->SifP)->get()->getResult())) {
+            $builder = $db->table("postavljenaponuda");
+            $trenutniRokZaOtkaz = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
+        } else {
+            $builder = $db->table("vanrednaponuda");
+            $trenutniRokZaOtkaz = ($builder->where("SifP", $ponuda->SifP)->get()->getResult())[0]->RokZaOtkazivanje;
+        }
 
         // broje se rezervacije jer neka polja treba proveriti samo ako nema rezervacija (videti SSU)
         $builder = $db->table("rezervacija");
@@ -155,7 +166,7 @@ class PrivatnikController extends BaseController {
         } else if ($_FILES["slika"]["size"] > 1000000) {
             $poruka = "Maksimalna dozvoljena veličina fajla je 1000000 bajtova.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka, "kontroler" => "PrivatnikController", "stranica" => "azurirajPonudu"]);
-        } else if ($brMesta) {
+        } else if ($brMesta <= 0) {
             $poruka = "Broj slobodnih mesta mora biti nenegativan broj.";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka, "kontroler" => "PrivatnikController", "stranica" => "azurirajPonudu"]);
         } else if ($cena <= 0) {
@@ -232,8 +243,12 @@ class PrivatnikController extends BaseController {
         }
     }
 
+    
     /**
-     * Anja Curic 2020/0513
+     * Prikaz inbox-a privatnika
+     * 
+     * @author Anja Curic 2020/0513
+     * @return void
      */
     public function inboxPrivatnik() {
         $Kime = session()->get("korisnik")->KorisnickoIme;
@@ -254,6 +269,14 @@ class PrivatnikController extends BaseController {
         $this->prikaz("inboxPrivatnik", ["poruke" => $poruke, "kontroler" => "PrivatnikController", "stranica" => "inboxPrivatnik"]);
     }
 
+
+     /**
+     * Prikaz selektovane poruke iz inbox-a privatnika
+     * 
+     * 
+     * @author Anja Curic 2020/0513
+     * @return void
+     */
     public function inboxPrivatnikPoruka() {
         $izbor = $this->request->getVar("poruka");
         $Kime = session()->get("korisnik")->KorisnickoIme;
@@ -686,12 +709,12 @@ Tim Side-eye.');
      * 
      * @return void
      */
-    public function logout(){
+    public function logout() {
         session()->remove("korisnik");
         $gostController = new GostController();
         $gostController->index();
     }
-    
+
     /**
      * Poziva se iz footera i salje se mejl timu side-eye sa popunjenim podacima iz forme iz footera
      * 

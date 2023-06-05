@@ -4,9 +4,15 @@
          <?php
          if (!empty($poruka)) {
             echo "<div style='display: flex; justify-content: center; color: red'
-                              <h5>{$poruka}</h5>
-                           </div>";
+                     <h5>{$poruka}</h5>
+                  </div>";
          }
+         if (!empty($porukaUspeh)) {
+            echo "<div style='display: flex; justify-content: center; color: green'
+                     <h5>{$porukaUspeh}</h5>
+                  </div>";
+         }
+
          ?>
          <form action="<?= base_url("{$kontroler}/izmenaProfila") ?>" enctype="multipart/form-data" method="post">
             <table>
@@ -42,8 +48,8 @@
       <div class="dugme-sacuvaj">
          <div style="margin-left: 260px;">
             <br>
-            <input type="submit" value="Sačuvaj" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
-            <input type="submit" value="Obriši moj nalog" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
+            <input type="submit" name="dugme" value="Sačuvaj" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
+            <input type="submit" name="dugme" value="Obriši moj nalog" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
 
          </div>
       </div>
@@ -52,7 +58,7 @@
          <img style=" margin-top: 50px; border-style: dotted; border-color: beige; width: 200px; height: 300px" alt="" src="<?php if (session()->get("korisnik")->ProfilnaSlika == null) {
                                                                                                                                  echo base_url('images/profile.jpg');
                                                                                                                               } else {
-                                                                                                                                 echo base_url('images/profilne/'.session()->get("korisnik")->ProfilnaSlika);
+                                                                                                                                 echo base_url('images/profilne/' . session()->get("korisnik")->ProfilnaSlika);
                                                                                                                               } ?>">
          </form>
       </div>

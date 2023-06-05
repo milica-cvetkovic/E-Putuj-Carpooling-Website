@@ -50,11 +50,11 @@ if (!empty($poruka)) {
                             </a>
                         </div>
                         <div class="row" style="display:flex; justify-content:center; margin-top: 20px">
-                            <button  class="btn make-offer-btn open-button" onclick="openForm()" style="width:30%; position: relative;  ">Kupi</button>
+                            <button  class="btn make-offer-btn open-button" onclick="openForm('.$rezervacija->SifR.')" style="width:30%; position: relative;  ">Kupi</button>
                         </div>
                     
                     <div class="kupovina">
-                        <div class="form-popup" id="myForm" style="bottom:0%">
+                        <div class="form-popup" id="myForm'.$rezervacija->SifR.'" style="bottom:0%">
                             <table class="table table-borderless" style="opacity:95%;color:white;background-color: #6181aa;width:400px;">
 
                                 <form class="form-container " style="position: relative;" action="'. base_url("KorisnikController/kupi_kartu").'" method="POST">
@@ -65,7 +65,7 @@ if (!empty($poruka)) {
                                                 <hr />
                                             </h1>
                                         </td>
-                                        <td style="text-align:right;"><a onclick="closeForm()" class="btn cancel" style="background-color: pink;width:30px; "  ><span style="display:flex; justify-content:center">X</span> </a></td>
+                                        <td style="text-align:right;"><a onclick="closeForm('.$rezervacija->SifR.')" class="btn cancel" style="background-color: pink;width:30px; "  ><span style="display:flex; justify-content:center">X</span> </a></td>
 
                                        
                                     </tr>
@@ -81,7 +81,7 @@ if (!empty($poruka)) {
                                     </tr>
                                     <tr>
                                         <td><label for="psw"><b>Broj mesta</b></label></td>
-                                        <td><input name="BrMesta" value='. $rezervacija->BrRez.' id="brojMesta"></td>
+                                        <td><input type="text" name="BrMesta" value='.$rezervacija->BrRez.' id="brojMesta"></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
@@ -90,7 +90,7 @@ if (!empty($poruka)) {
                                     </tr>
                                     <tr>
                                         <td><label for="cena"><b>Iznos</b></label></td>
-                                        <td> <span id="cena">'. $rezervacija->BrRez * $rezervacija->CenaKarte.'€</span></td>
+                                        <td> <span id="cena">'.$rezervacija->BrRez * $rezervacija->CenaKarte.'€</span></td>
                                     </tr>
                                     <tr>
                                         <td colspan="2">
@@ -151,11 +151,11 @@ if (!empty($poruka)) {
 </div>
 
 <script>
-    function openForm() {
-        document.getElementById("myForm").style.display = "block";
+    function openForm(sifR) {
+        document.getElementById("myForm"+sifR).style.display = "block";
     }
 
-    function closeForm() {
-        document.getElementById("myForm").style.display = "none";
+    function closeForm(sifR) {
+        document.getElementById("myForm"+sifR).style.display = "none";
     }
 </script>

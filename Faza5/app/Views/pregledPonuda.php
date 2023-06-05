@@ -19,10 +19,10 @@
                             <label>Prevozno sredstvo</label>
                             <select class="form-control" name="prevoznoSredstvo">
                                 <option></option>
-                                <?php 
-                                    foreach($svaPrevoznaSredstva as $p){
-                                        echo "<option> {$p->Naziv} </option>";
-                                    }
+                                <?php
+                                foreach ($svaPrevoznaSredstva as $p) {
+                                    echo "<option> {$p->Naziv} </option>";
+                                }
                                 ?>
                             </select>
                         </div>
@@ -30,10 +30,10 @@
                             <label>Mesto do</label>
                             <select class="form-control" name="mestoDo">
                                 <option></option>
-                                <?php 
-                                    foreach($svaMesta as $p){
-                                        echo "<option> {$p->Naziv} </option>";
-                                    }
+                                <?php
+                                foreach ($svaMesta as $p) {
+                                    echo "<option> {$p->Naziv} </option>";
+                                }
                                 ?>
                             </select>
                         </div>
@@ -41,10 +41,10 @@
                             <label>Mesto od</label>
                             <select class="form-control" name="mestoOd">
                                 <option></option>
-                                <?php 
-                                    foreach($svaMesta as $p){
-                                        echo "<option> {$p->Naziv} </option>";
-                                    }
+                                <?php
+                                foreach ($svaMesta as $p) {
+                                    echo "<option> {$p->Naziv} </option>";
+                                }
                                 ?>
                             </select>
                         </div>
@@ -84,53 +84,48 @@
                 </div>
             </div>
         </form>
-        <form name='sortform' action="<?= site_url('GostController/pretragaPonuda');?>" method='post'>
+
+    </div>
+    <div class="container" style="display: flex; justify-content: center">
+        <form name='sortform' action="<?= site_url('GostController/pretragaPonuda'); ?>" method='post'>
             <input type="hidden" name="sort" value="true">
-            <div class='row'>
-                <div class='col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12'>
-                    <select class='form-select' name='sortiranje' onchange='this.form.submit()'>
-                        <option selected>Sortiraj</option>
-                        <option value='rastuceCena'>Rastuće po ceni</a></option>
-                        <option value='rastuceDatum'>Rastuće po datumu</a></option>
-                        <option value='opadajuceCena'>Opadajuće po ceni</a></option>
-                        <option value='opadajuceDatum'>Opadajuće po datumu</a></option>
-                    </select>
-                </div>
-            </div>
+            <select class='form-select' name='sortiranje' onchange='this.form.submit()' style="width: unset">
+                <option selected>Sortiraj</option>
+                <option value='rastuceCena'>Rastuće po ceni</a></option>
+                <option value='rastuceDatum'>Rastuće po datumu</a></option>
+                <option value='opadajuceCena'>Opadajuće po ceni</a></option>
+                <option value='opadajuceDatum'>Opadajuće po datumu</a></option>
+            </select>
         </form>
     </div>
-    
+
     <?php
-    for($i = 0, $j = 0; $i<3 && $j < count($ponude); $i++){
+    for ($i = 0, $j = 0; $i < 3 && $j < count($ponude); $i++) {
         echo "<div class='row' style='margin-top: 40px;'>";
         $count = 3;
-        while($count != 0 && $j < count($ponude)){
+        while ($count != 0 && $j < count($ponude)) {
             echo "<div class='col-xl-4 col-lg-4 col-md-6 col-sm-12'>";
-            
+
             echo "<form name='ponuda{$ponude[$j]->SifP}' id='ponuda{$ponude[$j]->SifP}' method='post' action='";
             echo site_url('GostController/prikazPonudeGost');
             echo "'>"; ?>
-            <a href="javascript:{}" onclick="document.getElementById('ponuda<?=$ponude[$j]->SifP?>').submit(); return false;">
-                            <div class='traveling-box'>
+            <a href="javascript:{}" onclick="document.getElementById('ponuda<?= $ponude[$j]->SifP ?>').submit(); return false;">
+                <div class='traveling-box'>
             <?php
             $db = \Config\Database::connect();
             $builder = $db->table("rezervacija");
             $rezervacije = $builder->where("SifP", $ponude[$j]->SifP)->get()->getResult();
-            $brojRezervisanihMesta = 0;
-            foreach ($rezervacije as $rezervacija) {
-                $brojRezervisanihMesta += $rezervacija->BrMesta;
-            }                    
             echo "<i><img src='";
-            echo base_url('images/ponude/'.$ponude[$j]->Slika);
+            echo base_url('images/ponude/' . $ponude[$j]->Slika);
             echo "' alt='icon' style='object-fit: scale-down; margin-top: 10px; width: 250px; height: 250px;' /></i>";
             echo "<h2>{$ponude[$j]->MestoOd} - {$ponude[$j]->MestoDo}</h2>";
             echo "<p>Datum od: {$ponude[$j]->DatumOd} <br/> Datum do: {$ponude[$j]->DatumDo}</p>";
             echo "<br><img src='";
-            echo base_url('images/'.$ponude[$j]->prevoznoSredstvo.'_transparent.png');
+            echo base_url('images/' . $ponude[$j]->prevoznoSredstvo . '_transparent.png');
             echo "' height='35' width='35'><br>";
-            echo "Broj slobodnih mesta: ".($ponude[$j]->BrMesta - $brojRezervisanihMesta);
+            echo "Broj slobodnih mesta: " . ($ponude[$j]->BrMesta);
             echo "<span><img src='";
-            echo base_url('images/stickman.svg.png'); 
+            echo base_url('images/stickman.svg.png');
             echo "' height='15' width='15'></span>";
             echo "<h3>{$ponude[$j]->CenaKarte} €</h3>";
             echo "<input type='hidden' name='izabranaPonuda' value='{$ponude[$j]->SifP}'>";
@@ -138,65 +133,65 @@
             $j++;
             $count--;
         }
-        
+
         echo "</div>";
     }
-    
-    ?>
-    
-    <!--dugmad za pregled stranica-->
-    <div class="row justify-content-center" style="margin-top: 40px; text-align: center;">
-        <div class="col-xl-2">
-            <ul class="pagination" style="margin-bottom: 40px; display: flex;">
-                
-                <?php
-                
-                if($page > 1){
-                    $result = $page -1;
-                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda?page='.$result);
-                    echo "'>Prošla</a></li>";
-                }
-                
-                if($page - 2 > 0){
-                    $result = $page - 2;
-                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda?page='.$result);
-                    echo "'>{$result}</a></li>";
-                }
-                if($page - 1 > 0){
-                    $result = $page - 1;
-                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda?page='.$result);
-                    echo "'>{$result}</a></li>";
-                }
-        
-                echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                echo site_url('GostController/pretragaPonuda?page='.$page);
-                echo "'>{$page}</a></li>";
-                
-                if($page + 1 < ceil($totalPages / $numOfResultsOnPage) + 1){
-                    $result = $page +1;
-                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda?page='.$result);
-                    echo "'>{$result}</a></li>";
-                }
-                if($page + 2 < ceil($totalPages/ $numOfResultsOnPage) + 1){
-                    $result = $page + 2;
-                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda?page='.$result);
-                    echo "'>{$result}</a></li>";
-                }
-                
-                if($page < ceil($totalPages/$numOfResultsOnPage)){
-                    $result = $page + 1;
-                    echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
-                    echo site_url('GostController/pretragaPonuda?page='.$result);
-                    echo "'>Sledeća</a></li>";
-                }
-                ?>
-                
-            </ul>
-        </div>
-    </div>
-</div>
+
+            ?>
+
+            <!--dugmad za pregled stranica-->
+            <div class="row justify-content-center" style="margin-top: 40px; text-align: center;">
+                <div class="col-xl-2">
+                    <ul class="pagination" style="margin-bottom: 40px; display: flex;">
+
+                        <?php
+
+                        if ($page > 1) {
+                            $result = $page - 1;
+                            echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                            echo site_url('GostController/pretragaPonuda?page=' . $result);
+                            echo "'>Prošla</a></li>";
+                        }
+
+                        if ($page - 2 > 0) {
+                            $result = $page - 2;
+                            echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                            echo site_url('GostController/pretragaPonuda?page=' . $result);
+                            echo "'>{$result}</a></li>";
+                        }
+                        if ($page - 1 > 0) {
+                            $result = $page - 1;
+                            echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                            echo site_url('GostController/pretragaPonuda?page=' . $result);
+                            echo "'>{$result}</a></li>";
+                        }
+
+                        echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                        echo site_url('GostController/pretragaPonuda?page=' . $page);
+                        echo "'>{$page}</a></li>";
+
+                        if ($page + 1 < ceil($totalPages / $numOfResultsOnPage) + 1) {
+                            $result = $page + 1;
+                            echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                            echo site_url('GostController/pretragaPonuda?page=' . $result);
+                            echo "'>{$result}</a></li>";
+                        }
+                        if ($page + 2 < ceil($totalPages / $numOfResultsOnPage) + 1) {
+                            $result = $page + 2;
+                            echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                            echo site_url('GostController/pretragaPonuda?page=' . $result);
+                            echo "'>{$result}</a></li>";
+                        }
+
+                        if ($page < ceil($totalPages / $numOfResultsOnPage)) {
+                            $result = $page + 1;
+                            echo "<li class='page-item'><a class='page-link make-offer-btn' href='";
+                            echo site_url('GostController/pretragaPonuda?page=' . $result);
+                            echo "'>Sledeća</a></li>";
+                        }
+                        ?>
+
+                    </ul>
+                </div>
+            </div>
+                </div>

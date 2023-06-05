@@ -113,9 +113,6 @@
             </div>
          </div>
       </div>
-      <div class="justify-content-center read-more">
-         <a href="#contact" style="background-color: rgb(63, 155, 183); ">Pročitaj više</a>
-      </div>
    </div>
 </div>
 <div id="offers" class="traveling">
@@ -135,9 +132,6 @@
                <h3>Putuj autom</h3>
                <p>Ugodne vožnje automobilom</p>
                <br />
-               <div class="read-more">
-                  <?php echo anchor("GostController/index", "Procitaj vise"); ?>
-               </div>
             </div>
          </div>
          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12">
@@ -145,9 +139,6 @@
                <i><img src="<?php echo base_url('lana/icon/travel-icon3.png') ?>" alt="icon" /></i>
                <h3>Putuj autobusom</h3>
                <p> Planiraj putovanje sa društvom, bus ponude su tu!</p>
-               <div class="read-more">
-                  <?php echo anchor("GostController/index", "Procitaj vise"); ?>
-               </div>
             </div>
          </div>
          <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 ">
@@ -155,9 +146,6 @@
                <i><img src="<?php echo base_url('lana/icon/travel-icon4.png') ?>" alt="icon" /></i>
                <h3>Putuj brodom</h3>
                <p> Letnje avanture, na otvorenom moru!</p>
-               <div class="read-more">
-                  <?php echo anchor("GostController/index", "Procitaj vise"); ?>
-               </div>
             </div>
          </div>
       </div>

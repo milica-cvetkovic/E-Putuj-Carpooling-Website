@@ -44,12 +44,12 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                         <select class="form-control" name="prevoznoSredstvo" required>
                            <?php
                            $prevoznoSredstvoSesija = "";
-                           if (!empty(session()->get("prevoznoSredstvo"))) {
-                              $prevoznoSredstvoSesija = session()->get("prevoznoSredstvo");
-                              echo "<option>{$prevoznoSredstvoSesija}</option>";
-                           } else if (!empty($zatrazenaPonuda)) {
+                           if (!empty($zatrazenaPonuda)) {
                               $builder = $db->table("prevoznosredstvo");
                               $prevoznoSredstvoSesija = ($builder->where("SifSred", $zatrazenaPonuda->SifSred)->get()->getResult())[0]->Naziv;
+                              echo "<option>{$prevoznoSredstvoSesija}</option>";
+                           } else if (!empty(session()->get("prevoznoSredstvo"))) {
+                              $prevoznoSredstvoSesija = session()->get("prevoznoSredstvo");
                               echo "<option>{$prevoznoSredstvoSesija}</option>";
                            }
                            foreach ($prevoznaSredstva as $prevoznoSredstvo) {
@@ -65,12 +65,12 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                         <select class="form-control" name="mestoPolaska" required>
                            <?php
                            $mestoOdSesija = "";
-                           if (!empty(session()->get("mestoOd"))) {
-                              $mestoOdSesija = session()->get("mestoOd");
-                              echo "<option>{$mestoOdSesija}</option>";
-                           } else if (!empty($zatrazenaPonuda)) {
+                           if (!empty($zatrazenaPonuda)) {
                               $builder = $db->table("mesto");
                               $mestoOdSesija = ($builder->where("SifM", $zatrazenaPonuda->SifMesOd)->get()->getResult())[0]->Naziv;
+                              echo "<option>{$mestoOdSesija}</option>";
+                           } else if (!empty(session()->get("mestoOd"))) {
+                              $mestoOdSesija = session()->get("mestoOd");
                               echo "<option>{$mestoOdSesija}</option>";
                            }
                            foreach ($mesta as $mesto) {
@@ -86,12 +86,12 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                         <select class="form-control" name="mestoDolaska" required>
                            <?php
                            $mestoDoSesija = "";
-                           if (!empty(session()->get("mestoDo"))) {
-                              $mestoDoSesija = session()->get("mestoDo");
-                              echo "<option>{$mestoDoSesija}</option>";
-                           } else if (!empty($zatrazenaPonuda)) {
+                           if (!empty($zatrazenaPonuda)) {
                               $builder = $db->table("mesto");
                               $mestoDoSesija = ($builder->where("SifM", $zatrazenaPonuda->SifMesDo)->get()->getResult())[0]->Naziv;
+                              echo "<option>{$mestoDoSesija}</option>";
+                           } else if (!empty(session()->get("mestoDo"))) {
+                              $mestoDoSesija = session()->get("mestoDo");
                               echo "<option>{$mestoDoSesija}</option>";
                            }
                            foreach ($mesta as $mesto) {
@@ -110,14 +110,14 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                      <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12">
                         <label> Broj slobodnih mesta</label>
                         <input class="form-control" placeholder="0" type="text" name="brMesta"  required
-                                 <?php if (!empty(session()->get("brMesta"))) {echo "value='".session()->get("brMesta")."'";}
-                                 else if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->BrMesta}'";} ?>>
+                                 <?php if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->BrMesta}'";}
+                                 else if (!empty(session()->get("brMesta"))) {echo "value='".session()->get("brMesta")."'";} ?>>
                      </div>
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                         <label>Datum polaska</label>
                         <input class="form-control" placeholder="Any" type="date" name="datumOd" required
-                                 <?php if (!empty(session()->get("datumOd"))) {echo "value='".session()->get("datumOd")."'";}
-                                 else  if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->DatumOd}'";} ?>>
+                                 <?php if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->DatumOd}'";}
+                                 else  if (!empty(session()->get("datumOd"))) {echo "value='".session()->get("datumOd")."'";} ?>>
                      </div>
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                         <label>Datum dolaska</label>
@@ -127,8 +127,8 @@ $zatrazenaPonuda = session()->get("zatrazenaPonuda");
                      <div class="col-xl-3 col-lg-4 col-md-3 col-sm-6 col-12">
                         <label>Vreme polaska</label>
                         <input class="form-control" placeholder="Any" type="time" name="vremeOd" required
-                                 <?php if (!empty(session()->get("vremeOd"))) {echo "value='".session()->get("vremeOd")."'";}
-                                 else  if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->VremeOd}'";} ?>>
+                                 <?php if (!empty($zatrazenaPonuda)) {echo "value='{$zatrazenaPonuda->VremeOd}'";}
+                                 else  if (!empty(session()->get("vremeOd"))) {echo "value='".session()->get("vremeOd")."'";} ?>>
                      </div>
                      <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6 col-12">
                         <label>Vreme dolaska</label>

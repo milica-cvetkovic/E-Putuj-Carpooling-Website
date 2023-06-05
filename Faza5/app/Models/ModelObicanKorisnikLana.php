@@ -92,7 +92,8 @@ class ModelObicanKorisnikLana extends Model
                 'SifMesDo' => $voznja['SifMesDo'],
                 'SifMesOd' => $voznja['SifMesOd'],
                 'SifSred' => $SifSred,
-                'SifK' => $privatnik->SifK,
+                'SifK' => session()->get("korisnik")->SifK,
+                "SifPriv" => $privatnik->SifK,
                 'CenaKarte' => 0,
                 'BrMesta' => $voznja['BrMesta'],
 
@@ -239,11 +240,19 @@ class ModelObicanKorisnikLana extends Model
             $ponuda->BrMesta = $ponuda->BrMesta - $BrMesta;
             for ($i = 0; $i < $BrMesta; $i++) {
                 $kupljena_karta = [
-                    'NacinPlacanja' => 0,
+                    'NacinPlacanja' => $ponuda->CenaKarte,
                     'SifP' => $SifP,
                     'SifK' => $SifK
                 ];
-                $this->db->table('kupljenakarta')->insert($kupljena_karta);
+                $db      = \Config\Database::connect();
+                $db->table('kupljenakarta')->insert($kupljena_karta);
+
+                $uplata =[
+                    'SifKar'=>$db->insertID(),
+                    'DatumUplate'=> Time::now()->toDateTimeString(),
+                    'Iznos'=>$ponuda->CenaKarte
+                ];
+                $db->table('uplata')->insert($uplata);
             }
 
             $this->db->table('ponuda')->where("SifP=", $SifP)->update($ponuda);
@@ -253,6 +262,7 @@ class ModelObicanKorisnikLana extends Model
                 $nagrada = $this->db->table('poklon')->where('SifPokl', $SifPokl)->get()->getResult()[0];
                 if ($nagrada->TipPoklona == "%") {
                     // echo "%";
+                
                     $korisnik->Novac -= $ponuda->CenaKarte*$BrMesta * (100-$nagrada->Iznos) / 100.0;
                     $OVAJ = $this->db->table('jedobio')->where("SifK", $SifK)->where("SifPokl",$SifPokl)->get()->getResult()[0]->JeDobioPK;
 
@@ -293,7 +303,7 @@ class ModelObicanKorisnikLana extends Model
         $SifP = $rezervacija->SifP;
         $ponuda = $this->db->table('ponuda')->where("SifP=", $SifP)->get()->getResult();
         if (count($ponuda) == 0 || $BrMesta <= 0) {
-            return;
+            return false;
         }
         $ponuda = $ponuda[0];
         
@@ -313,7 +323,15 @@ class ModelObicanKorisnikLana extends Model
                     'SifP' => $SifP,
                     'SifK' => $SifK
                 ];
-                $this->db->table('kupljenakarta')->insert($kupljena_karta);
+                $db      = \Config\Database::connect();
+                $db->table('kupljenakarta')->insert($kupljena_karta);
+
+                $uplata =[
+                    'SifKar'=>$db->insertID(),
+                    'DatumUplate'=> Time::now()->toDateTimeString(),
+                    'Iznos'=>$ponuda->CenaKarte
+                ];
+                $db->table('uplata')->insert($uplata);
             }
             
             $this->db->table('rezervacija')->where("SifR", $rezervacija->SifR)->delete();
@@ -322,7 +340,7 @@ class ModelObicanKorisnikLana extends Model
                 // echo "nagrada";
                 $nagrada = $this->db->table('poklon')->where('SifPokl', $SifPokl)->get()->getResult()[0];
                 if ($nagrada->TipPoklona == "%") {
-                    echo "%";
+                   
                     $korisnik->Novac -= $ponuda->CenaKarte*$BrMesta * (100-$nagrada->Iznos) / 100.0;
                     $OVAJ = $this->db->table('jedobio')->where("SifK", $SifK)->where("SifPokl",$SifPokl)->get()->getResult()[0]->JeDobioPK;
 
@@ -330,12 +348,12 @@ class ModelObicanKorisnikLana extends Model
                 }
                 
                 else if ($nagrada->TipPoklona == "€"){
-                    echo "€";
+                   
                     $suma = $ponuda->CenaKarte *$BrMesta - $nagrada->Iznos;
                     if($suma<0){$suma=0;}
                     $korisnik->Novac = $korisnik->Novac -$suma ;
                     $OVAJ = $this->db->table('jedobio')->where("SifK", $SifK)->where("SifPokl",$SifPokl)->get()->getResult()[0]->JeDobioPK;
-                    echo $OVAJ;
+                    
                     $this->db->table('jedobio')->where("JeDobioPK",$OVAJ)->delete();
                 }
 
@@ -347,6 +365,7 @@ class ModelObicanKorisnikLana extends Model
             $privatnik = $this->db->table('korisnik')->where("SifK=", $ponuda->SifK)->get()->getResult()[0];
             $privatnik->Novac += $ponuda->CenaKarte*$BrMesta;
             $this->db->table('korisnik')->where("SifK=", $privatnik->SifK)->update($privatnik);
+            return true;
 
         }
     }

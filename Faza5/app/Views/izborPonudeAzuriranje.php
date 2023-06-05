@@ -49,10 +49,6 @@
                   $datum = $dan . "/" . $mesec . "/" . $godina;
                   $builder = $db->table("rezervacija");
                   $rezervacije = $builder->where("SifP", $ponuda->SifP)->get()->getResult();
-                  $brojRezervisanihMesta = 0;
-                  foreach ($rezervacije as $rezervacija) {
-                     $brojRezervisanihMesta += $rezervacija->BrMesta;
-                  }
                   echo '<div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">';
                   echo "<a href='";
                   echo base_url("PrivatnikController/prikazPonude/{$ponuda->SifP}");
@@ -64,7 +60,7 @@
                   echo base_url("images/{$prevoznoSredstvo}_transparent.png");
                   echo '"';
                   echo ' height="35" width="35"><br>
-               ' . ($ponuda->BrMesta - $brojRezervisanihMesta) . ' <span><img src="';
+               ' .$ponuda->BrMesta. ' <span><img src="';
                   echo base_url("images/stickman.png");
                   echo '"';
                   echo ' height="15" width="15"></span>
