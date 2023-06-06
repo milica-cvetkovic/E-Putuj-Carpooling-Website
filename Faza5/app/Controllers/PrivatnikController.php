@@ -394,7 +394,8 @@ class PrivatnikController extends BaseController {
                 "SifMesDo" => $SifMesDo,
                 "SifMesOd" => $SifMesOd,
                 "SifSred" => $SifSred,
-                "SifK" => session()->get("korisnik")->SifK
+                "SifK" => session()->get("korisnik")->SifK,
+                "SifPriv"=>session()->get("korisnik")->SifK
             ];
 
             $builder->insert($data);
@@ -559,6 +560,8 @@ Tim Side-eye.');
         $builder = $db->table("rezervacija");
         $rezervacije = $builder->get()->getResult();
         foreach ($rezervacije as $rezervacija) {
+            $builder=$db->table("korisnik");
+            $korisnik=($builder->where("SifK",$rezervacija->SifK)->get()->getResult())[0];
             $email = (new Email())->from("sideeyetim@outlook.com")->to($korisnik->Email)
                 ->subject('Obaveštenje o otkazivanju ponude ' . $sifP)->text('Poštovani/a,
 
@@ -567,6 +570,9 @@ zakazanu za ' . $ponuda->DatumOd . ' u ' . $ponuda->VremeOd . '. Vaša rezervaci
             
 S poštovanjem,
 Tim Side-eye.');
+
+
+
             $mailer->send($email);
         }
         $builder = $db->table("rezervacija");

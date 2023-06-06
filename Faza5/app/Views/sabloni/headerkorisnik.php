@@ -91,7 +91,7 @@
                                         <li id="liPocetnaK"><a href="<?php echo base_url('KorisnikController/index') ?>">Početna</a></li>
                                         <li><a href="#contact">Kontakt</a></li>
                                         <li id="liInboxK"> <a href="<?php echo base_url('KorisnikController/inboxKorisnik') ?>">Inbox <span class="badge bg-danger"><?php if($brPoruka>0)echo $brPoruka;?></span></a> </li>
-                                        <li> <a href="index/#onama">O nama</a> </li>
+                                        <li> <a href="<?=base_url("KorisnikController/index#onama")?>">O nama</a> </li>
                                         <li id="liPregled"><a href="<?=base_url("KorisnikController/pretragaPonuda")?>">Pretraži ponude</a></li>
                                         <li id="liTrazi"><a href="<?=base_url("KorisnikController/trazenjeVoznje")?>">Zatraži vožnju</a></li>
                                         <li id="liRezervacije"><a href="<?=base_url("KorisnikController/rezervacije")?>">Moje rezervacije</a></li>

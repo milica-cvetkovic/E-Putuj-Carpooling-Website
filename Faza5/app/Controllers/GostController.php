@@ -138,12 +138,12 @@ class GostController extends BaseController {
        
         $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,14}$/";
         if(preg_match($regex, $lozinka) == 0){
-            $poruke['lozinka'] = "Lozinka u neispravnom formatu.";
+            $poruke['lozinka'] = "Lozinka mora da sadrži jedno malo slovo, jedno veliko slovo, jedan specijalan karakter, jednu cifru i da je dužine od 8 do 14 karaktera";
             return $this->registracija($poruke);
         }
         
         if($lozinka != $ponovnalozinka){
-            $poruke['ponovna'] = "Lozinka u polju potvrde nije usta kao prva unesena.";
+            $poruke['ponovna'] = "Lozinka u polju potvrde nije ista kao prva unesena.";
             return $this->registracija($poruke);
         }
         
