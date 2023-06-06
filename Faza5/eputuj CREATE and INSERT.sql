@@ -533,21 +533,21 @@ INSERT INTO `zahtevponuda` (`SifP`, `CenaOd`, `CenaDo`) VALUES
 -- Constraints for table `admin`
 --
 ALTER TABLE `admin`
-  ADD CONSTRAINT `fk_14` FOREIGN KEY (`SifK`) REFERENCES `korisnik` (`SifK`);
+  ADD CONSTRAINT `fk_14` FOREIGN KEY (`SifK`) REFERENCES `korisnik` (`SifK`)ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `jedobio`
 --
 ALTER TABLE `jedobio`
-  ADD CONSTRAINT `FK_Pokl` FOREIGN KEY (`SifPokl`) REFERENCES `poklon` (`SifPokl`),
-  ADD CONSTRAINT `FK_SifK` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`);
+  ADD CONSTRAINT `FK_Pokl` FOREIGN KEY (`SifPokl`) REFERENCES `poklon` (`SifPokl`)ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_SifK` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `kupljenakarta`
 --
 ALTER TABLE `kupljenakarta`
-  ADD CONSTRAINT `R_24` FOREIGN KEY (`SifP`) REFERENCES `ponuda` (`SifP`),
-  ADD CONSTRAINT `R_25` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`);
+  ADD CONSTRAINT `R_24` FOREIGN KEY (`SifP`) REFERENCES `ponuda` (`SifP`)ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_25` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `obicankorisnik`
@@ -559,25 +559,25 @@ ALTER TABLE `obicankorisnik`
 -- Constraints for table `ocena`
 --
 ALTER TABLE `ocena`
-  ADD CONSTRAINT `R_30` FOREIGN KEY (`SifPriv`) REFERENCES `privatnik` (`SifK`),
-  ADD CONSTRAINT `R_31` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`);
+  ADD CONSTRAINT `R_30` FOREIGN KEY (`SifPriv`) REFERENCES `privatnik` (`SifK`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_31` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`)ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `ponuda`
 --
 ALTER TABLE `ponuda`
-  ADD CONSTRAINT `R_10` FOREIGN KEY (`SifMesDo`) REFERENCES `mesto` (`SifM`),
-  ADD CONSTRAINT `R_11` FOREIGN KEY (`SifMesOd`) REFERENCES `mesto` (`SifM`),
-  ADD CONSTRAINT `R_12` FOREIGN KEY (`SifSred`) REFERENCES `prevoznosredstvo` (`SifSred`),
-  ADD CONSTRAINT `R_26` FOREIGN KEY (`SifK`) REFERENCES `korisnik` (`SifK`);
+  ADD CONSTRAINT `R_10` FOREIGN KEY (`SifMesDo`) REFERENCES `mesto` (`SifM`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_11` FOREIGN KEY (`SifMesOd`) REFERENCES `mesto` (`SifM`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_12` FOREIGN KEY (`SifSred`) REFERENCES `prevoznosredstvo` (`SifSred`) ON DELETE CASCADE ON UPDATE CASCADE, 
+  ADD CONSTRAINT `R_26` FOREIGN KEY (`SifK`) REFERENCES `korisnik` (`SifK`)ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `poruka`
 --
 ALTER TABLE `poruka`
-  ADD CONSTRAINT `R_13` FOREIGN KEY (`SifPonuda`) REFERENCES `ponuda` (`SifP`),
-  ADD CONSTRAINT `R_16` FOREIGN KEY (`SifKor`) REFERENCES `obicankorisnik` (`SifK`),
-  ADD CONSTRAINT `R_17` FOREIGN KEY (`SifPriv`) REFERENCES `privatnik` (`SifK`);
+  ADD CONSTRAINT `R_13` FOREIGN KEY (`SifPonuda`) REFERENCES `ponuda` (`SifP`)ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_16` FOREIGN KEY (`SifKor`) REFERENCES `obicankorisnik` (`SifK`)ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_17` FOREIGN KEY (`SifPriv`) REFERENCES `privatnik` (`SifK`)ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `postavljenaponuda`
@@ -590,7 +590,7 @@ ALTER TABLE `postavljenaponuda`
 --
 ALTER TABLE `privatnik`
   ADD CONSTRAINT `R_4` FOREIGN KEY (`SifK`) REFERENCES `korisnik` (`SifK`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `R_5` FOREIGN KEY (`SifPret`) REFERENCES `pretplata` (`SifPret`);
+  ADD CONSTRAINT `R_5` FOREIGN KEY (`SifPret`) REFERENCES `pretplata` (`SifPret`)ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `report`
@@ -603,14 +603,14 @@ ALTER TABLE `report`
 -- Constraints for table `rezervacija`
 --
 ALTER TABLE `rezervacija`
-  ADD CONSTRAINT `R_18` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`),
-  ADD CONSTRAINT `R_19` FOREIGN KEY (`SifP`) REFERENCES `ponuda` (`SifP`);
+  ADD CONSTRAINT `R_18` FOREIGN KEY (`SifK`) REFERENCES `obicankorisnik` (`SifK`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `R_19` FOREIGN KEY (`SifP`) REFERENCES `ponuda` (`SifP`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `uplata`
 --
 ALTER TABLE `uplata`
-  ADD CONSTRAINT `R_23` FOREIGN KEY (`SifKar`) REFERENCES `kupljenakarta` (`SifKar`);
+  ADD CONSTRAINT `R_23` FOREIGN KEY (`SifKar`) REFERENCES `kupljenakarta` (`SifKar`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `vanrednaponuda`

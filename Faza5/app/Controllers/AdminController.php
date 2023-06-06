@@ -283,10 +283,15 @@ class AdminController extends BaseController {
 
     public function Obrisi(){ 
         $model=new ModelKorisnik();
+        
         if(!empty($this->request->getVar("izbor")))$id=(int)$this->request->getVar("izbor");
         else $id=(int)$this->request->getVar("izbor1");
         $val=$model->where("SifK",$id)->findAll()[0];
-        $model->delete($id);
+
+        $db=\Config\Database::connect();
+        $builder=$db->table("korisnik");
+        $builder->where("SifK", $id)->delete();
+
         $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
         $transport->setUsername("sideeyetim@outlook.com");
         $transport->setPassword("RADIMAIL123");

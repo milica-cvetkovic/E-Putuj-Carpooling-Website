@@ -28,7 +28,7 @@ class Database extends Config
         'DSN'      => '',
         'hostname' => 'localhost',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Anjacuric040601#',
         'database' => 'eputuj',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
