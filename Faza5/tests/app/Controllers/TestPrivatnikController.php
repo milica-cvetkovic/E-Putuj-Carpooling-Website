@@ -12,13 +12,9 @@ class TextPrivatnikController extends CIUnitTestCase
     use DatabaseTestTrait;
     
     protected $migrate     = false;
-    //protected $migrateOnce = false;
     protected $refresh     = true;
-    //protected $namespace   = 'Tests\Support\Database';
 
-    // For Seeds
-    //protected $seedOnce = false;
-    protected $seed     = 'Tests\Support\Database\Seeds\PrivatnikSeeder';
+   protected $seed     = 'Tests\Support\Database\Seeds\PrivatnikSeeder';
    protected $basePath = 'Tests\Support\Database';
     
     protected function setUp(): void
@@ -31,6 +27,11 @@ class TextPrivatnikController extends CIUnitTestCase
     {
         parent::tearDown();
 
+    }
+    
+    protected function regressDatabase() {
+        $sql = file_get_contents($this->basePath.'testeputuj.sql');
+        $this->db->execute($sql);
     }
     
     public function testIndexPage(){

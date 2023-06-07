@@ -50,10 +50,10 @@ class Database extends Config
      */
     public array $tests = [
         'DSN'         => '',
-        'hostname'    => 'localhost',
-        'username'    => 'root',
+        'hostname'    => '127.0.0.1',
+        'username'    => '',
         'password'    => '',
-        'database'    => 'eputujtest',
+        'database'    => ':memory:',
         'DBDriver'    => ':SQLite3',
         'DBPrefix'    => '',  // Needed to ensure we're working correctly with prefixes live. DO NOT REMOVE FOR CI DEVS
         'pConnect'    => false,
