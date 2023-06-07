@@ -165,17 +165,24 @@ class KorisnikController extends BaseController
                 $email = $_POST['email'];
                 $profilna = null;
                 $imeSlike = null;
-                $dugme = $this->request->getVar("dugme");
-                if($dugme=="Sačuvaj"){
-                    if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
-                        // cuvanje slike na serveru
-                        $destinacioniFolder = FCPATH . "images\profilne\\";
-                        $imeSlike = $SifK . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
-                        $destinacioniFajl = $destinacioniFolder . $imeSlike;
-                        if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
-                            $poruka = "Nije uspelo ubacivanje slike";
-                        }
+                if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
+                    // cuvanje slike na serveru
+                    $destinacioniFolder = FCPATH . "images\profilne\\";
+                    $imeSlike = $SifK . "_" . date("YmdHis") . "_" . basename($_FILES['slika']['name']);
+                    $destinacioniFajl = $destinacioniFolder . $imeSlike;
+                    if (!move_uploaded_file($_FILES['slika']['tmp_name'], $destinacioniFajl)) {
+                        $poruka = "Nije uspelo ubacivanje slike";
                     }
+                }
+                $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,14}$/";
+
+                if(!empty($email) && !filter_var($email,FILTER_VALIDATE_EMAIL)){
+                    $poruka = "Format email-a nije odgovarajuci!";
+                }
+                else if(!empty($lozinka) && preg_match($regex, $lozinka) == 0){
+                    $poruka = "Format lozinke nije odgovarjuci, neophodno je da duzina lozinke bude od 8 do 14 karktera, pojeduje bar jedno veliko slovo, malo slovo, specijaln karakter i broj!";
+                }
+                else{
                     if ($imeSlike != null) {
                         $imeStareSlike = ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]->ProfilnaSlika;
                         if (file_exists(FCPATH . "images\profilne\\" . $imeStareSlike) && $imeStareSlike != "") {
@@ -185,18 +192,7 @@ class KorisnikController extends BaseController
                     $profilna = $imeSlike;
                     $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
                     session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
-                }else{
-                    $db      = \Config\Database::connect();
-                    $data = [
-                        'TraziBrisanje' => 1
-                    ];
-
-                    $builder = $db->table("korisnik");
-                    $builder->where("SifK", $SifK);
-                    $builder->update($data);
-                    $data['porukaUspeh'] = "Uspesno poslat zahtev za brisanje!";
-                }
-              
+                } 
             }
 
 
@@ -229,7 +225,7 @@ class KorisnikController extends BaseController
                 if ($ocena == null) {
                     $data['poruka'] = "Privatnik ne postoji!";
                 } else {
-                    $data['porukaUspeha'] = "Uspesno ste ocenili privatnika";
+                    $data['porukaUspeh'] = "Uspesno ste ocenili privatnika";
                     $db->table('ocena')->insert($ocena);
                 }
             }
@@ -527,9 +523,16 @@ class KorisnikController extends BaseController
 
 
                 if (
-                    isset($_POST['CenaOd']) && isset($_POST['CenaDo'])
-                    && isset($_POST['BrojPutnika']) && isset($_POST['DatumDo']) && isset($_POST['DatumOd']) && isset($_POST['VremeDo']) && isset($_POST['VremeOd'])
+                     !empty($_POST['DatumDo']) && !empty($_POST['DatumOd']) && !empty($_POST['VremeDo']) && !empty($_POST['VremeOd'])
                 ) {
+                    if(empty($_POST['CenaOd'])){
+                        $_POST['CenaOd']=0;
+                    } if(empty($_POST['CenaDo'])){
+                        $_POST['CenaDo']=0;
+                    }
+                    if(empty($_POST['BrojPutnika'])){
+                        $_POST['BrojPutnika']=0;
+                    }
                     if (
                         $_POST['DatumOd'] . " " . $_POST['VremeOd'] <= date("Y-m-d H:i:s") ||
                         $_POST['DatumDo'] . " " . $_POST['VremeDo'] <= date("Y-m-d H:i:s")
@@ -538,7 +541,7 @@ class KorisnikController extends BaseController
                         $data['poruka'] = "Greska pri unosu podataka za datum i vreme ostvarivanja voznje";
                     } else if ($_POST['BrojPutnika'] <= 0) {
                         $data['poruka'] = "Neophodno je da Broj Putnika bude veca od nule";
-                    } else if ($_POST['CenaDo'] < $_POST['CenaOd'] || $_POST['CenaDo']<0 || $_POST['CenaOd']<0) {
+                    } else if ($_POST['CenaDo'] <= $_POST['CenaOd'] || $_POST['CenaDo']<0 || $_POST['CenaOd']<0) {
                         
                         $data['poruka'] = "Cena mora biti pozitivna i Cena Do mora biti veca od Cene od!";
                     }
@@ -562,7 +565,7 @@ class KorisnikController extends BaseController
 
                         ];
 
-                        $data['porukaUspeha'] = "Uspešno ste izvršili tražnju vožnje!";
+                        $data['porukaUspeh'] = "Uspešno ste izvršili tražnju vožnje!";
                         $data['poruka'] = "";
 
                         $model = new ModelObicanKorisnikLana($db);

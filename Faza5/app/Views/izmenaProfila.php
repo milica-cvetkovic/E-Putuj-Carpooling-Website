@@ -29,7 +29,7 @@
                   <td><label style="color: rgb(210, 62, 153);">E-mail &nbsp; </label></td>
                </tr>
                <tr>
-                  <td> <input name="lozinka" class="ime" type="text"> &nbsp; &nbsp; </td>
+                  <td> <input name="lozinka" class="ime" type="password"> &nbsp; &nbsp; </td>
                   <td><input name="email" class="ime" type="text" value="<?= session()->get("korisnik")->Email ?>"></td>
                </tr>
                <tr>

@@ -664,11 +664,13 @@ Tim Side-eye.');
      * 
      * @return void
      */
-    public function izmenaProfila() {
+    public function izmenaProfila()
+    {
         $data = [];
         $db = db_connect();
         $model = new ModelObicanKorisnikLana($db);
         $SifK =  session()->get("korisnik")->SifK;
+        //$SifK = "2";
         $poruka = "";
         if ($this->request->getMethod() == 'post') {
             if ($_POST) {
@@ -679,7 +681,6 @@ Tim Side-eye.');
                 $email = $_POST['email'];
                 $profilna = null;
                 $imeSlike = null;
-                // ako nije poslat fajl, ne cuva se nista
                 if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
                     // cuvanje slike na serveru
                     $destinacioniFolder = FCPATH . "images\profilne\\";
@@ -689,22 +690,32 @@ Tim Side-eye.');
                         $poruka = "Nije uspelo ubacivanje slike";
                     }
                 }
-                // bice null ako nije poslat fajl, pa se profilna slika ne brise sa servera
-                if ($imeSlike != null) {
-                    $imeStareSlike = ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]->ProfilnaSlika;
-                    if (file_exists(FCPATH . "images\profilne\\" . $imeStareSlike) && $imeStareSlike != "") {
-                        unlink(FCPATH . "images\profilne\\" . $imeStareSlike);
-                    }
-                }
-                $profilna = $imeSlike;
-                $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+                $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,14}$/";
 
-                // postavlja se opet sesija kako bi bili azurni podaci
-                session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
+                if(!empty($email) && !filter_var($email,FILTER_VALIDATE_EMAIL)){
+                    $poruka = "Format email-a nije odgovarajuci!";
+                }
+                else if(!empty($lozinka) && preg_match($regex, $lozinka) == 0){
+                    $poruka = "Format lozinke nije odgovarjuci, neophodno je da duzina lozinke bude od 8 do 14 karktera, pojeduje bar jedno veliko slovo, malo slovo, specijaln karakter i broj!";
+                }
+                else{
+                    if ($imeSlike != null) {
+                        $imeStareSlike = ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]->ProfilnaSlika;
+                        if (file_exists(FCPATH . "images\profilne\\" . $imeStareSlike) && $imeStareSlike != "") {
+                            unlink(FCPATH . "images\profilne\\" . $imeStareSlike);
+                        }
+                    }
+                    $profilna = $imeSlike;
+                    $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+                    session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
+                } 
             }
+
+
             $data["poruka"] = $poruka;
         }
 
+    
         $data["kontroler"] = "PrivatnikController";
         $data["stranica"] = "izmenaProfila";
         $this->prikaz("izmenaProfila", $data);

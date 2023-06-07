@@ -47,7 +47,7 @@ class AdminController extends BaseController {
      * Prikazivanje glavne starnice admin
      * 
      * 
-     * @return array
+     * 
      */
     public function index() {
         $model=new ModelKorisnik();
@@ -103,7 +103,7 @@ class AdminController extends BaseController {
      * 
      * 
      * 
-     * @return array
+     * 
      */
 
     public function dodajMesto(){
@@ -139,7 +139,7 @@ class AdminController extends BaseController {
      * 
      * Brisanje naloga korisnika
      * 
-     * @return array
+     * 
      */
 
     public function potvrdiBrisanje(){
@@ -165,7 +165,7 @@ class AdminController extends BaseController {
      * Potvrda naloga
      * 
      * 
-     * @return array
+     * 
      */
     public function potvrdiNalog(){
         $izbor=$this->request->getVar("izbor");
@@ -196,7 +196,7 @@ class AdminController extends BaseController {
      * Potvrda kreiranja naloga
      * 
      * 
-     * @return array
+     * 
      */
     public function potvrdiKreiranje(){ 
         $model=new ModelKorisnik();
@@ -256,7 +256,7 @@ class AdminController extends BaseController {
      * Uklanjanje naloga korisnika
      * 
      * 
-     * @return array
+     * 
      */
     public function ukloniNalog(){
         $model=new ModelKorisnik();
@@ -278,7 +278,7 @@ class AdminController extends BaseController {
      * Brisanje naloga korsnika
      * 
      * 
-     * @return array
+     * 
      */
 
     public function Obrisi(){ 
@@ -324,7 +324,7 @@ Tim Side-Eye.
      * 
      * Odbijanje naloga korsinika
      * 
-     * @return array
+     * 
      */
     public function Odbij(){ 
         $model=new ModelKorisnik();
@@ -354,7 +354,7 @@ Tim Side-Eye.
      * Posalji Email potvrde korisniku
      * 
      * 
-     * @return array
+     * 
      */
     public function posaljiEmail(){
 
