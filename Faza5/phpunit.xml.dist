@@ -28,7 +28,7 @@
     </coverage>
     <testsuites>
         <testsuite name="App">
-            <directory>./tests</directory>
+            <directory>./tests/app</directory>
         </testsuite>
     </testsuites>
     <logging>
