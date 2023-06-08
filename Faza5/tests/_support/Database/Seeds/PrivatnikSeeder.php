@@ -20,13 +20,41 @@ class PrivatnikSeeder extends Seeder
                 'Email' => 'pomocniEPUTUJ2@outlook.com',
                 'PrivatnikIliKorisnik' => 'P',
                 'Novac' => 400,
-                'ProfilaSlika' => '3_20230531220122_RE4wwtb.jpg'
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
             ],
         ];
 
         $builder = $this->db->table('korisnik');
         foreach ($korisnici as $korisnik) {
             $builder->insert($korisnik);
+        }
+
+          
+        $mesta = [
+            [
+                'SifM' => 0,
+                'Naziv' => 'Beograd'
+            ],
+            [
+                'SifM' => 14,
+                'Naziv' => 'Trebinje'
+            ]
+        ];
+        
+        $builder = $this->db->table('mesto');
+        foreach($mesta as $mesto){
+            $builder->insert($mesto);
+        }
+
+        $sredstva = [
+            [
+                'SifSred' => 2,
+                'Naziv' => 'Automobil'
+            ]
+        ];
+        $builder = $this->db->table('prevoznosredstvo');
+        foreach($sredstva as $sredstvo){
+            $builder->insert($sredstvo);
         }
         
         $ponude = [
@@ -41,7 +69,7 @@ class PrivatnikSeeder extends Seeder
                 'SifMesDo' => 0,
                 'SifMesOd' => 14,
                 'SifSred' => 2,
-                'SifK' => 3,
+                'SifK' => 0,
                 'Slika' => '31_20230605185505_beograd-na-vodi.jpg',
                 'SifPriv' => 0
             ],
@@ -51,14 +79,6 @@ class PrivatnikSeeder extends Seeder
         foreach ($ponude as $ponuda) {
             $builder->insert($ponuda);
         }
-        
-        
-        $mesta = [
-            
-        ];
-        
-        
-        
         
     }
 }
