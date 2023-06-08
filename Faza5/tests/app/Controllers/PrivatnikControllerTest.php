@@ -24,9 +24,11 @@ class PrivatnikControllerTest extends CIUnitTestCase
     protected $seed     = 'Tests\Support\Database\Seeds\PrivatnikSeeder';
    protected $basePath = 'Tests\Support\Database';
     
+    
     protected function setUp(): void
     {
         parent::setUp();
+        
     }
 
     // protected function regressDatabase()
@@ -60,7 +62,6 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $builder = $this->db->table("zahtevponuda")->truncate();
     }
     
-    
 
     public function testRandomPage(){
         $results = $this->withURI("http://localhost:8080")->controller("App\Controllers\GostController")->execute('index');
@@ -69,6 +70,25 @@ class PrivatnikControllerTest extends CIUnitTestCase
     }
 
     public function testIndexPage(){
+        
+         
+//        $korisnik = [
+//                'SifK' => 0,
+//                'KorisnickoIme' => 'zeljko123',
+//                'Lozinka' => 'zeljko123',
+//                'TraziBrisanje' => 0,
+//                'Ime' => 'Zeljko',
+//                'Prezime' => 'Urosevic',
+//                'BrTel' => 432678900,
+//                'Email' => 'pomocniEPUTUJ2@outlook.com',
+//                'PrivatnikIliKorisnik' => 'P',
+//                'Novac' => 400,
+//                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+//            ];
+//        
+//        $session = $this->createStub(Session::class);
+//        $session->method->('get')->willReturn($korisnik);
+        
         $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('index');
         $this->assertTrue($results->see('Dobrodošli'));
         $this->assertTrue(true);
