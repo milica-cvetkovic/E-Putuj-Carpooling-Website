@@ -51,6 +51,7 @@ class PrivatnikController extends BaseController {
      * Pocetna stranica za privatnika
      * 
      * @return void
+     * 
      */
     public function index() {
 

@@ -28,7 +28,7 @@ class Database extends Config
         'DSN'      => '',
         'hostname' => 'localhost',
         'username' => 'root',
-        'password' => '',
+        'password' => 'Anjacuric040601#',
         'database' => 'eputuj',
         'DBDriver' => 'MySQLi',
         'DBPrefix' => '',
@@ -52,7 +52,7 @@ class Database extends Config
         'DSN'         => '',
         'hostname'    => 'localhost',
         'username'    => 'root',
-        'password'    => '',
+        'password'    => 'Anjacuric040601#',
         'database'    => 'eputujtest',
         'DBDriver'    => 'MySQLi',
         'DBPrefix'    => '',  // Needed to ensure we're working correctly with prefixes live. DO NOT REMOVE FOR CI DEVS

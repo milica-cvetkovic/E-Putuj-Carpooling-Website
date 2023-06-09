@@ -39,6 +39,7 @@ class GostController extends BaseController {
      * @return void
      */
     public function index() {
+        
         $svePonude = $this->dohvatiSvePonude();
         $svaMesta = $this->dohvatiSvaMesta();
         $svaPrevoznaSredstva = $this->dohvatiSvaPrevoznaSredstva();

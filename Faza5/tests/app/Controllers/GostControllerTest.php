@@ -8,7 +8,7 @@ use CodeIgniter\Test\ControllerTestTrait;
 use CodeIgniter\Test\DatabaseTestTrait;
 
 
-class PrivatnikControllerTest extends CIUnitTestCase
+class GostControllerTest extends CIUnitTestCase
 {
     use ControllerTestTrait;
     use DatabaseTestTrait;
@@ -62,36 +62,23 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $builder = $this->db->table("vanrednaponuda")->truncate();
         $builder = $this->db->table("zahtevponuda")->truncate();
     }
-    
-
-    public function testRandomPage(){
-        
-        $results = $this->withURI("http://localhost:8080")->controller("App\Controllers\GostController")->execute('index');
-        $this->assertTrue($results->see('Početna'));
-    }
 
     public function testIndexPage(){
         
-         
-       $korisnik = [
-                'SifK' => 0,
-               'KorisnickoIme' => 'zeljko123',
-               'Lozinka' => 'zeljko123',
-               'TraziBrisanje' => 0,
-                'Ime' => 'Zeljko',
-                'Prezime' => 'Urosevic',
-                'BrTel' => 432678900,
-                'Email' => 'pomocniEPUTUJ2@outlook.com',
-                'PrivatnikIliKorisnik' => 'P',
-                'Novac' => 400,
-                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
-            ];
+        $results = $this->withURI("http://localhost:8080/GostController")->controller("App\Controllers\GostController")->execute('index');
+        $this->assertTrue($results->see('Početna'));
+    }
+
+    public function testLoginPrivatnik(){ 
         
-        
-        session()->set('korisnik',(object)$korisnik);
-        
-        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('index');
-        $this->assertTrue($results->see('Dobrodošli'));
+        $_REQUEST['username-input']='milica.c';
+        $_REQUEST['password-input']='Milica123#';
+
+        $results = $this->withURI("http://localhost:8080/index.php/GostController/login")->controller("App\Controllers\GostController")->execute('loginSubmit');
+        $this->assertFalse($results->see("Popunjavanje"));
+        $this->assertFalse($results->see("Neispravno"));
+        $this->assertFalse($results->see("Neispravna"));
+
     }
     
 }
