@@ -73,7 +73,7 @@
                            <ul class="menu-area-main">
 
                               <li id="liPocetna"> <a href="<?= site_url("GostController/index") ?>">Početna</a> </li> <!-- ovde treba prosledjivati sta je aktivno, vrv moze preko js -->
-                              <li>                <a href="index#onama">O nama</a> </li>
+                              <li>                <a href="<?= site_url("GostController/index#onama") ?>">O nama</a> </li>
                               <li id="liPretraga"><a href="<?php echo site_url("GostController/pretragaPonuda")?>">Ponude</a></li>
                               <li id="liKontakt"> <a href="#contact">Kontakt</a></li>
 

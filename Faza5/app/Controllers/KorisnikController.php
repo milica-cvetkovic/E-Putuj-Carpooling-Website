@@ -225,7 +225,7 @@ class KorisnikController extends BaseController
                 if ($ocena == null) {
                     $data['poruka'] = "Privatnik ne postoji!";
                 } else {
-                    $data['porukaUspeh'] = "Uspesno ste ocenili privatnika";
+                    $data['porukaUspeh'] = "Uspešno ste ocenili privatnika.";
                     $db->table('ocena')->insert($ocena);
                 }
             }

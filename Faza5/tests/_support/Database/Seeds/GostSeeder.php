@@ -67,7 +67,7 @@ class GostSeeder extends Seeder
                 'SifMesDo' => 3,
                 'SifMesOd' => 8,
                 'SifSred' => 2,
-                'SifK' => 12,
+                'SifK' => 4,
                 'Slika' => '31_20230605185505_beograd-na-vodi.jpg',
                 'SifPriv' => 4
             ],
@@ -76,6 +76,16 @@ class GostSeeder extends Seeder
         $builder = $this->db->table('ponuda');
         foreach ($ponude as $ponuda) {
             $builder->insert($ponuda);
+        }
+
+        $postavljene=[[
+            'SifP' => 37,
+            'RokZaOtkazivanje' => 2
+        ],];
+
+        $builder = $this->db->table('postavljenaponuda');
+        foreach ($postavljene as $p) {
+            $builder->insert($p);
         }
 
         $privatnici=[
@@ -143,7 +153,7 @@ class GostSeeder extends Seeder
             [
                 'SifSred' => 2,
                 'Naziv' => 'Automobil'
-            ]
+            ],
         ];
         $builder = $this->db->table('prevoznosredstvo');
         foreach($sredstva as $sredstvo){
@@ -160,5 +170,9 @@ class GostSeeder extends Seeder
                 'Naziv' => 'Valjevo'
             ]
         ];
+        $builder = $this->db->table('mesto');
+        foreach($mesta as $mesto){
+            $builder->insert($mesto);
+        }
     }
 }

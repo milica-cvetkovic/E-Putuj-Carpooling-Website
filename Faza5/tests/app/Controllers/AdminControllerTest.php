@@ -407,7 +407,7 @@ class AdminControllerTest extends CIUnitTestCase {
     }
 
     public function testDetaljiPrivatnikaPosleReporta(){
-        $korisnik = [
+        $korisnik =[
             'SifK' => 5,
             'KorisnickoIme' => 'admin',
             'Lozinka' => 'Admin123#',
@@ -418,7 +418,7 @@ class AdminControllerTest extends CIUnitTestCase {
             'Email' => 'admin',
             'PrivatnikIliKorisnik' => 'A',
             'Novac' => 0,
-            'ProfilnaSlika' => ''
+            'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
         ];
 
 
@@ -427,8 +427,9 @@ class AdminControllerTest extends CIUnitTestCase {
         $_REQUEST['izbor1'] = "2";
         $_REQUEST['izbor2'] = "4";
         $_REQUEST['r'] = "1";
+        $_REQUEST['izbor'] =null;
         $results = $this->controller('App\Controllers\AdminController')->execute('detaljiPrivatnikaPosleReporta');
-        $this->assertTrue($results->see('Nazad'));
+        $this->assertTrue($results->see('Informacije o korisničkom nalogu'));
     }
 
     public function testReportDetalji(){
