@@ -10,7 +10,7 @@ class PrivatnikSeeder extends Seeder
     {
         $korisnici = [
             [
-                'SifK' => 0,
+                'SifK' => 3,
                 'KorisnickoIme' => 'zeljko123',
                 'Lozinka' => 'zeljko123',
                 'TraziBrisanje' => 0,
@@ -20,6 +20,19 @@ class PrivatnikSeeder extends Seeder
                 'Email' => 'pomocniEPUTUJ2@outlook.com',
                 'PrivatnikIliKorisnik' => 'P',
                 'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ],
+            [
+                'SifK' => 4,
+                'KorisnickoIme' => 'milica.c',
+                'Lozinka' => 'Milica123#',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Milica',
+                'Prezime' => 'Cvetkovic',
+                'BrTel' => 1234,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 300,
                 'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
             ],
         ];
@@ -38,6 +51,14 @@ class PrivatnikSeeder extends Seeder
             [
                 'SifM' => 14,
                 'Naziv' => 'Trebinje'
+            ],
+            [
+                'SifM' => 3,
+                'Naziv' => 'Jagodina'
+            ],
+            [
+                'SifM' => 8,
+                'Naziv' => 'Valjevo'
             ]
         ];
         
@@ -73,11 +94,50 @@ class PrivatnikSeeder extends Seeder
                 'Slika' => '31_20230605185505_beograd-na-vodi.jpg',
                 'SifPriv' => 0
             ],
+            [
+                'SifP' => 37,
+                'BrMesta' => 1,
+                'DatumOd' => '2023-07-09',
+                'DatumDo' => '2023-06-26',
+                'VremeOd' => '23:00:00',
+                'VremeDo' => '20:00:00',
+                'CenaKarte' => 10.00,
+                'SifMesDo' => 3,
+                'SifMesOd' => 8,
+                'SifSred' => 2,
+                'SifK' => 4,
+                'Slika' => '31_20230605185505_beograd-na-vodi.jpg',
+                'SifPriv' => 4
+            ],
         ];
         
         $builder = $this->db->table('ponuda');
         foreach ($ponude as $ponuda) {
             $builder->insert($ponuda);
+        }
+        
+        $postavljene=[[
+            'SifP' => 37,
+            'RokZaOtkazivanje' => 2
+        ],];
+
+        $builder = $this->db->table('postavljenaponuda');
+        foreach ($postavljene as $p) {
+            $builder->insert($p);
+        }
+        
+        $rezervacije = [
+          [
+              "SifK" => 4,
+              "SifP" => 37,
+              "BrMesta" => 2,
+              "DatumRezervacije" => '2023-06-02',
+          ]  
+        ];
+        
+        $builder = $this->db->table('rezervacija');
+        foreach ($rezervacije as $r) {
+            $builder->insert($r);
         }
         
     }

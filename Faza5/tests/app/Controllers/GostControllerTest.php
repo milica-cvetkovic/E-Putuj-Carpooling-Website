@@ -221,7 +221,7 @@ class GostControllerTest extends CIUnitTestCase
     }
 
     public function testZaboravljenaLozinka(){ 
-        $_REQUEST['emailReset']="ca200513d@student.etf.bg.ac.rs";
+        $_REQUEST['emailReset']="pomocniEPUTUJ2@outlook.com";
         $results = $this->controller("App\Controllers\GostController")->execute('zaboravljenaLozinkaSubmit');
         $this->assertTrue($results->see("OPCIJE ZA PUTOVANJA"));
     }

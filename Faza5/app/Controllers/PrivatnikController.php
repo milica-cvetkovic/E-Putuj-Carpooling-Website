@@ -96,7 +96,6 @@ class PrivatnikController extends BaseController {
      */
     public function prikazPonude($sifP) {
         $db      = \Config\Database::connect();
-
         // dohvata se ponuda koja treba da se prikaze
         $builder = $db->table("ponuda");
         $ponuda = ($builder->where("SifP", $sifP)->get()->getResult())[0];
@@ -160,7 +159,7 @@ class PrivatnikController extends BaseController {
             $brojRezervisanihMesta += $rezervacija->BrMesta;
         }
 
-        // provere ispravnosti forme
+        //provere ispravnosti forme
         if (strpos($_FILES['slika']['type'], "image") === false) {
             $poruka = "Ubacen fajl nije slika";
             $this->prikaz("azurirajPonudu", ["ponuda" => $ponuda, "poruka" => $poruka, "kontroler" => "PrivatnikController", "stranica" => "azurirajPonudu"]);

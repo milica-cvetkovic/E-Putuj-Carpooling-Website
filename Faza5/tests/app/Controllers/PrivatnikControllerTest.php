@@ -24,11 +24,27 @@ class PrivatnikControllerTest extends CIUnitTestCase
     protected $seedOnce = false;
     protected $seed     = 'Tests\Support\Database\Seeds\PrivatnikSeeder';
    protected $basePath = 'Tests\Support\Database';
-    
+   
     
     protected function setUp(): void
     {
         parent::setUp();
+        
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
         
     }
 
@@ -62,22 +78,14 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $builder = $this->db->table("vanrednaponuda")->truncate();
         $builder = $this->db->table("zahtevponuda")->truncate();
     }
-    
-
-    public function testRandomPage(){
-        
-        $results = $this->withURI("http://localhost:8080")->controller("App\Controllers\GostController")->execute('index');
-        $this->assertTrue($results->see('Početna'));
-    }
 
     public function testIndexPage(){
         
-         
-       $korisnik = [
-                'SifK' => 0,
-               'KorisnickoIme' => 'zeljko123',
-               'Lozinka' => 'zeljko123',
-               'TraziBrisanje' => 0,
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
                 'Ime' => 'Zeljko',
                 'Prezime' => 'Urosevic',
                 'BrTel' => 432678900,
@@ -87,11 +95,100 @@ class PrivatnikControllerTest extends CIUnitTestCase
                 'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
             ];
         
-        
         session()->set('korisnik',(object)$korisnik);
         
         $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('index');
         $this->assertTrue($results->see('Dobrodošli'));
     }
+    
+    public function testIzborPonudeAzuriranje(){
+        
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+        
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izborPonudeAzuriranje');
+        $this->assertTrue($results->see('AŽURIRANJE PONUDE'));
+        
+    }
+    
+    /**
+     * @dataProvider ponudaProvider
+     */
+    public function testPrikazPonude($sifP){
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('prikazPonude', $sifP);
+        $this->assertTrue($results->see('Cena'));
+    }
+    
+    public function ponudaProvider(){
+        return [
+            [37],
+        ];
+    }
+    
+    /**
+     * @dataProvider ponudaProvider
+     */
+    public function testAzurirajPonudu($sifP){
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('azurirajPonudu', $sifP);
+        $this->assertTrue($results->see("Azuriraj"));
+    }
+    
+    /**
+     * @dataProvider ponudaProvider
+     */
+    public function testAzuriranjePonudeSubmit1($sifP){
+        $_REQUEST["prevoznoSredstvo"]= 2;
+        $_REQUEST["mestoPolaska"] = "Beograd";
+        $_REQUEST["mestoDolaska"] = "Jagodina";
+        $_REQUEST["cenaKarte"] = 900;
+        $_REQUEST["brMesta"] = 10;
+        $_REQUEST["datumOd"] = '2023-10-10';
+        $_REQUEST["datumDo"] = '2023-10-14';
+        $_REQUEST["vremeOd"] = '20:00:00';
+        $_REQUEST["vremeDo"] = '19:00:00';
+        $_REQUEST["rokZaOtkazivanje"] = 2;
+        $_FILES['slika']['type'] =  base_url('images/1.png');
+        
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('azurirajPonudu', $sifP);
+        $this->assertTrue($results->see("Azuriraj"));
+   
+        
+        
+    }
+    
+     /**
+     * @dataProvider ponudaProvider
+     */
+    public function testAzuriranjePonudeSubmit2($sifP){
+        $_REQUEST["prevoznoSredstvo"]= 2;
+        $_REQUEST["mestoPolaska"] = "Beograd";
+        $_REQUEST["mestoDolaska"] = "Jagodina";
+        $_REQUEST["cenaKarte"] = 900;
+        $_REQUEST["brMesta"] = -5;
+        $_REQUEST["datumOd"] = '2023-06-10';
+        $_REQUEST["cenaKarte"] = '2023-06-18';
+        $_REQUEST["vremeOd"] = '20:00:00';
+        $_REQUEST["vremeDo"] = '19:00:00';
+        $_REQUEST["rokZaOtkazivanje"] = 2;
+        $_FILES['slika']['type'] = base_url('images/1.png');
+        
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('azurirajPonudu', $sifP);
+        $this->assertTrue($results->see("Broj slobodnih mesta mora biti nenegativan broj."));
+   
+    }
+    
     
 }
