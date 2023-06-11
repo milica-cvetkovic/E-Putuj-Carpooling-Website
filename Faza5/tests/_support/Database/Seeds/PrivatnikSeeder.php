@@ -97,8 +97,8 @@ class PrivatnikSeeder extends Seeder
             [
                 'SifP' => 37,
                 'BrMesta' => 1,
-                'DatumOd' => '2023-07-09',
-                'DatumDo' => '2023-06-26',
+                'DatumOd' => '2023-06-09',
+                'DatumDo' => '2023-07-26',
                 'VremeOd' => '23:00:00',
                 'VremeDo' => '20:00:00',
                 'CenaKarte' => 10.00,
@@ -138,6 +138,68 @@ class PrivatnikSeeder extends Seeder
         $builder = $this->db->table('rezervacija');
         foreach ($rezervacije as $r) {
             $builder->insert($r);
+        }
+        
+        $kupljenekarte = [
+            [
+                "SifKar" => 2,
+                "NacinPlacanja" => 100.00,
+                "SifP" => 3,
+                "SifK" => 4
+            ]
+        ];
+        
+         $builder = $this->db->table('kupljenakarta');
+        foreach ($kupljenekarte as $k) {
+            $builder->insert($k);
+        }
+        
+        $uplate = [
+            [
+                "SifU" => 1,
+                "DatumUplate" => "2023-06-11 12:00:00",
+                "Iznos" => 100.00,
+                "SifKar" => 2
+            ]
+        ];
+        
+        $builder = $this->db->table('uplata');
+        foreach ($uplate as $u) {
+            $builder->insert($u);
+        }
+        
+        $pretplate = [
+           [
+              "SifPret" => 1,
+               "Naziv" => "Standard",
+               "Iznos" => 9.99
+            ],
+            [
+               "SifPret" => 2,
+               "Naziv" => "Premium",
+               "Iznos" => 29.99 
+            ]
+        ];
+        
+        $builder = $this->db->table('pretplata');
+        foreach ($pretplate as $p) {
+            $builder->insert($p);
+        }
+        
+        $privatnici = [
+            [
+                'SifK' => 3,
+                "SifPret" => 1
+            ],
+            [
+                'SifK' => 4,
+                "SifPret" => 2
+            ]
+        ];
+        
+        $builder = $this->db->table('privatnik');
+        foreach ($privatnici as $p) {
+            $builder->insert($p);
         }
         
     }
