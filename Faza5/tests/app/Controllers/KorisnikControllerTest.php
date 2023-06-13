@@ -1159,7 +1159,7 @@ class KorisnikControllerTest extends CIUnitTestCase
         ];
         session()->set('korisnik', (object)$korisnik);
 
-        $results = $this->controller('App\Controllers\AdminController')->execute('logout');
+        $results = $this->controller('App\Controllers\KorisnikController')->execute('logout');
         $this->assertTrue($results->see('Uloguj se'));
     }
 

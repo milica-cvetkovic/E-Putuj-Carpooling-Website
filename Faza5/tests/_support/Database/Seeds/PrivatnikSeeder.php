@@ -35,6 +35,32 @@ class PrivatnikSeeder extends Seeder
                 'Novac' => 300,
                 'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
             ],
+            [
+                'SifK' => 12,
+                'KorisnickoIme' => 'trivic123',
+                'Lozinka' => 'Trivic123!',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Aleksa',
+                'Prezime' => 'Trivic',
+                'BrTel' =>38165123456,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'K',
+                'Novac' =>300,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ],
+            [
+                'SifK' => 5,
+                'KorisnickoIme' => 'admin',
+                'Lozinka' => 'Admin123#',
+                'TraziBrisanje' => 0,
+                'Ime' => 'admin',
+                'Prezime' => 'admin',
+                'BrTel' =>0,
+                'Email' => 'admin',
+                'PrivatnikIliKorisnik' => 'A',
+                'Novac' =>0,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ],
         ];
 
         $builder = $this->db->table('korisnik');
@@ -199,6 +225,28 @@ class PrivatnikSeeder extends Seeder
         
         $builder = $this->db->table('privatnik');
         foreach ($privatnici as $p) {
+            $builder->insert($p);
+        }
+        
+        $poruke = [
+            [
+                "SifPonuda" => 31,
+                "SifKor" => 5,
+                "SifPriv" => 3,
+                "SifPor" => 17,
+                "SmerPoruke" => 2
+            ],
+            [
+                "SifPonuda" => 37,
+                "SifKor" => 12,
+                "SifPriv" => 3,
+                "SifPor" => 22,
+                "SmerPoruke" => 1
+            ]
+        ];
+        
+        $builder = $this->db->table('poruka');
+        foreach ($poruke as $p) {
             $builder->insert($p);
         }
         

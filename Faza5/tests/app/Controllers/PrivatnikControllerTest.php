@@ -668,5 +668,248 @@ class PrivatnikControllerTest extends CIUnitTestCase
         
     }
     
+     public function testKomentar1(){ 
+        $_REQUEST['stranica']='izmenaProfila';
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    
+    public function testKomentar2(){ 
+        $_REQUEST['stranica']='inboxPrivatnik';
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    public function testKomentar3(){ 
+        $_REQUEST['stranica']='napraviPonudu';
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    public function testKomentar4(){ 
+        $_REQUEST['stranica']="azurirajPonudu";
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    public function testKomentar5(){ 
+        $_REQUEST['stranica']="izborPonudeAzuriranje";
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    public function testKomentar6(){ 
+        $_REQUEST['stranica']="promenaPretplate";
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    public function testKomentar7(){ 
+        $_REQUEST['stranica']="prikazPonudePrivatnik";
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    public function testKomentar8(){ 
+        $_REQUEST['stranica']="otkaziPonudu";
+        $_REQUEST['ime']='Anja';
+
+        $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
+        $this->assertTrue($results->dontSee('Dobrodošli'));
+    }
+    
+     public function testLogout() {
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+
+        $results = $this->controller('App\Controllers\PrivatnikController')->execute('logout');
+        $this->assertTrue($results->see('Uloguj se'));
+    }
+    
+    ////////////////////////
+    
+     public function testIzmenaProfilaPrikaz(){
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
+        $this->assertTrue($results->see("Lozinka"));
+        $this->assertTrue($results->see("Izaberite fotografiju"));
+    }
+
+    public function testIzmenaProfilaPogresanFormatEmaila(){
+       $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['ime'] = 'Aleksa';
+        $_POST['prezime'] = 'Trivic';
+        $_POST['lozinka'] = 'Trivic123!';
+        $_POST['email'] = 'abcd';
+        $_FILES['slika']['tmp_name'] = 'abcd';
+
+        $this->request->setMethod('POST');
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
+        $this->assertTrue($results->see("Format email-a nije odgovarajuci!"));
+    }
+
+    public function testIzmenaProfilaPogresanFormatLozinke(){
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['ime'] = 'Aleksa';
+        $_POST['prezime'] = 'Trivic';
+        $_POST['lozinka'] = 'trivic123';
+        $_POST['email'] = 'pomocniEPUTUJ2@outlook.com';
+        $_FILES['slika']['tmp_name'] = 'abcd';
+
+        $this->request->setMethod('POST');
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
+        $this->assertTrue($results->see("Format lozinke nije odgovarajuci, neophodno je da duzina lozinke bude od 8 do 14 karaktera, poseduje bar jedno veliko slovo, malo slovo, specijalan karakter i broj!"));
+    }
+
+    public function testIzmenaProfilaUspesno(){
+         $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['ime'] = 'Aleksa1';
+        $_POST['prezime'] = 'Trivic1';
+        $_POST['lozinka'] = 'Trivic1234!';
+        $_POST['email'] = 'pomocniEPUTUJ23@outlook.com';
+        $_FILES['slika']['tmp_name'] = 'abcd';
+
+        $this->request->setMethod('POST');
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
+        $izmenjeno = [
+            "Ime" => "Aleksa1",
+            "Prezime" => "Trivic1",
+            "Lozinka" => "Trivic1234!",
+            "Email" => "pomocniEPUTUJ23@outlook.com"
+        ];
+        $this->seeInDatabase("korisnik", $izmenjeno);
+    }
+    
+    public function testInboxPrivatnikNijeSelektovanaPoruka(){
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+        
+        session()->set('korisnik',(object)$korisnik);
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('inboxPrivatnik');
+        $this->assertTrue($results->see('trivic123'));
+        $this->assertTrue($results->see("Mesto polaska:Novi Sad"));
+        // var_dump($results);
+    }
+    
+     public function testInboxPrivatnikaSelektovanaPoruka(){
+        $korisnik = [
+                'SifK' => 3,
+                'KorisnickoIme' => 'zeljko123',
+                'Lozinka' => 'zeljko123',
+                'TraziBrisanje' => 0,
+                'Ime' => 'Zeljko',
+                'Prezime' => 'Urosevic',
+                'BrTel' => 432678900,
+                'Email' => 'pomocniEPUTUJ2@outlook.com',
+                'PrivatnikIliKorisnik' => 'P',
+                'Novac' => 400,
+                'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+            ];
+
+        session()->set('korisnik', (object)$korisnik);
+
+        $_REQUEST['poruka'] = 1;
+
+        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('inboxPrivatnikPoruka');
+        $this->assertTrue($results->see("Kragujevac"));
+        $this->assertTrue($results->see("2023-07-06"));
+    }
     
 }
