@@ -180,6 +180,9 @@ class ModelObicanKorisnikLana extends Model
     public function azuriraj_poklone_i_tokene($poklon, $SifK)
     {
         if ($poklon == "nista") {
+            $korisnik = $this->db->table('obicankorisnik')->where('SifK=', $SifK)->get()->getResult()[0];
+            $builder = $this->db->table("obicankorisnik")->where("SifK", $SifK);
+            $builder->update(["token" => $korisnik->token - 1]);
             return;
         }
 

@@ -178,7 +178,7 @@ class AdminControllerTest extends CIUnitTestCase {
         $this->assertTrue($results->see('Uspešno dodato mesto!'));
     }
 
-    public function testLogout() {
+    public function testLogoutAdmin() {
         $korisnik = [
             'SifK' => 5,
             'KorisnickoIme' => 'admin',

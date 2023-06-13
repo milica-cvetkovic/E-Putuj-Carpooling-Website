@@ -223,11 +223,11 @@ class GostControllerTest extends CIUnitTestCase
     public function testZaboravljenaLozinka(){ 
         $_REQUEST['emailReset']="pomocniEPUTUJ2@outlook.com";
         $results = $this->controller("App\Controllers\GostController")->execute('zaboravljenaLozinkaSubmit');
-        $this->assertTrue($results->see("OPCIJE ZA PUTOVANJA"));
+        $this->assertTrue($results->see("Opcije za putovanja"));
     }
     public function testZaboravljenaLozinka2(){ 
         $results = $this->controller("App\Controllers\GostController")->execute('zaboravljenaLozinka');
-        $this->assertFalse($results->see("OPCIJE ZA PUTOVANJA"));
+        $this->assertFalse($results->see("Opcije za putovanja"));
     }
 
     public function testPregledPonude(){ 

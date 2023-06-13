@@ -225,7 +225,6 @@ class PrivatnikControllerTest extends CIUnitTestCase
      */
     public function testAzuriranjePonudeSubmitNeuspesnoDatumIVremeRanije($sifP){
         
-        $this->markTestSkipped('greska');
         $_REQUEST["prevoznoSredstvo"]= 2;
         $_REQUEST["mestoPolaska"] = "Beograd";
         $_REQUEST["mestoDolaska"] = "Jagodina";
@@ -243,14 +242,12 @@ class PrivatnikControllerTest extends CIUnitTestCase
         
         $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('azuriranjePonudeSubmit', $sifP);
         $this->assertTrue($results->see("Uneti datum i vreme moraju biti kasnije od trenutnog datuma i vremena."));
-   
     }
     
     /**
      * @dataProvider ponudaProvider
      */
     public function testAzuriranjePonudeSubmitDatumiNeispravni($sifP){
-        $this->markTestSkipped('greska');
         $_REQUEST["prevoznoSredstvo"]= 2;
         $_REQUEST["mestoPolaska"] = "Beograd";
         $_REQUEST["mestoDolaska"] = "Jagodina";
@@ -276,7 +273,6 @@ class PrivatnikControllerTest extends CIUnitTestCase
      */
     public function testAzuriranjePonudeSubmitVreme($sifP){
         
-         $this->markTestSkipped('greska');
         $_REQUEST["prevoznoSredstvo"]= 2;
         $_REQUEST["mestoPolaska"] = "Beograd";
         $_REQUEST["mestoDolaska"] = "Jagodina";
@@ -302,7 +298,6 @@ class PrivatnikControllerTest extends CIUnitTestCase
      */
     public function testAzuriranjePonudeSubmitMesto($sifP){
         
-        $this->markTestSkipped('greska');
         $_REQUEST["prevoznoSredstvo"]= 2;
         $_REQUEST["mestoPolaska"] = "Beograd";
         $_REQUEST["mestoDolaska"] = "Beograd";

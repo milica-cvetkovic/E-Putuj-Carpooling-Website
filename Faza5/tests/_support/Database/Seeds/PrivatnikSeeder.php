@@ -129,7 +129,7 @@ class PrivatnikSeeder extends Seeder
         $rezervacije = [
           [
               "SifK" => 4,
-              "SifP" => 37,
+              "SifP" => 31,
               "BrMesta" => 2,
               "DatumRezervacije" => '2023-06-02',
           ]  

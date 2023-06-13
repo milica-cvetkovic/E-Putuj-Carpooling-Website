@@ -76,16 +76,15 @@ class KorisnikController extends BaseController
         }
         $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "kontroler" => "KorisnikController", "stranica" => "inboxKorisnik"]);
     }
-  /**
+
+
+    /**
      * @author  Anja Curic 2020/0513
      * 
      * Brisanje poruke iz inboxa
      * 
      * @return void
      */
-
-
-
     public function obrisiPoruku()
     {
         $SifP = $this->request->getVar("SifP");
@@ -104,15 +103,15 @@ class KorisnikController extends BaseController
         $this->inboxKorisnik();
         return;
     }
-     /**
-     * @author  Anja Curic 2020/0513
-     * 
-     * Inbox korisnika poruka
-     * 
-     * @return void
-     */
 
 
+    /**
+    * @author  Anja Curic 2020/0513
+    * 
+    * Inbox korisnika poruka
+    * 
+    * @return void
+    */
     public function inboxKorisnikPoruka()
     {
         $izbor = $this->request->getVar("poruka");
@@ -141,6 +140,8 @@ class KorisnikController extends BaseController
         $odabrana->sredstvo = $modelS->where("SifSred", $odabrana->SifSred)->findAll()[0]->Naziv;
         $this->prikaz("inboxKorisnik", ["poruke" => $poruke, "odabrana" => $odabrana, "kontroler" => "KorisnikController", "stranica" => "inboxKorisnik"]);
     }
+
+
     /**
      * @author  Lana Ivkovic 2020/0480
      * 
@@ -180,7 +181,7 @@ class KorisnikController extends BaseController
                     $poruka = "Format email-a nije odgovarajuci!";
                 }
                 else if(!empty($lozinka) && preg_match($regex, $lozinka) == 0){
-                    $poruka = "Format lozinke nije odgovarjuci, neophodno je da duzina lozinke bude od 8 do 14 karktera, pojeduje bar jedno veliko slovo, malo slovo, specijaln karakter i broj!";
+                    $poruka = "Format lozinke nije odgovarajuci, neophodno je da duzina lozinke bude od 8 do 14 karaktera, poseduje bar jedno veliko slovo, malo slovo, specijalan karakter i broj!";
                 }
                 else{
                     if ($imeSlike != null) {
@@ -258,7 +259,7 @@ class KorisnikController extends BaseController
      * 
      * Prikaz odabrane ponude korisnika: sa dijelom za rezervaciju i kupovinu
      * @param int sifra ponude koja se prikazuje
-     * @param string tip akcije koji ce se izvrsiti: kovina ili rezervacija
+     * @param string tip akcije koji ce se izvrsiti: kupovina ili rezervacija
      * @return array
      */
     public function prikazPonude($sifP, $tip = "nista")
@@ -351,7 +352,9 @@ class KorisnikController extends BaseController
 
         $this->prikaz("prikazPonude", $data);
     }
-/**
+
+
+    /**
      * @author  Lana Ivkovic 2020/0480
      * 
      * Prijavljivanje privatnika
@@ -369,7 +372,6 @@ class KorisnikController extends BaseController
             if ($_POST) {
                 $SifK = $_POST['SifK'];
                 $komentar = $_POST['komentar'];
-                $SifPrijavitelja = "2";
                 $prijava =  $model->report($SifK, $komentar, $SifPrijavitelja);
                 if ($prijava == null) {
                     $data['poruka'] = "Privatnik ne postoji!";
@@ -668,7 +670,7 @@ Komentar:' . $this->request->getVar('komentar') . '
         if ($stranica == "trazenjeVoznje") $this->trazenjeVoznje();
         else if ($stranica == "rezervacije") $this->rezervacije();
         else if ($stranica == "report") $this->report();
-        else if ($stranica = "inboxKorisnik") $this->inboxKorisnik();
+        else if ($stranica == "inboxKorisnik") $this->inboxKorisnik();
         else if ($stranica == "indexkorisnik") $this->index();
         else if ($stranica == "izmenaProfila") $this->izmenaProfila();
         else if ($stranica == "prikazPonude") $this->pregledPonuda();
