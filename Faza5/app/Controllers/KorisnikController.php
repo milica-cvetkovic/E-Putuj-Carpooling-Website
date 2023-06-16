@@ -21,9 +21,25 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
+/**
+ * KorisnikController - klasa za pretragu,slanje zahteva za ponudu,rezervacije i kupovinu karte za putovanja
+ * 
+ * @version 1.0
+ */
+
+
 class KorisnikController extends BaseController
 {
-     
+     /**
+     * Parametrizovan prikaz stranice $stranica pomocu $podaci
+     * 
+     * @author Lana Ivkovic 2020/0513
+     *
+     * @param string $stranica stranica koja se prikazuje
+     * @param array $podaci podaci kojima je stranica parametrizovana
+     * 
+     * @return void
+     */
     private function prikaz($stranica, $podaci)
     {
         $SifK = session()->get("korisnik")->SifK;
@@ -34,9 +50,8 @@ class KorisnikController extends BaseController
         echo view("sabloni/footer");
     }
     /**
-     * @author  Lana Ivkovic 2020/0480
-     * 
      * Prikazivanje glavne starnice korisnika
+     * @author  Lana Ivkovic 2020/0480
      * 
      * @return void
      */
@@ -49,10 +64,10 @@ class KorisnikController extends BaseController
         $this->prikaz("indexkorisnik", ["svePonude" => $svePonude, "svaMesta" => $svaMesta, "svaPrevoznaSredstva" => $svaPrevoznaSredstva, "kontroler" => "GostController", "stranica" => "indexkorisnik"]);
     }
 
-    /**
-     * @author  Anja Curic 2020/0513
-     * 
+    /** 
      * Inbox korisnika
+     * 
+     *  @author  Anja Curic 2020/0513
      * 
      * @return void
      */
@@ -79,10 +94,8 @@ class KorisnikController extends BaseController
 
 
     /**
-     * @author  Anja Curic 2020/0513
-     * 
      * Brisanje poruke iz inboxa
-     * 
+     * @author  Anja Curic 2020/0513
      * @return void
      */
     public function obrisiPoruku()
@@ -105,11 +118,9 @@ class KorisnikController extends BaseController
     }
 
 
-    /**
+    /** 
+    * Inbox korisnika prikaz izabrane poruke.
     * @author  Anja Curic 2020/0513
-    * 
-    * Inbox korisnika poruka
-    * 
     * @return void
     */
     public function inboxKorisnikPoruka()
@@ -143,10 +154,8 @@ class KorisnikController extends BaseController
 
 
     /**
-     * @author  Lana Ivkovic 2020/0480
-     * 
      * Izmena profila korisnika
-     * 
+     * @author  Lana Ivkovic 2020/0480
      * @return void
      */
     public function izmenaProfila()
@@ -159,11 +168,16 @@ class KorisnikController extends BaseController
         $poruka = "";
         if ($this->request->getMethod() == 'post') {
             if ($_POST) {
-                $data['poruka'] = "post";
+                $dugme=$_POST['dugme'];
+                if($dugme=="Sačuvaj"){ 
+                    $data['poruka'] = "post";
                 $ime = $_POST['ime'];
                 $prezime = $_POST['prezime'];
                 $lozinka = $_POST['lozinka'];
                 $email = $_POST['email'];
+                $brTel = $_POST['brTel'];
+                $ponovljena=$_POST['ponovljena'];
+               
                 $profilna = null;
                 $imeSlike = null;
                 if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
@@ -178,10 +192,13 @@ class KorisnikController extends BaseController
                 $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,14}$/";
 
                 if(!empty($email) && !filter_var($email,FILTER_VALIDATE_EMAIL)){
-                    $poruka = "Format email-a nije odgovarajuci!";
+                    $poruka = "Email adresa u pogrešnom formatu.";
                 }
                 else if(!empty($lozinka) && preg_match($regex, $lozinka) == 0){
-                    $poruka = "Format lozinke nije odgovarajuci, neophodno je da duzina lozinke bude od 8 do 14 karaktera, poseduje bar jedno veliko slovo, malo slovo, specijalan karakter i broj!";
+                    $poruka = "Lozinka mora da sadrži jedno malo slovo, jedno veliko slovo, jedan specijalan karakter, jednu cifru i da je dužine od 8 do 14 karaktera.";
+                }
+                else if((!empty($lozinka) && !empty($ponovljena) && $lozinka!=$ponovljena) || (empty($ponovljena) && !empty($lozinka))){ 
+                    $poruka="Lozinka u polju potvrde nije ista kao prva unesena.";
                 }
                 else{
                     if ($imeSlike != null) {
@@ -191,24 +208,31 @@ class KorisnikController extends BaseController
                         }
                     }
                     $profilna = $imeSlike;
-                    $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+                    $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK,$brTel);
                     session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
                 } 
+
+                $data["poruka"] = $poruka;
             }
 
 
-            $data["poruka"] = $poruka;
+            
+
+            else{ 
+                $model->zahtevBrisanje($SifK);
+            }
         }
+        
+        }
+        
 
         $data["kontroler"] = "KorisnikController";
         $data["stranica"] = "izmenaProfila";
         $this->prikaz("izmenaProfila", $data);
     }
      /**
-     * @author  Lana Ivkovic 2020/0480
-     * 
      * Ocenjivanje privatnika od strane korisnika
-     * 
+     * @author  Lana Ivkovic 2020/0480
      * @return void
      */
     public function ocenjivanje()
@@ -239,10 +263,9 @@ class KorisnikController extends BaseController
 
 
     /**
-     * @author  Anja Curic 2020/0513
      * 
      * Prikaz ponude u inboxu korisnika
-     * 
+     * @author  Anja Curic 2020/0513
      * @return void
      */
     public function prikazPonudeInbox()
@@ -255,9 +278,9 @@ class KorisnikController extends BaseController
         $this->prikaz("prikazPonudeInbox", ["ponuda" => $ponuda, "kontroler" => "KorisnikController", "stranica" => "prikazPonudeInbox"]);
     }
 /**
+     * Prikaz odabrane ponude korisnika: sa dijelom za rezervaciju i kupovinu
      * @author  Lana Ivkovic 2020/0480
      * 
-     * Prikaz odabrane ponude korisnika: sa dijelom za rezervaciju i kupovinu
      * @param int sifra ponude koja se prikazuje
      * @param string tip akcije koji ce se izvrsiti: kupovina ili rezervacija
      * @return array
@@ -355,10 +378,9 @@ class KorisnikController extends BaseController
 
 
     /**
-     * @author  Lana Ivkovic 2020/0480
      * 
      * Prijavljivanje privatnika
-     * 
+     * @author  Lana Ivkovic 2020/0480
      * @return void
      */
     public function report()
@@ -392,9 +414,10 @@ class KorisnikController extends BaseController
         $this->prikaz("report", $data);
     }
 /**
-     * @author  Lana Ivkovic 2020/0480
      * 
      * Rezervacije ulogovanog korisnika
+     * 
+     * @author  Lana Ivkovic 2020/0480
      * 
      * @return void
      */
@@ -431,10 +454,9 @@ class KorisnikController extends BaseController
         $this->prikaz("rezervacije", $data);
     }
 /**
-     * @author  Lana Ivkovic 2020/0480
      * 
      * Kupovina karte kao i mogucnost otkazivanja rezervacije od strane ulogovanog korisnika
-     * 
+     * @author  Lana Ivkovic 2020/0480
      * @return void
      */
 
@@ -502,10 +524,9 @@ class KorisnikController extends BaseController
         $this->prikaz("rezervacije", $data);
     }
 /**
-     * @author  Lana Ivkovic 2020/0480
      * 
      * Podnosenje zahteva za vandrednu voznju od strane ulogovanog korisnika
-     * 
+     * @author  Lana Ivkovic 2020/0480
      * @return void
      */
     public function trazenjeVoznje()
@@ -586,9 +607,10 @@ class KorisnikController extends BaseController
         $this->prikaz("trazenjeVoznje", $data);
     }
     /**
-     * @author  Lana Ivkovic 2020/0480
+     * 
      * 
      *Tocak srece prikaz stranice
+     *@author  Lana Ivkovic 2020/0480
      * 
      * @return void
      */
@@ -605,10 +627,10 @@ class KorisnikController extends BaseController
         echo view('tocakSrece', $data);
     }
     /**
-     * @author  Lana Ivkovic 2020/0480
+     * 
      * 
      * Obrada nagrade(Tocak srece) ulogovanog korisnika
-     * 
+     * @author  Lana Ivkovic 2020/0480
      * @return void
      */
     public function tocakSrece()
@@ -643,10 +665,9 @@ class KorisnikController extends BaseController
         /// PREBACII I LIJEPO POSLAJI ZA INDEX -> PODATKE I PROMJENI U HEADERU
         $this->index();
     }
-    /**
-     * @author  Anja Curic 2020/0513
-     * 
-     * Komentari
+     /**
+     * Komentari,koji se nalaze u footer-u stranice.Realizacija slanja komentara putem mail-a.
+     * @author Anja Curic 2020/0513 
      * 
      * @return void
      */
@@ -679,10 +700,10 @@ Komentar:' . $this->request->getVar('komentar') . '
         else if ($stranica == "pregledPonuda") $this->pregledPonuda();
     }
     /**
-     * @author  Anja Curic 2020/0513
+     * 
      * 
      * Logout za korisnike
-     * 
+     * @author  Anja Curic 2020/0513
      * @return void
      */
 
@@ -695,10 +716,10 @@ Komentar:' . $this->request->getVar('komentar') . '
 
 
     /**
-     * @author Milica Cvetković 2020/0003
+     * 
      * 
      * Pretraga i filtriranje/sortiranje ponuda po izabranim kriterijumima
-     * 
+     * @author Milica Cvetković 2020/0003
      * @return mixed
      */
     public function pretragaPonuda()
@@ -800,10 +821,10 @@ Komentar:' . $this->request->getVar('komentar') . '
     }
 
     /**
-     * @author Milica Cvetković 2020/0003
+     * 
      * 
      * Dohvatanje svih prevoznih sredstava iz baze
-     * 
+     * @author Milica Cvetković 2020/0003
      * @return array
      */
     public function dohvatiSvaPrevoznaSredstva()
@@ -858,9 +879,11 @@ Komentar:' . $this->request->getVar('komentar') . '
     }
 
     /**
-     * @author Milica Cvetković 2020/0003
+     * 
      * 
      * Pretraga ponuda po zadatim kriterijumima
+     * 
+     * @author Milica Cvetković 2020/0003
      * 
      * @param string $prevoznoSredstvo
      * @param string $mestoOd
@@ -924,10 +947,10 @@ Komentar:' . $this->request->getVar('komentar') . '
         return $builder->get()->getResult();
     }
 
-    /**
-     * @author Milica Cvetković 2020/0003
-     * 
+    /** 
      * Pretraga ponuda po zadatim kriterijumima i izvrseno sortiranje
+     * 
+     * @author Milica Cvetković 2020/0003
      * 
      * @param string $prevoznoSredstvo
      * @param string $mestoOd
@@ -999,11 +1022,10 @@ Komentar:' . $this->request->getVar('komentar') . '
         return $builder->get()->getResult();
     }
 
-    /**
-     * @author Milica Cvetković 2020/0003
+    /** 
      * 
      * Provera da li privatnik ima odgovarajucu pretplatu
-     * 
+     * @author Milica Cvetković 2020/0003
      * @param int $SifK
      * 
      * @return boolean
@@ -1034,9 +1056,9 @@ Komentar:' . $this->request->getVar('komentar') . '
     }
 
     /**
-     * @author Milica Cvetković 2020/0003
      * 
      * Dohvatanje svih ponuda sa limitom zbog paginacije
+     * @author Milica Cvetković 2020/0003
      * 
      * @param int $page
      * @param int $numOfResultsOnPage
@@ -1062,10 +1084,9 @@ Komentar:' . $this->request->getVar('komentar') . '
     }
 
     /**
-     * @author Željko Urošević 2020/0073
      * 
      * Izracunavanje proseka ocena
-     * 
+     * @author Željko Urošević 2020/0073
      * @param mixed $ponuda
      * 
      * @return double
@@ -1090,10 +1111,10 @@ Komentar:' . $this->request->getVar('komentar') . '
     }
 
     /**
-     * @author Milica Cvetković 2020/0003
+     *
      * 
      * Stranica za pregled postavljenih ponuda
-     * 
+     * @author Milica Cvetković 2020/0003
      * @return mixed
      */
     public function pregledPonuda()

@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Milica Cvetkovic 2020/0003 
- */
+
 
 namespace App\Controllers;
 
@@ -20,10 +18,12 @@ use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 class GostController extends BaseController {
 
     /**
-     * Prikaz stranica
+     * Parametrizovan prikaz stranice $stranica pomocu $podaci
      * 
-     * @param string $stranica
-     * @param array $podaci
+     * @author Milica Cvetković 2020/0003 
+     *
+     * @param string $stranica stranica koja se prikazuje
+     * @param array $podaci podaci kojima je stranica parametrizovana
      * 
      * @return void
      */
@@ -34,8 +34,8 @@ class GostController extends BaseController {
     }
 
     /**
-     * Pocetna stranica sajta
-     * 
+     * Pocetna stranica sajta za korisnika tipa gost
+     * @author Milica Cvetković 2020/0003 
      * @return void
      */
     public function index() {
@@ -48,6 +48,7 @@ class GostController extends BaseController {
     
     /**
      * Stranica za login korisnika
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param array $poruke
      * 
@@ -59,6 +60,8 @@ class GostController extends BaseController {
     
     /**
      * Submit forme za login i prijavljivanje korisnika
+     * 
+     * @author Milica Cvetković 2020/0003 
      * 
      * @return mixed
      */
@@ -101,6 +104,8 @@ class GostController extends BaseController {
     /**
      * Stranica za registraciju korisnika
      * 
+     * @author Milica Cvetković 2020/0003 
+     * 
      * @param array $poruke
      * 
      * @return void
@@ -108,6 +113,13 @@ class GostController extends BaseController {
     public function registracija($poruke = null){
         $this->prikaz("registracija.php", ["poruke" => $poruke,"kontroler"=>"GostController","stranica"=>"registracija"]);
     }
+
+    /**
+     * Submit forma za registraciju
+     * @author Milica Cvetković 2020/0003 
+     * 
+     * @return void
+     */
     
     public function registracijaSubmit(){
         
@@ -163,8 +175,8 @@ class GostController extends BaseController {
     }
     
     /**
-     * Zahtev za povratak lozinke
-     * 
+     * Stranica submita forme za izmenu lozinke
+     * @author Milica Cvetković 2020/0003 
      * @return void
      */
     public function zaboravljenaLozinkaSubmit(){
@@ -184,6 +196,7 @@ class GostController extends BaseController {
 
     /**
      * Stranica za pregled postavljenih ponuda
+     * @author Milica Cvetković 2020/0003 
      * 
      * @return mixed
      */
@@ -203,7 +216,10 @@ class GostController extends BaseController {
     }
    
     /**
-     * Pretraga i filtriranje/sortiranje ponuda po izabranim kriterijumima
+     * Pretraga i filtriranje/sortiranje ponuda po izabranim kriterijumima,prikazuju se sve ponude koje
+     * zadovoljavaju kriterijum
+     * 
+     * @author Milica Cvetković 2020/0003 
      * 
      * @return mixed
      */
@@ -308,6 +324,7 @@ class GostController extends BaseController {
 
     /**
      * Prikaz jedne izabrane ponude
+     * @author Milica Cvetković 2020/0003 
      * 
      * @return void
      */
@@ -320,6 +337,7 @@ class GostController extends BaseController {
     
     /**
      * Dohvatanje korisnika iz baze
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param string $korisnickoime
      * 
@@ -338,6 +356,7 @@ class GostController extends BaseController {
     
     /**
      * Cuvanje korisnika u bazu
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param string $ime
      * @param string $prezime
@@ -372,6 +391,7 @@ class GostController extends BaseController {
     
     /**
      * Provera da li korisnicko ime postoji u bazi
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param string $korisnickoIme
      * 
@@ -392,6 +412,7 @@ class GostController extends BaseController {
     
     /**
      * Provera da li se lozinka poklapa sa zadatim korisnickim imenom u bazi
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param string $korisnickoIme
      * @param string $lozinka
@@ -414,6 +435,7 @@ class GostController extends BaseController {
     
     /**
      * Dohvatanje zadate ponude iz baze
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param int $ponuda
      * 
@@ -439,6 +461,7 @@ class GostController extends BaseController {
     
     /**
      * Pretraga ponuda po zadatim kriterijumima
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param string $prevoznoSredstvo
      * @param string $mestoOd
@@ -504,6 +527,7 @@ class GostController extends BaseController {
     
     /**
      * Pretraga ponuda po zadatim kriterijumima i izvrseno sortiranje
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param string $prevoznoSredstvo
      * @param string $mestoOd
@@ -577,6 +601,7 @@ class GostController extends BaseController {
     
     /**
      * Provera da li privatnik ima odgovarajucu pretplatu
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param int $SifK
      * 
@@ -608,6 +633,7 @@ class GostController extends BaseController {
     
     /**
      * Dohvatanje svih ponuda iz baze
+     * @author Milica Cvetković 2020/0003 
      * 
      * @return array
      */
@@ -628,6 +654,7 @@ class GostController extends BaseController {
     
     /**
      * Dohvatanje svih ponuda sa limitom zbog paginacije
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param int $page
      * @param int $numOfResultsOnPage
@@ -654,6 +681,7 @@ class GostController extends BaseController {
     
     /**
      * Provera da li je registracija odobrena
+     * @author Milica Cvetković 2020/0003 
      * 
      * @param mixed $korisnik
      * 
@@ -715,7 +743,7 @@ class GostController extends BaseController {
     
     /**
      * Dohvatanje svih prevoznih sredstava iz baze
-     * 
+     * @author Milica Cvetković 2020/0003 
      * @return array
      */
     public function dohvatiSvaPrevoznaSredstva(){
@@ -731,6 +759,7 @@ class GostController extends BaseController {
     
     /**
      * Dohvatanje svih mesta iz baze
+     * @author Milica Cvetković 2020/0003 
      * 
      * @return array
      */
@@ -744,7 +773,12 @@ class GostController extends BaseController {
         return $builder->get()->getResult();
         
     }
-
+    /**
+     * Komentari,koji se nalaze u footer-u stranice.Realizacija slanja komentara putem mail-a.
+     * @author Anja Curic 2020/0513 
+     * 
+     * @return void
+     */
     public function komentar(){ 
         $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
         $transport->setUsername("pomocniEPUTUJ1@outlook.com");

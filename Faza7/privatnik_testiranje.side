@@ -4,10 +4,6 @@
   "name": "privatnik_testiranje",
   "url": "http://localhost:8080/PrivatnikController/index",
   "tests": [{
-    "id": "a87c45c3-f10f-4ee3-9f8d-8731a106a16d",
-    "name": "Untitled",
-    "commands": []
-  }, {
     "id": "47f3f0d9-6de1-48ef-b6a1-19035a49d0f0",
     "name": "T1_Promena_pretplate_Premium",
     "commands": [{
@@ -161,7 +157,7 @@
       ],
       "value": ""
     }, {
-      "id": "c09a1c74-cdbf-48db-96b2-507e027dfa2f",
+      "id": "4ca9eba9-109c-4cd6-90c7-bf356aa08b0d",
       "comment": "",
       "command": "click",
       "target": "name=mestoPolaska",
@@ -173,7 +169,7 @@
       ],
       "value": ""
     }, {
-      "id": "b11fc7e5-a5ff-42a2-9647-b6bd821a80bc",
+      "id": "b4cf9f35-4de2-4c66-bd6a-f2cfc8170dd1",
       "comment": "",
       "command": "click",
       "target": "name=mestoDolaska",
@@ -184,6 +180,13 @@
         ["xpath=//div[3]/select", "xpath:position"]
       ],
       "value": ""
+    }, {
+      "id": "897906f8-bded-4970-9a91-3dfc31ecc034",
+      "comment": "",
+      "command": "select",
+      "target": "name=mestoDolaska",
+      "targets": [],
+      "value": "label=Aleksinac"
     }, {
       "id": "6b168fbc-ed82-49fb-973d-2ef7fca09d72",
       "comment": "",
@@ -301,7 +304,7 @@
       ],
       "value": "2023-06-23"
     }, {
-      "id": "534ed43d-137d-49bb-b751-002b8c38283e",
+      "id": "ffda1e97-52c2-4e22-a0d9-40bd4bcd44b3",
       "comment": "",
       "command": "click",
       "target": "name=vremeOd",
@@ -313,7 +316,19 @@
       ],
       "value": ""
     }, {
-      "id": "6712e31d-0594-4e4d-a2e5-1d91a8943b77",
+      "id": "b2dd6df7-44f1-4cc4-9027-c58789054f01",
+      "comment": "",
+      "command": "type",
+      "target": "name=vremeOd",
+      "targets": [
+        ["name=vremeOd", "name"],
+        ["css=.col-xl-3:nth-child(8) > .form-control", "css:finder"],
+        ["xpath=//input[@name='vremeOd']", "xpath:attributes"],
+        ["xpath=//div[8]/input", "xpath:position"]
+      ],
+      "value": "12:00"
+    }, {
+      "id": "be1829e7-115c-4341-8692-c15d3f5355bd",
       "comment": "",
       "command": "click",
       "target": "name=vremeDo",
@@ -325,9 +340,9 @@
       ],
       "value": ""
     }, {
-      "id": "831d98c2-3fa4-4409-80e1-62d02a842560",
+      "id": "ead1cd7a-5646-4e4b-a3db-2f7f1e4ae6a9",
       "comment": "",
-      "command": "click",
+      "command": "type",
       "target": "name=vremeDo",
       "targets": [
         ["name=vremeDo", "name"],
@@ -335,7 +350,7 @@
         ["xpath=//input[@name='vremeDo']", "xpath:attributes"],
         ["xpath=//div[9]/input", "xpath:position"]
       ],
-      "value": ""
+      "value": "13:00"
     }, {
       "id": "b962d822-dcfb-4ca8-a6f2-4967360a75f0",
       "comment": "",
@@ -480,6 +495,18 @@
       "targets": [],
       "value": "label=Novi Sad"
     }, {
+      "id": "f4b1a2af-b9cc-4d9a-8b47-a48bfabfedfe",
+      "comment": "",
+      "command": "type",
+      "target": "name=cenaKarte",
+      "targets": [
+        ["name=cenaKarte", "name"],
+        ["css=.col-xl-6:nth-child(4) > .form-control", "css:finder"],
+        ["xpath=//input[@name='cenaKarte']", "xpath:attributes"],
+        ["xpath=//div[4]/input", "xpath:position"]
+      ],
+      "value": "-2"
+    }, {
       "id": "5fa260bc-8472-4d6e-bdf7-73fc0cb7bc8a",
       "comment": "",
       "command": "click",
@@ -548,17 +575,19 @@
       ],
       "value": "2023-06-15"
     }, {
-      "id": "13e9a403-4ced-4786-ba44-904115501a68",
+      "id": "42cf7d79-5d8b-45c5-8d4b-ebe05539ff8e",
       "comment": "",
       "command": "click",
       "target": "name=datumDo",
-      "targets": [
-        ["name=datumDo", "name"],
-        ["css=.col-xl-3:nth-child(7) > .form-control", "css:finder"],
-        ["xpath=//input[@name='datumDo']", "xpath:attributes"],
-        ["xpath=//div[7]/input", "xpath:position"]
-      ],
+      "targets": [],
       "value": ""
+    }, {
+      "id": "13e9a403-4ced-4786-ba44-904115501a68",
+      "comment": "",
+      "command": "type",
+      "target": "name=datumDo",
+      "targets": [],
+      "value": "2023-06-17"
     }, {
       "id": "39cb2b26-46f8-42d3-9c9f-124da01398ee",
       "comment": "",
@@ -574,39 +603,10 @@
     }, {
       "id": "a5317b16-d80c-4f87-a76a-939352920fe9",
       "comment": "",
-      "command": "click",
+      "command": "type",
       "target": "name=vremeOd",
-      "targets": [
-        ["name=vremeOd", "name"],
-        ["css=.col-xl-3:nth-child(8) > .form-control", "css:finder"],
-        ["xpath=//input[@name='vremeOd']", "xpath:attributes"],
-        ["xpath=//div[8]/input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "638ef4eb-6120-4312-9787-31221e70feda",
-      "comment": "",
-      "command": "click",
-      "target": "name=vremeDo",
-      "targets": [
-        ["name=vremeDo", "name"],
-        ["css=.col-xl-3:nth-child(9) > .form-control", "css:finder"],
-        ["xpath=//input[@name='vremeDo']", "xpath:attributes"],
-        ["xpath=//div[9]/input", "xpath:position"]
-      ],
-      "value": ""
-    }, {
-      "id": "65bbdcc9-c8f0-457f-846b-218fdc1fd015",
-      "comment": "",
-      "command": "click",
-      "target": "name=vremeDo",
-      "targets": [
-        ["name=vremeDo", "name"],
-        ["css=.col-xl-3:nth-child(9) > .form-control", "css:finder"],
-        ["xpath=//input[@name='vremeDo']", "xpath:attributes"],
-        ["xpath=//div[9]/input", "xpath:position"]
-      ],
-      "value": ""
+      "targets": [],
+      "value": "12:00"
     }, {
       "id": "4fe6a063-9c65-4543-9385-a3f1999036c5",
       "comment": "",
@@ -654,7 +654,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "35af7fe9-c299-4659-a1f5-b94e19c70aaf",
       "comment": "",
@@ -970,7 +970,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "0670911b-42a9-4fa1-98d4-70f71f933386",
       "comment": "",
@@ -1302,7 +1302,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "3ad224de-7c35-4318-9b1c-bae90ba7e315",
       "comment": "",
@@ -1602,43 +1602,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\artist_6.jpg"
-    }, {
-      "id": "b704aa92-8e1a-4bce-a3ad-1e98653773b3",
-      "comment": "",
-      "command": "mouseDownAt",
-      "target": "name=slika",
-      "targets": [
-        ["name=slika", "name"],
-        ["css=.col-xl-3:nth-child(10) > .form-control", "css:finder"],
-        ["xpath=//input[@name='slika']", "xpath:attributes"],
-        ["xpath=//div[10]/input", "xpath:position"]
-      ],
-      "value": "206.23748779296875,14.61248779296875"
-    }, {
-      "id": "01f20938-e9e0-4e56-9b5a-c210c805eb7e",
-      "comment": "",
-      "command": "mouseMoveAt",
-      "target": "name=slika",
-      "targets": [
-        ["name=slika", "name"],
-        ["css=.col-xl-3:nth-child(10) > .form-control", "css:finder"],
-        ["xpath=//input[@name='slika']", "xpath:attributes"],
-        ["xpath=//div[10]/input", "xpath:position"]
-      ],
-      "value": "206.23748779296875,14.61248779296875"
-    }, {
-      "id": "df97f39c-abe8-4dbf-aa5b-400b548b5338",
-      "comment": "",
-      "command": "mouseUpAt",
-      "target": "name=slika",
-      "targets": [
-        ["name=slika", "name"],
-        ["css=.col-xl-3:nth-child(10) > .form-control", "css:finder"],
-        ["xpath=//input[@name='slika']", "xpath:attributes"],
-        ["xpath=//div[10]/input", "xpath:position"]
-      ],
-      "value": "206.23748779296875,14.61248779296875"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "1241a3c8-dcef-469f-af2a-cb2d119164b0",
       "comment": "",
@@ -1972,43 +1936,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
-    }, {
-      "id": "6dda86d0-5e3a-400c-8a91-f1513c8a9888",
-      "comment": "",
-      "command": "mouseDownAt",
-      "target": "name=slika",
-      "targets": [
-        ["name=slika", "name"],
-        ["css=.col-xl-3:nth-child(10) > .form-control", "css:finder"],
-        ["xpath=//input[@name='slika']", "xpath:attributes"],
-        ["xpath=//div[10]/input", "xpath:position"]
-      ],
-      "value": "176.23748779296875,22.61248779296875"
-    }, {
-      "id": "c5ea3a7d-1b08-4389-8546-513798510124",
-      "comment": "",
-      "command": "mouseMoveAt",
-      "target": "name=slika",
-      "targets": [
-        ["name=slika", "name"],
-        ["css=.col-xl-3:nth-child(10) > .form-control", "css:finder"],
-        ["xpath=//input[@name='slika']", "xpath:attributes"],
-        ["xpath=//div[10]/input", "xpath:position"]
-      ],
-      "value": "176.23748779296875,22.61248779296875"
-    }, {
-      "id": "ffa38d73-520d-415f-918d-13dac14ecf67",
-      "comment": "",
-      "command": "mouseUpAt",
-      "target": "name=slika",
-      "targets": [
-        ["name=slika", "name"],
-        ["css=.col-xl-3:nth-child(10) > .form-control", "css:finder"],
-        ["xpath=//input[@name='slika']", "xpath:attributes"],
-        ["xpath=//div[10]/input", "xpath:position"]
-      ],
-      "value": "176.23748779296875,22.61248779296875"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "627c18e9-9adc-4341-9602-42a6e0151a66",
       "comment": "",
@@ -2340,7 +2268,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "21e7e3a7-8164-48ce-b61d-188d40fe077f",
       "comment": "",
@@ -2661,7 +2589,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "5fb9b5f7-90d4-40b1-99fd-c00b2cf4a4d2",
       "comment": "",
@@ -3019,7 +2947,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\Temp\\slika.jpg"
     }, {
       "id": "257833cc-0043-4b6d-90d0-e0651211a744",
       "comment": "",
@@ -3070,7 +2998,7 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "87504460-e8a3-4835-9fe5-6e15dd7bee0b",
+      "id": "42cd37b4-2c4c-450f-970a-37befcf9d56e",
       "comment": "",
       "command": "click",
       "target": "linkText=Ažuriraj punudu",
@@ -3085,12 +3013,12 @@
       ],
       "value": ""
     }, {
-      "id": "a023a096-2cd3-4083-969b-8dee1ed6ff96",
+      "id": "8192160d-0f31-4ebd-8242-fade3c222cc8",
       "comment": "",
       "command": "click",
-      "target": "css=.active .col-xl-4:nth-child(2) .dugme",
+      "target": "css=.col-xl-4:nth-child(2) .dugme",
       "targets": [
-        ["css=.active .col-xl-4:nth-child(2) .dugme", "css:finder"],
+        ["css=.col-xl-4:nth-child(2) .dugme", "css:finder"],
         ["xpath=//div[@id='postavljenePonude']/div/div/div/div[2]/a[2]/button", "xpath:idRelative"],
         ["xpath=//div[2]/a[2]/button", "xpath:position"]
       ],
@@ -3346,7 +3274,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.png"
+      "value": "C:\\Temp\\slika.jpg"
     }, {
       "id": "ea6073c8-0608-4c94-8131-3ae00973158a",
       "comment": "",
@@ -3368,7 +3296,7 @@
         ["xpath=//input[@name='rokZaOtkazivanje']", "xpath:attributes"],
         ["xpath=//div[11]/input", "xpath:position"]
       ],
-      "value": "6"
+      "value": "3"
     }, {
       "id": "49701dcb-d26e-4961-83b0-dc6b7e886d04",
       "comment": "",
@@ -3419,7 +3347,7 @@
       "targets": [],
       "value": ""
     }, {
-      "id": "bfa19516-a9ed-4e5a-907f-74eab90b87fd",
+      "id": "4d7ebb90-e87c-4d0c-9b2a-0be0c43b9649",
       "comment": "",
       "command": "click",
       "target": "linkText=Ažuriraj punudu",
@@ -3434,27 +3362,21 @@
       ],
       "value": ""
     }, {
-      "id": "8a72ae50-6955-4649-bf89-727e3efee013",
+      "id": "3b2e7236-2ecc-4ea3-b72d-2c942c5fbdd6",
       "comment": "",
-      "command": "click",
-      "target": "css=.carousel-item:nth-child(1) .col-xl-4:nth-child(1) i > img",
-      "targets": [
-        ["css=.carousel-item:nth-child(1) .col-xl-4:nth-child(1) i > img", "css:finder"],
-        ["xpath=//img[@alt='icon']", "xpath:img"],
-        ["xpath=//div[@id='postavljenePonude']/div/div/div/div/a/div/i/img", "xpath:idRelative"],
-        ["xpath=//i/img", "xpath:position"]
-      ],
+      "command": "runScript",
+      "target": "window.scrollTo(0,456)",
+      "targets": [],
       "value": ""
     }, {
-      "id": "54092f8e-a4c9-4680-9b6d-c71f5c300c54",
+      "id": "a6e3301a-9f86-4c28-b0ac-57b73363bd72",
       "comment": "",
       "command": "click",
-      "target": "css=a > .make-offer-btn",
+      "target": "css=.col-xl-4:nth-child(2) .dugme",
       "targets": [
-        ["css=a > .make-offer-btn", "css:finder"],
-        ["xpath=//button[@type='button']", "xpath:attributes"],
-        ["xpath=//a/button", "xpath:position"],
-        ["xpath=//button[contains(.,'Ažuriraj ponudu')]", "xpath:innerText"]
+        ["css=.col-xl-4:nth-child(2) .dugme", "css:finder"],
+        ["xpath=//div[@id='postavljenePonude']/div/div/div/div[2]/a[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/a[2]/button", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3538,7 +3460,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "489f6e71-9ad0-441c-94c0-58f38a95bf49",
       "comment": "",
@@ -3604,14 +3526,21 @@
       ],
       "value": ""
     }, {
-      "id": "12dceafc-84fd-40c8-b577-16a28f5cbcf3",
+      "id": "3f64824c-04b4-42d5-ae56-ae4f7b82bf9e",
+      "comment": "",
+      "command": "runScript",
+      "target": "window.scrollTo(0,428)",
+      "targets": [],
+      "value": ""
+    }, {
+      "id": "c21b1700-796d-494a-a3ac-cb3a01621eaf",
       "comment": "",
       "command": "click",
-      "target": "css=.active .col-xl-4:nth-child(3) .dugme",
+      "target": "css=.col-xl-4:nth-child(2) .dugme",
       "targets": [
-        ["css=.active .col-xl-4:nth-child(3) .dugme", "css:finder"],
-        ["xpath=//div[@id='postavljenePonude']/div/div/div/div[3]/a[2]/button", "xpath:idRelative"],
-        ["xpath=//div[3]/a[2]/button", "xpath:position"]
+        ["css=.col-xl-4:nth-child(2) .dugme", "css:finder"],
+        ["xpath=//div[@id='postavljenePonude']/div/div/div/div[2]/a[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/a[2]/button", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3692,7 +3621,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "952f84c7-4ba8-4210-ab38-5716dfb808b4",
       "comment": "",
@@ -3758,14 +3687,29 @@
       ],
       "value": ""
     }, {
-      "id": "e934e464-801c-47da-b195-abfefa68e59d",
+      "id": "1bff54e8-c088-4f45-8f71-f1b21ad757b4",
       "comment": "",
       "command": "click",
-      "target": "css=.active .col-xl-4:nth-child(1) .dugme",
+      "target": "linkText=Ažuriraj punudu",
       "targets": [
-        ["css=.active .col-xl-4:nth-child(1) .dugme", "css:finder"],
-        ["xpath=//div[@id='postavljenePonude']/div/div/div/div/a[2]/button", "xpath:idRelative"],
-        ["xpath=//a[2]/button", "xpath:position"]
+        ["linkText=Ažuriraj punudu", "linkText"],
+        ["css=#liAzuriraj > a", "css:finder"],
+        ["xpath=//a[contains(text(),'Ažuriraj punudu')]", "xpath:link"],
+        ["xpath=//li[@id='liAzuriraj']/a", "xpath:idRelative"],
+        ["xpath=//a[@href='http://localhost:8080/PrivatnikController/izborPonudeAzuriranje']", "xpath:href"],
+        ["xpath=//li[5]/a", "xpath:position"],
+        ["xpath=//a[contains(.,'Ažuriraj punudu')]", "xpath:innerText"]
+      ],
+      "value": ""
+    }, {
+      "id": "753f34b7-01ba-458a-b30a-90176633a9d0",
+      "comment": "",
+      "command": "click",
+      "target": "css=.col-xl-4:nth-child(2) .dugme",
+      "targets": [
+        ["css=.col-xl-4:nth-child(2) .dugme", "css:finder"],
+        ["xpath=//div[@id='postavljenePonude']/div/div/div/div[2]/a[2]/button", "xpath:idRelative"],
+        ["xpath=//div[2]/a[2]/button", "xpath:position"]
       ],
       "value": ""
     }, {
@@ -3791,7 +3735,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "ed3b2b29-43a7-4e52-b05e-382491fedcdc",
       "comment": "",
@@ -3918,7 +3862,7 @@
       "id": "5bcdc320-f87e-477f-b960-d11a71a8fe27",
       "comment": "",
       "command": "click",
-      "target": "css=.active .col-xl-4:nth-child(2) .dugme",
+      "target": "css=.col-xl-4:nth-child(2) .dugme",
       "targets": [
         ["css=.active .col-xl-4:nth-child(2) .dugme", "css:finder"],
         ["xpath=//div[@id='postavljenePonude']/div/div/div/div[2]/a[2]/button", "xpath:idRelative"],
@@ -3948,7 +3892,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "1e40d707-53e8-4af4-a31c-b33762f83a38",
       "comment": "",
@@ -4065,7 +4009,7 @@
       "id": "2a1aa429-f2ca-4082-83b3-08e7a1cc573a",
       "comment": "",
       "command": "click",
-      "target": "css=.active .col-xl-4:nth-child(3) .dugme",
+      "target": "css=.col-xl-4:nth-child(2) .dugme",
       "targets": [
         ["css=.active .col-xl-4:nth-child(3) .dugme", "css:finder"],
         ["xpath=//div[@id='postavljenePonude']/div/div/div/div[3]/a[2]/button", "xpath:idRelative"],
@@ -4143,7 +4087,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "e6b320d2-2c18-4761-bfc4-46cf6174b136",
       "comment": "",
@@ -4338,7 +4282,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "430197f2-d5e9-47ea-a630-75625afeaa1e",
       "comment": "",
@@ -4475,7 +4419,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//input[2]", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "47b40349-5bc7-49fc-b95e-c7a1000a9f81",
       "comment": "",
@@ -4773,7 +4717,7 @@
         ["xpath=//input[@name='slika']", "xpath:attributes"],
         ["xpath=//div[10]/input", "xpath:position"]
       ],
-      "value": "C:\\fakepath\\slika.jpg"
+      "value": "C:\\TEMP\\slika.jpg"
     }, {
       "id": "e8b34ae0-a2ab-46ee-a9b3-4fc95f340525",
       "comment": "",
@@ -4850,7 +4794,7 @@
     "persistSession": false,
     "parallel": false,
     "timeout": 300,
-    "tests": ["a87c45c3-f10f-4ee3-9f8d-8731a106a16d"]
+    "tests": []
   }],
   "urls": ["http://localhost:8080/PrivatnikController/index"],
   "plugins": []

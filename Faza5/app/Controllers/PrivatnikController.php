@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Željko Urošević 2020/0073
- */
 
 namespace App\Controllers;
 
@@ -32,6 +29,8 @@ class PrivatnikController extends BaseController {
     /**
      * Parametrizovan prikaz stranice $stranica pomocu $podaci
      * 
+     * @author Zeljko Urosevic 2020/0073
+     * 
      * @param string $stranica stranica koja se prikazuje
      * @param array $podaci podaci kojima je stranica parametrizovana
      * 
@@ -49,6 +48,7 @@ class PrivatnikController extends BaseController {
 
     /**
      * Pocetna stranica za privatnika
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @return void
      * 
@@ -70,8 +70,11 @@ class PrivatnikController extends BaseController {
     }
 
     /**
+     *
      * Stranica na kojoj se privatniku prikazuju ponude koje je postavio i omogucava
-     * izbor jedne za azuriranje
+     * izbor jedne od ponuda za azuriranje
+     * 
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @return void
      */
@@ -105,6 +108,8 @@ class PrivatnikController extends BaseController {
     /**
      * Prikaz forme za azuriranje ponude koju je privatnik selektovao
      * 
+     * @author Zeljko Urosevic 2020/0073
+     * 
      * @param int $sifP identifikator ponude koja se azurira
      */
     public function azurirajPonudu($sifP) {
@@ -120,6 +125,8 @@ class PrivatnikController extends BaseController {
     /**
      * Poziva se kada privatnik popuni formu, vrsi odgovarajuce provere i ako 
      * prodju sve provere azurira ponudu u bazi
+     * 
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @param int $sifP identifikator ponude koja se azurira
      * 
@@ -245,7 +252,7 @@ class PrivatnikController extends BaseController {
 
     
     /**
-     * Prikaz inbox-a privatnika
+     * Prikaz inbox-a privatnika,bez otvorene poruke
      * 
      * @author Anja Curic 2020/0513
      * @return void
@@ -308,6 +315,7 @@ class PrivatnikController extends BaseController {
 
     /**
      * Otvara formu za pravljenje ponude
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @return void
      */
@@ -320,6 +328,8 @@ class PrivatnikController extends BaseController {
     /**
      * Poziva se prilikom zavrsetka popunjavanja forme za kreiranje ponude;
      * Vrsi sve provere i ako prodju sve provere pravi novu ponudu u bazi
+     * 
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @return void
      */
@@ -472,6 +482,8 @@ class PrivatnikController extends BaseController {
     /**
      * Prikaz svih ponuda koje je privatnik postavio sa mogucnoscu otkazivanja odredjene ponude
      * 
+     * @author Zeljko Urosevic 2020/0073
+     * 
      * @return void
      */
     public function otkaziPonudu() {
@@ -486,6 +498,8 @@ class PrivatnikController extends BaseController {
 
     /**
      * Poziva se kada privatnik odluci da otkazuje odgovarajucu ponudu
+     * 
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @param int $sifP identifikator ponude koja se otkazuje
      * 
@@ -601,6 +615,8 @@ Tim Side-eye.');
     /**
      * Prikaz stranice sa informacijama o promeni pretplate kao i mogucnost prelaska sa jedne na drugu pretplatu
      * 
+     * @author Zeljko Urosevic 2020/0073
+     * 
      * @return void
      */
     public function promenaPretplate() {
@@ -610,6 +626,8 @@ Tim Side-eye.');
     /**
      * Poziva se kada privatnik odluci da promeni pretplatu, i tada se proverava da li ima
      * uslova za promenu pretplate i ako ima, vrsi se promena u bazi
+     * 
+     * @author Zeljko Urosevic 2020/0073
      * 
      * @return void
      */
@@ -674,11 +692,16 @@ Tim Side-eye.');
         $poruka = "";
         if ($this->request->getMethod() == 'post') {
             if ($_POST) {
-                $data['poruka'] = "post";
+                $dugme=$_POST['dugme'];
+                if($dugme=="Sačuvaj"){ 
+                    $data['poruka'] = "post";
                 $ime = $_POST['ime'];
                 $prezime = $_POST['prezime'];
                 $lozinka = $_POST['lozinka'];
                 $email = $_POST['email'];
+                $brTel = $_POST['brTel'];
+                $ponovljena=$_POST['ponovljena'];
+               
                 $profilna = null;
                 $imeSlike = null;
                 if (is_uploaded_file($_FILES['slika']['tmp_name'])) {
@@ -693,10 +716,13 @@ Tim Side-eye.');
                 $regex = "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,14}$/";
 
                 if(!empty($email) && !filter_var($email,FILTER_VALIDATE_EMAIL)){
-                    $poruka = "Format email-a nije odgovarajuci!";
+                    $poruka = "Email adresa u pogrešnom formatu.";
                 }
                 else if(!empty($lozinka) && preg_match($regex, $lozinka) == 0){
-                    $poruka = "Format lozinke nije odgovarjuci, neophodno je da duzina lozinke bude od 8 do 14 karktera, pojeduje bar jedno veliko slovo, malo slovo, specijaln karakter i broj!";
+                    $poruka = "Lozinka mora da sadrži jedno malo slovo, jedno veliko slovo, jedan specijalan karakter, jednu cifru i da je dužine od 8 do 14 karaktera.";
+                }
+                else if((!empty($lozinka) && !empty($ponovljena) && $lozinka!=$ponovljena) || (empty($ponovljena) && !empty($lozinka))){ 
+                    $poruka="Lozinka u polju potvrde nije ista kao prva unesena.";
                 }
                 else{
                     if ($imeSlike != null) {
@@ -706,15 +732,24 @@ Tim Side-eye.');
                         }
                     }
                     $profilna = $imeSlike;
-                    $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK);
+                    $model->izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK,$brTel);
                     session()->set("korisnik", ($db->table("korisnik")->where("SifK", $SifK)->get()->getResult())[0]);
                 } 
+
+                $data["poruka"] = $poruka;
+            }
+
+
+            
+
+            else{ 
+                $model->zahtevBrisanje($SifK);
+            }
             }
 
 
             $data["poruka"] = $poruka;
         }
-
     
         $data["kontroler"] = "PrivatnikController";
         $data["stranica"] = "izmenaProfila";
@@ -733,9 +768,8 @@ Tim Side-eye.');
     }
 
     /**
-     * Poziva se iz footera i salje se mejl timu side-eye sa popunjenim podacima iz forme iz footera
-     * 
-     * @author Anja Curic 2020/0513
+     * Komentari,koji se nalaze u footer-u stranice.Realizacija slanja komentara putem mail-a.
+     * @author Anja Curic 2020/0513 
      * 
      * @return void
      */

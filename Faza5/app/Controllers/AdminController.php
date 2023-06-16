@@ -1,8 +1,6 @@
 <?php
 
-/**
- * Anja Curic 2020/0513
- */
+
 
 namespace App\Controllers;
 
@@ -17,9 +15,26 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Mailer\Transport;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
 
+/**
+ * AdminController-klasa za realizaciju funkcionalnosti administratora: dodavanje mesta,potvrda
+ * kreiranja naloga,potvrda brisanja naloga,gasenje naloga radi previse report-ova.
+ * 
+ * @version 1.0
+ */
 
 
 class AdminController extends BaseController {
+
+    /**
+     * Parametrizovan prikaz stranice $stranica pomocu $podaci
+     * 
+     * @author Anja Curic 2020/0513
+     *
+     * @param string $stranica stranica koja se prikazuje
+     * @param array $podaci podaci kojima je stranica parametrizovana
+     * 
+     * @return void
+     */
      
     private function prikaz($stranica, $podaci){
         $model=new ModelKorisnik();
@@ -42,12 +57,13 @@ class AdminController extends BaseController {
        echo view($stranica, $podaci);
     }
     /**
+     *
+     * Pocetna stranica kod administratora - prikaz naloga koji zahtevaju potvrdu kreiranja.
+     * 
      * @author  Anja Curic 2020/0513
      * 
-     * Prikazivanje glavne starnice admin
      * 
-     * 
-     * 
+     * @return void
      */
     public function index() {
         $model=new ModelKorisnik();
@@ -68,8 +84,12 @@ class AdminController extends BaseController {
         $this->prikaz("indexadmin", ["broj"=>"1","nalozi"=>$nalozi]);
     }
 
-    // dalje su samo testiranja prikaza, vrv ce se neke stranice spojiti jedna sa drugom
-    // ali dok se ne krene implementacija jos ne moze
+    /**
+     * Stranica koja prikazuje detalje o nalogu privatnika,nakon sto dobije report od nekog korisnika. 
+     * @author Anja Curic 2020/0513
+     * 
+     * @return void
+     */
    
     public function detaljiPrivatnikaPosleReporta(){
 
@@ -98,17 +118,24 @@ class AdminController extends BaseController {
         $this->prikaz("detaljiPrivatnikaPosleReporta", ["razlog"=>$razlog,"broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
     }
      /**
+     * 
+     * Dodavanje mesta u bazu podataka
      * @author  Anja Curic 2020/0513
-     * Dodavanje mesta
      * 
-     * 
-     * 
-     * 
+     * @return void 
      */
 
     public function dodajMesto(){
         $this->prikaz("dodajMesto", ["broj"=>"3"]);
     }
+
+    /**
+     * Nakon sto se sabmituje forma za dodavanje mesta.
+     * 
+     * @author Anja Curic 2020/0513
+     * 
+     * @return void 
+     */
     public function dodavanjeMesta(){
         $model=new ModelMesto();
         $naziv=$this->request->getVar("mesto");
@@ -134,11 +161,11 @@ class AdminController extends BaseController {
         else $this->prikaz("dodajMesto", ["poruka_neuspeh"=>"Niste uneli naziv mesta!","broj"=>"3"]);
     }
      /**
+     * Izlistava naloge koji su trazili brisanje(deaktivaciju).
+     * 
      * @author  Anja Curic 2020/0513
      * 
-     * 
-     * Brisanje naloga korisnika
-     * 
+     * @return void
      * 
      */
 
@@ -160,12 +187,12 @@ class AdminController extends BaseController {
         $this->prikaz("potvrdiBrisanje", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran"=>$odabran]);
     }
      /**
+     * 
+     * Izlistava naloge koji cekaju na aktivaciju.
+     * 
      * @author  Anja Curic 2020/0513
      * 
-     * Potvrda naloga
-     * 
-     * 
-     * 
+     * @return void
      */
     public function potvrdiNalog(){
         $izbor=$this->request->getVar("izbor");
@@ -189,19 +216,20 @@ class AdminController extends BaseController {
         $this->prikaz("potvrdiNalog", ["broj"=>"1","nalozi"=>$nalozi,"odabran"=>$odabran]);
     }
 
-    //ako se pritisne dugme potvrde naloga
+    
      /**
+     * Potvrda aktivacije naloga koji su se registrovali kao privatnik ili obican korisnik.
+     * Slanje mail-a obavestenja.
      * @author  Anja Curic 2020/0513
      * 
-     * Potvrda kreiranja naloga
-     * 
-     * 
-     * 
+     * @return void
      */
     public function potvrdiKreiranje(){ 
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
         $nalog=$model->where("SifK",$id)->findAll()[0];
+        $mail=$nalog->Email;
+        $kime=$nalog->KorisnickoIme;
         if($nalog->PrivatnikIliKorisnik=="K"){ 
             $db=\Config\Database::connect();
             $builder=$db->table("obicankorisnik");
@@ -214,17 +242,70 @@ class AdminController extends BaseController {
             $modelO=new ModelPrivatnik();
             $modelO->save(["SifK"=>$id,"SifPret"=>"1"]);
         }
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("sideeyetim@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($mail)
+        ->subject('Obaveštenje o kreiranju naloga '.$kime.' na sajtu ePutuj')->text('
+Poštovani/a, 
+    Administrator je dopustio kreiranje naloga '.$kime.' na sajtu ePutuj. Za dodatne informacije obratite nam se putem mail-a.
+    
+S poštovanjem,
+Tim Side-Eye.
+                ');
+
+        
+        $mailer->send($email);
+
+
         redirect($this->index());
     }
 
-    //ako se pritisne dugme odbijanja potvrde
+    /**
+     * Nalog ne dobija dozvolu za aktivaciju.
+     * Slanje mail-a obavestenja.
+     * @author Anja Curic 2020/0513
+     * 
+     * @return void
+     */
     
     public function potvrdiOdbijanje(){ 
         $model=new ModelKorisnik();
         $id=(int)$this->request->getVar("izbor");
+        $mail=$model->where('SifK',$id)->findAll()[0]->Email;
+        $kime=$model->where('SifK',$id)->findAll()[0]->KorisnickoIme;
         $model->delete($id);
+
+        $transport=new EsmtpTransport("smtp-mail.outlook.com",587);
+        $transport->setUsername("sideeyetim@outlook.com");
+        $transport->setPassword("RADIMAIL123");
+        $mailer=new Mailer($transport);
+
+        $email = (new Email())->from("sideeyetim@outlook.com")->to($mail)
+        ->subject('Obaveštenje o kreiranju naloga '.$kime.' na sajtu ePutuj')->text('
+Poštovani/a, 
+    Administrator je odbio kreiranje naloga '.$kime.' na sajtu ePutuj. Za dodatne informacije obratite nam se putem mail-a.
+    
+S poštovanjem,
+Tim Side-Eye.
+                ');
+
+        
+        $mailer->send($email);
+
+
+
         redirect($this->index());
     }
+    /**
+     * Informacije o reportu,nakon sto se klikne na dugme 'Pregledaj' kod odredjenog report-a.
+     * 
+     * @author Anja Curic 2020/0513
+     * 
+     * @return void
+     */
 
     public function reportDetalji(){
         $izbor1=$this->request->getVar("izbor1");
@@ -251,10 +332,11 @@ class AdminController extends BaseController {
         $this->prikaz("reportDetalji", ["razlog"=>$razlog ,"broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi,"odabran1"=>$odabran1,"odabran2"=>$odabran2]);
     }
  /**
+     * 
+     * Prikaz svih naloga,koji su dobili report ili traze brisanje.
      * @author  Anja Curic 2020/0513
      * 
-     * Uklanjanje naloga korisnika
-     * 
+     * @return void 
      * 
      * 
      */
@@ -274,10 +356,11 @@ class AdminController extends BaseController {
         $this->prikaz("ukloniNalog", ["broj"=>"2","nalozi"=>$nalozi,"reportovi"=>$reportovi]);
     }
      /**
+     * 
+     * Brisanje naloga korsnika,slanje mail-a obavestenja o brisanju.
      * @author  Anja Curic 2020/0513
-     * Brisanje naloga korsnika
      * 
-     * 
+     * @return void
      * 
      */
 
@@ -322,7 +405,9 @@ Tim Side-Eye.
      * @author  Anja Curic 2020/0513
      * 
      * 
-     * Odbijanje naloga korsinika
+     * Odbijanje gasenja naloga korisnika,koji je sam zahtevao gasenje.
+     * 
+     * @return void
      * 
      * 
      */
@@ -349,12 +434,10 @@ Tim Side-Eye.
         redirect($this->ukloniNalog());
     }
  /**
+     *  Salje mail upozorenja korisniku da ce nalog biti ugasen radi odredjenog broja report-ova.
      * @author  Anja Curic 2020/0513
      * 
-     * Posalji Email potvrde korisniku
-     * 
-     * 
-     * 
+     * @return void
      */
     public function posaljiEmail(){
 
@@ -397,9 +480,8 @@ Tim Side-Eye.
     }
     
     /**
-     * @author  Anja Curic 2020/0513
-     * 
      * Logout za admina
+     * @author  Anja Curic 2020/0513
      * 
      * @return void
      */

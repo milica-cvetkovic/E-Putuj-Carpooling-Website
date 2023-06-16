@@ -55,7 +55,15 @@ class ModelObicanKorisnikLana extends Model
         return $prave_rezervacije;
     }
 
-    public function izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK)
+    public function zahtevBrisanje($SifK){ 
+        $korisnik = $this->db->table("korisnik")->where("SifK=", $SifK)->get()->getResult()[0];
+
+        $korisnik->TraziBrisanje=1;
+
+        $this->db->table('korisnik')->where("SifK=", $SifK)->update($korisnik);
+    }
+
+    public function izmenaProfila($ime, $prezime, $lozinka, $email, $profilna, $SifK,$brTel)
     {
         $korisnik = $this->db->table("korisnik")->where("SifK=", $SifK)->get()->getResult()[0];
 
@@ -70,6 +78,9 @@ class ModelObicanKorisnikLana extends Model
         }
         if ($email != "") {
             $korisnik->Email = $email;
+        }
+        if($brTel!=""){ 
+            $korisnik->BrTel=$brTel;
         }
         if ($profilna != null) {
             $korisnik->ProfilnaSlika = $profilna;

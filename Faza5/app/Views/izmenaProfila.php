@@ -26,27 +26,38 @@
                </tr>
                <tr>
                   <td> <label style="color: rgb(210, 62, 153);">Lozinka</label></td>
-                  <td><label style="color: rgb(210, 62, 153);">E-mail &nbsp; </label></td>
+                  <td><label style="color: rgb(210, 62, 153);">Ponovljena lozinka &nbsp; </label></td>
                </tr>
                <tr>
                   <td> <input name="lozinka" class="ime" type="password"> &nbsp; &nbsp; </td>
-                  <td><input name="email" class="ime" type="text" value="<?= session()->get("korisnik")->Email ?>"></td>
+                  <td> <input name="ponovljena" class="ime" type="password"> &nbsp; &nbsp; </td>
                </tr>
                <tr>
+                  <td> <label style="color: rgb(210, 62, 153);">Email</label></td>
                   <td> <label style="color: rgb(210, 62, 153);">Broj telefona</label></td>
-                  <td><label style="color: rgb(210, 62, 153);">Izaberite fotografiju</label></td>
+                  
                </tr>
                <tr>
-                  <td> <input name="brojtelefona" class="ime" type="tel" value="<?= session()->get("korisnik")->BrTel ?>"> &nbsp; &nbsp; </td>
+                  <td><input name="email" class="ime" type="text" value="<?= session()->get("korisnik")->Email ?>"></td>
+                  <td> <input name="brTel" class="ime" type="tel" value="<?= session()->get("korisnik")->BrTel ?>"> &nbsp; &nbsp; </td>
+               </tr>
+               <tr>
+                  <td><label style="color: rgb(210, 62, 153);">Izaberite fotografiju</label></td>
+                  
+               </tr>
+               <tr>
                   <td><input type="hidden" name="MAX_FILE_SIZE" value="1000000" />
                      <input class="ime" placeholder="Any" type="file" name="slika">
                   </td>
                </tr>
             </table>
+            
 
       </div>
       <div class="dugme-sacuvaj">
-         <div style="margin-left: 260px;">
+         <div style="margin-left: 15px;">
+            <br>
+            <br>
             <br>
             <input type="submit" name="dugme" value="Sačuvaj" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
             <input type="submit" name="dugme" value="Obriši moj nalog" class="btn " style="background-color: rgb(87, 203, 203);" style="color: aliceblue;"></td>
