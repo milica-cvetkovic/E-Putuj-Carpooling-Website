@@ -273,7 +273,7 @@ class PrivatnikController extends BaseController {
             $poruka->korisnik = $modelK->where("SifK", $poruka->SifKor)->findAll()[0]->KorisnickoIme;
         }
 
-        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke, "kontroler" => "PrivatnikController", "stranica" => "inboxPrivatnik"]);
+        $this->prikaz("inboxPrivatnik", ["poruke" => $poruke, "kontroler" => "PrivatnikController", "stranica" => "inboxPrivatnik", "odabrana" => ""]);
     }
 
 

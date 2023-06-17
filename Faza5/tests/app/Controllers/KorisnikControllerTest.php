@@ -197,10 +197,13 @@ class KorisnikControllerTest extends CIUnitTestCase
         $_POST['lozinka'] = 'Trivic123!';
         $_POST['email'] = 'abcd';
         $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['ponovljena'] = "Trivic123!";
+        $_POST['brTel'] = 38165123456;
 
         $this->request->setMethod('POST');
         $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
-        $this->assertTrue($results->see("Format email-a nije odgovarajuci!"));
+        $this->assertTrue($results->see("Email adresa u pogrešnom formatu."));
     }
 
     public function testIzmenaProfilaPogresanFormatLozinke(){
@@ -226,10 +229,45 @@ class KorisnikControllerTest extends CIUnitTestCase
         $_POST['lozinka'] = 'trivic123';
         $_POST['email'] = 'pomocniEPUTUJ2@outlook.com';
         $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['ponovljena'] = 'trivic123';
+        $_POST['brTel'] = 38165123456;
 
         $this->request->setMethod('POST');
         $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
-        $this->assertTrue($results->see("Format lozinke nije odgovarajuci, neophodno je da duzina lozinke bude od 8 do 14 karaktera, poseduje bar jedno veliko slovo, malo slovo, specijalan karakter i broj!"));
+        $this->assertTrue($results->see("Lozinka mora da sadrži jedno malo slovo, jedno veliko slovo, jedan specijalan karakter, jednu cifru i da je dužine od 8 do 14 karaktera."));
+    }
+
+    public function testIzmenaProfilaPonovljenaLozinkaRazlicita(){
+        $korisnik = [
+            'SifK' => 12,
+            'KorisnickoIme' => 'trivic123',
+            'Lozinka' => 'Trivic123!',
+            'TraziBrisanje' => 0,
+            'Ime' => 'Aleksa',
+            'Prezime' => 'Trivic',
+            'BrTel' =>38165123456,
+            'Email' => 'pomocniEPUTUJ2@outlook.com',
+            'PrivatnikIliKorisnik' => 'K',
+            'Novac' =>300,
+            'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+        ];
+
+        session()->set('korisnik', (object)$korisnik);
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['ime'] = 'Aleksa';
+        $_POST['prezime'] = 'Trivic';
+        $_POST['lozinka'] = 'Trivic123!';
+        $_POST['email'] = 'pomocniEPUTUJ2@outlook.com';
+        $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['lozinka'] = 'Trivic1234!';
+        $_POST['brTel'] = 38165123456;
+
+        $this->request->setMethod('POST');
+        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
+        $this->assertTrue($results->see("Lozinka u polju potvrde nije ista kao prva unesena."));
     }
 
     public function testIzmenaProfilaUspesno(){
@@ -255,6 +293,9 @@ class KorisnikControllerTest extends CIUnitTestCase
         $_POST['lozinka'] = 'Trivic1234!';
         $_POST['email'] = 'pomocniEPUTUJ23@outlook.com';
         $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['ponovljena'] = 'Trivic1234!';
+        $_POST['brTel'] = 38165123456;
 
         $this->request->setMethod('POST');
         $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
@@ -263,6 +304,35 @@ class KorisnikControllerTest extends CIUnitTestCase
             "Prezime" => "Trivic1",
             "Lozinka" => "Trivic1234!",
             "Email" => "pomocniEPUTUJ23@outlook.com"
+        ];
+        $this->seeInDatabase("korisnik", $izmenjeno);
+    }
+
+    public function testIzmenaProfilaZatraziBrisanje(){
+        $korisnik = [
+            'SifK' => 12,
+            'KorisnickoIme' => 'trivic123',
+            'Lozinka' => 'Trivic123!',
+            'TraziBrisanje' => 0,
+            'Ime' => 'Aleksa',
+            'Prezime' => 'Trivic',
+            'BrTel' =>38165123456,
+            'Email' => 'pomocniEPUTUJ2@outlook.com',
+            'PrivatnikIliKorisnik' => 'K',
+            'Novac' =>300,
+            'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+        ];
+
+        session()->set('korisnik', (object)$korisnik);
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['dugme'] = "Obriši moj nalog";
+
+        $this->request->setMethod('POST');
+        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
+        $izmenjeno = [
+            "KorisnickoIme" => "trivic123",
+            'TraziBrisanje' => 1,
         ];
         $this->seeInDatabase("korisnik", $izmenjeno);
     }
@@ -1043,7 +1113,7 @@ class KorisnikControllerTest extends CIUnitTestCase
         session()->set('korisnik', (object)$korisnik);
         $_REQUEST['stranica']="izmenaProfila";
         $_REQUEST['ime']='Anja';
-
+        $this->request->setMethod('GET');
         $results = $this->controller("App\Controllers\KorisnikController")->execute('komentar');
         // var_dump($results);
         $this->assertTrue($results->see("Lozinka"));

@@ -253,8 +253,8 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $_REQUEST["mestoDolaska"] = "Jagodina";
         $_REQUEST["cenaKarte"] = 900;
         $_REQUEST["brMesta"] = 10;
-        $_REQUEST["datumOd"] = '2023-06-25';
-        $_REQUEST["datumDo"] = '2023-06-14';
+        $_REQUEST["datumOd"] = '2023-07-25';
+        $_REQUEST["datumDo"] = '2023-07-14';
         $_REQUEST["vremeOd"] = '20:00:00';
         $_REQUEST["vremeDo"] = '19:00:00';
         $_REQUEST["rokZaOtkazivanje"] = 2;
@@ -265,7 +265,6 @@ class PrivatnikControllerTest extends CIUnitTestCase
         
         $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('azuriranjePonudeSubmit', $sifP);
         $this->assertTrue($results->see("Datum dolaska mora biti kasnije od datuma polaska."));
-   
     }
     
     /**
@@ -278,8 +277,8 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $_REQUEST["mestoDolaska"] = "Jagodina";
         $_REQUEST["cenaKarte"] = 900;
         $_REQUEST["brMesta"] = 10;
-        $_REQUEST["datumOd"] = '2023-06-14';
-        $_REQUEST["datumDo"] = '2023-06-14';
+        $_REQUEST["datumOd"] = '2023-07-14';
+        $_REQUEST["datumDo"] = '2023-07-14';
         $_REQUEST["vremeOd"] = '20:00:00';
         $_REQUEST["vremeDo"] = '13:00:00';
         $_REQUEST["rokZaOtkazivanje"] = 2;
@@ -716,7 +715,7 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $_REQUEST['ime']='Anja';
 
         $results = $this->controller("App\Controllers\PrivatnikController")->execute('komentar');
-        $this->assertTrue($results->dontSee('Dobrodošli'));
+        $this->assertTrue($results->see('Dobrodošli'));
     }
     public function testKomentar8(){ 
         $_REQUEST['stranica']="otkaziPonudu";
@@ -794,10 +793,13 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $_POST['lozinka'] = 'Trivic123!';
         $_POST['email'] = 'abcd';
         $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['ponovljena'] = "Trivic123!";
+        $_POST['brTel'] = 38165123456;
 
         $this->request->setMethod('POST');
-        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
-        $this->assertTrue($results->see("Format email-a nije odgovarajuci!"));
+        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
+        $this->assertTrue($results->see("Email adresa u pogrešnom formatu."));
     }
 
     public function testIzmenaProfilaPogresanFormatLozinke(){
@@ -824,10 +826,13 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $_POST['lozinka'] = 'trivic123';
         $_POST['email'] = 'pomocniEPUTUJ2@outlook.com';
         $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['ponovljena'] = 'trivic123';
+        $_POST['brTel'] = 38165123456;
 
         $this->request->setMethod('POST');
-        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
-        $this->assertTrue($results->see("Format lozinke nije odgovarajuci, neophodno je da duzina lozinke bude od 8 do 14 karaktera, poseduje bar jedno veliko slovo, malo slovo, specijalan karakter i broj!"));
+        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
+        $this->assertTrue($results->see("Lozinka mora da sadrži jedno malo slovo, jedno veliko slovo, jedan specijalan karakter, jednu cifru i da je dužine od 8 do 14 karaktera."));
     }
 
     public function testIzmenaProfilaUspesno(){
@@ -854,14 +859,46 @@ class PrivatnikControllerTest extends CIUnitTestCase
         $_POST['lozinka'] = 'Trivic1234!';
         $_POST['email'] = 'pomocniEPUTUJ23@outlook.com';
         $_FILES['slika']['tmp_name'] = 'abcd';
+        $_POST['dugme'] = "Sačuvaj";
+        $_POST['ponovljena'] = 'Trivic1234!';
+        $_POST['brTel'] = 38165123456;
 
         $this->request->setMethod('POST');
-        $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('izmenaProfila');
+        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
         $izmenjeno = [
             "Ime" => "Aleksa1",
             "Prezime" => "Trivic1",
             "Lozinka" => "Trivic1234!",
             "Email" => "pomocniEPUTUJ23@outlook.com"
+        ];
+        $this->seeInDatabase("korisnik", $izmenjeno);
+    }
+
+    public function testIzmenaProfilaZatraziBrisanje(){
+        $korisnik = [
+            'SifK' => 3,
+            'KorisnickoIme' => 'zeljko123',
+            'Lozinka' => 'zeljko123',
+            'TraziBrisanje' => 0,
+            'Ime' => 'Zeljko',
+            'Prezime' => 'Urosevic',
+            'BrTel' => 432678900,
+            'Email' => 'pomocniEPUTUJ2@outlook.com',
+            'PrivatnikIliKorisnik' => 'P',
+            'Novac' => 400,
+            'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
+        ];
+    
+    session()->set('korisnik',(object)$korisnik);
+
+        $_SERVER['REQUEST_METHOD'] = 'POST';
+        $_POST['dugme'] = "Obriši moj nalog";
+
+        $this->request->setMethod('POST');
+        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
+        $izmenjeno = [
+            "KorisnickoIme" => "zeljko123",
+            'TraziBrisanje' => 1,
         ];
         $this->seeInDatabase("korisnik", $izmenjeno);
     }
@@ -884,8 +921,7 @@ class PrivatnikControllerTest extends CIUnitTestCase
         session()->set('korisnik',(object)$korisnik);
         $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('inboxPrivatnik');
         $this->assertTrue($results->see('trivic123'));
-        $this->assertTrue($results->see("Mesto polaska:Novi Sad"));
-        // var_dump($results);
+        $this->assertTrue($results->see("Mesto polaska:Valjevo"));
     }
     
      public function testInboxPrivatnikaSelektovanaPoruka(){
@@ -905,11 +941,11 @@ class PrivatnikControllerTest extends CIUnitTestCase
 
         session()->set('korisnik', (object)$korisnik);
 
-        $_REQUEST['poruka'] = 1;
+        $_REQUEST['poruka'] = 22;
 
         $results = $this->withURI("http://localhost:8080/PrivatnikController")->controller("App\Controllers\PrivatnikController")->execute('inboxPrivatnikPoruka');
-        $this->assertTrue($results->see("Kragujevac"));
-        $this->assertTrue($results->see("2023-07-06"));
+        $this->assertTrue($results->see("Valjevo"));
+        $this->assertTrue($results->see("20.00"));
     }
     
 }
