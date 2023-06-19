@@ -76,9 +76,7 @@ class GostControllerTest extends CIUnitTestCase
 
         $results = $this->controller("App\Controllers\GostController")->execute('loginSubmit');
         
-        $this->assertFalse($results->see('Neispravno'));
-        $this->assertFalse($results->see('Neispravna'));
-        $this->assertFalse($results->see('Popunjavanje'));
+        $this->assertTrue($results->see("Dobrodošli"));
         
     }
 
@@ -87,9 +85,7 @@ class GostControllerTest extends CIUnitTestCase
         $_REQUEST['password-input']='Trivic123!';
 
         $results = $this->controller("App\Controllers\GostController")->execute('loginSubmit');
-        $this->assertFalse($results->see('Neispravno'));
-        $this->assertFalse($results->see('Neispravna'));
-        $this->assertFalse($results->see('Popunjavanje'));
+        $this->assertTrue($results->see("Točak"));
     }
 
     public function testLoginAdmin(){ 
@@ -97,9 +93,7 @@ class GostControllerTest extends CIUnitTestCase
         $_REQUEST['password-input']='Admin123#';
 
         $results = $this->controller("App\Controllers\GostController")->execute('loginSubmit');
-        $this->assertFalse($results->see('Neispravno'));
-        $this->assertFalse($results->see('Neispravna'));
-        $this->assertFalse($results->see('Popunjavanje'));
+        $this->assertTrue($results->see("Potvrda"));
     }
 
     public function testNeispravnoKimeLogin(){ 
@@ -141,11 +135,7 @@ class GostControllerTest extends CIUnitTestCase
 
         $results = $this->controller("App\Controllers\GostController")->execute('registracijaSubmit');
 
-        $this->assertFalse($results->see("Popunjavanje"));
-        $this->assertFalse($results->see("Korisničko"));
-        $this->assertFalse($results->see("Lozinka mora"));
-        $this->assertFalse($results->see("Lozinka u polju"));
-        $this->assertFalse($results->see("Email adresa u pogrešnom formatu."));
+        $this->assertTrue($results->see("Pretraži ponudu"));
 
     }
 

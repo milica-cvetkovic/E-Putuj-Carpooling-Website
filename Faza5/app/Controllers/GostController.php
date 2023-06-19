@@ -92,12 +92,21 @@ class GostController extends BaseController {
         }
         
         $this->session->set("korisnik", $korisnik);
-        if($korisnik->PrivatnikIliKorisnik == "K")
-            return redirect()->to(site_url("KorisnikController"));
-         if($korisnik->PrivatnikIliKorisnik == "P")
-            return redirect()->to(site_url("PrivatnikController"));
+        if($korisnik->PrivatnikIliKorisnik == "K"){ 
+            //return redirect()->to(site_url("KorisnikController/index"));
+            $a=new KorisnikController();
+            $a->index();
+        }
+         if($korisnik->PrivatnikIliKorisnik == "P"){ 
+            //return redirect()->to(site_url("PrivatnikController/index"));
+            $a=new PrivatnikController();
+            $a->index();
+         }
+             
           if($korisnik->PrivatnikIliKorisnik == "A"){
-            return redirect()->to(site_url("AdminController"));
+            //return redirect()->to(site_url("AdminController/index"));
+            $a=new AdminController();
+            $a->index();
           }
     }
 
@@ -161,8 +170,8 @@ class GostController extends BaseController {
         }
         
         $this->sacuvajKorisnika($ime, $prezime, $brtel, $email, $korisnickoime, $lozinka, $tip);
-        
-        return redirect()->to(site_url("GostController/index"));
+        //redirect()->to(site_url("GostController/index"));
+        $this->index();
     }
     
     /**
