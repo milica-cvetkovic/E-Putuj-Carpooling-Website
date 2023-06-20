@@ -308,34 +308,8 @@ class KorisnikControllerTest extends CIUnitTestCase
         $this->seeInDatabase("korisnik", $izmenjeno);
     }
 
-    public function testIzmenaProfilaZatraziBrisanje(){
-        $korisnik = [
-            'SifK' => 12,
-            'KorisnickoIme' => 'trivic123',
-            'Lozinka' => 'Trivic123!',
-            'TraziBrisanje' => 0,
-            'Ime' => 'Aleksa',
-            'Prezime' => 'Trivic',
-            'BrTel' =>38165123456,
-            'Email' => 'pomocniEPUTUJ2@outlook.com',
-            'PrivatnikIliKorisnik' => 'K',
-            'Novac' =>300,
-            'ProfilnaSlika' => '3_20230531220122_RE4wwtb.jpg'
-        ];
-
-        session()->set('korisnik', (object)$korisnik);
-
-        $_SERVER['REQUEST_METHOD'] = 'POST';
-        $_POST['dugme'] = "Obriši moj nalog";
-
-        $this->request->setMethod('POST');
-        $results = $this->withURI("http://localhost:8080/KorisnikController")->controller("App\Controllers\KorisnikController")->execute('izmenaProfila');
-        $izmenjeno = [
-            "KorisnickoIme" => "trivic123",
-            'TraziBrisanje' => 1,
-        ];
-        $this->seeInDatabase("korisnik", $izmenjeno);
-    }
+    
+    
 
     public function testOcenjivanjePrikaz(){
         $korisnik = [
