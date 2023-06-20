@@ -280,7 +280,7 @@ class ModelObicanKorisnikLana extends Model {
                     $OVAJ = $this->db->table('jedobio')->where("SifK", $SifK)->where("SifPokl", $SifPokl)->get()->getResult()[0]->JeDobioPK;
 
                     $this->db->table('jedobio')->where("JeDobioPK", $OVAJ)->delete();
-                } 
+                }
             } else {
                 $korisnik->Novac -= $ponuda->CenaKarte * $BrMesta;
             }
