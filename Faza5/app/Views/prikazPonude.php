@@ -156,7 +156,7 @@ $prosek = $suma * 1.0 / $broj;
                                         </tr>
                                         <tr rowspan="2">
                                             <td width="50%"><label for="brtel"><b>Broj telefona</b></label></td>
-                                            <td align="center"><input type="text" placeholder="065 123 456 7" style="width:100%;"></td>
+                                            <td align="center"><input type="text" readonly placeholder="065 123 456 7" style="width:100%;"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
@@ -196,7 +196,7 @@ $prosek = $suma * 1.0 / $broj;
                                         </tr>
                                         <tr>
                                             <td width="50%"><label for="brtel"><b>Broj telefona</b></label></td>
-                                            <td align="center"><input type="text" placeholder="065 123 456 7" style="width:100%"></td>
+                                            <td align="center"><input type="text" readonly placeholder="065 123 456 7" style="width:100%"></td>
                                         </tr>
                                         <tr>
                                             <td colspan="2">
