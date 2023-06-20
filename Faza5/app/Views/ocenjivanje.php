@@ -17,7 +17,7 @@ if (!empty($poruka)) {
             <div class="titlepage" style="margin-top: 20px;">
                 <h2>Oceni</h2>
                 <span> </span>
-            </div>
+            </div>  
         </div>
     </div>
     <div class="container" align="center">
